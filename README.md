@@ -1,105 +1,192 @@
 # MerryMate
 
-MerryMate is my final year project, a full-stack web application developed with Laravel (backend), MySQL (database), and React (frontend). This application has been deployed on Heroku.
+MerryMate est une application web de gestion de listes de cadeaux.
+Le backend est construit avec Laravel, le frontend avec React via Inertia.js, et la base de données est MySQL.
 
-## Demo
+Démo en ligne : https://www.merrymate.fr/
 
-You can test **MerryMate** from [this link](https://merrymate-acbf617285bb.herokuapp.com/). Enjoy!
+## Fonctionnalités implémentées
 
-## Deployment
+### Comptes et sécurité
 
-#### Prerequisites
+- Inscription et connexion utilisateur·ice
+- Vérification de l'e-mail (workflow Laravel Breeze)
+- reCAPTCHA à l'inscription
+- Réinitialisation de mot de passe
+- Suppression de compte avec confirmation du mot de passe
 
--   Heroku account: create an account on [Heroku](https://dashboard.heroku.com/).
--   Heroku CLI: download and install the Heroku CLI from [this link](https://devcenter.heroku.com/articles/heroku-cli).
+### Gestion des listes
 
-#### 1. Connect to Heroku
+- Trois types de listes :
+    - listes publiques créées
+    - listes privées créées
+    - listes suivies
+- Création, édition et suppression d'une liste
+- Recherche de listes publiques à suivre
+- Consultation d'une liste suivie avec tri par statuts des idées (disponibles, réservées, achetées)
+- Archivage d'une liste (les idées achetées passent en statut archivé)
+- Alerte lorsqu'il reste moins de 6 idées disponibles dans la liste (=ni réservées ni achetées)
 
-Log in to your Heroku account via the terminal:
+### Suivi d'une liste
+
+- Seule les listes publiques peuvent être suivies
+- Possibilité de suivre une liste de deux façons :
+    - Vérification via un code privé
+    - Demande d'accès via une notification envoyée au·à la propriétaire
+- Acceptation/refus d'une demande d'accès par le·a propriétaire : envoi d'une notification à la personne qui a effectué la demande
+
+### Gestion des idées cadeaux
+
+- Dans une liste suivie :
+    - Possibilité de :
+        - réserver une idée
+        - indiquer qu'une idée a été achetée
+        - annuler la réservation ou l'achat
+    - Mode Secret Santa : la nom de la personne qui a acheté/réservé est gardé secret
+- Dans une liste créée :
+    - Ajout, modification, suppression d'idées dans la liste
+    - Protection sur la suppression : une idée réservée/achetée ne peut pas être supprimée
+    - Champs disponibles :
+        - titre, marque, lien, détails, prix
+        - idée favorite
+        - idée multiple (peut être offerte plusieurs fois)
+        - informations de réduction/adhésion
+    - Le·a propriétaire ne voit pas les idées réservées/achetées
+
+### Notifications
+
+- Notification par e-mail des demandes/réponses d'accès
+- Marquage lu/non lu sur la page dédiée
+- Types de notifications :
+    - confirmation de suivi de liste
+    - demande d'accès
+    - réponse à une demande d'accès
+
+### Autres pages
+
+- Profil : édition du profil utilisateur·ice
+- Budget : total des idées achetées/réservées par l'utilisateur·ice par personne
+- Cadeaux recus : idées archivées (et donc reçues) de ses propres listes par année
+- Notifications
+
+## Stack technique
+
+- PHP 8.1+
+- Laravel 10
+- Inertia.js (Laravel + React)
+- React 18
+- Vite
+- Tailwind CSS + Bootstrap
+- MySQL
+- Laravel Sanctum
+- PHPUnit (tests backend)
+- Vitest + Testing Library (tests frontend)
+
+## Prérequis
+
+- PHP >= 8.1
+- Composer
+- Node.js >= 18 et npm
+- MySQL
+
+## Installation locale
+
+1. Cloner le projet puis se placer dans le dossier
+2. Installer les dépendances backend :
 
 ```bash
-  heroku login
+composer install
 ```
 
-Or log in directly through the CLI:
+3. Installer les dépendances frontend :
 
 ```bash
-  heroku login -i
+npm install
 ```
 
-#### 2. Create the project
-
--   Go to the [dashboard](https://dashboard.heroku.com/) and click on `Create a new app`.
--   Choose a name for your application.
--   Select the closest region to your end-users to optimize latency.
--   Select GitHub as the deployment method and link your GitHub repository.
--   Enable automatic deployment so that each push to GitHub is automatically deployed to Heroku.
--   _Optional_ : enable the "Wait for CI to pass before deploy" option so that Heroku only deploys the application if the GitHub Actions tests pass.
-
-#### 3. Configure buildpacks
-
-Buildpacks are scripts used by Heroku to install dependencies and configure the application's environment.  
-This can be done through the Heroku dashboard or via the CLI:
+4. Copier le fichier d'environnement :
 
 ```bash
-  heroku buildpacks:add heroku/nodejs
-  heroku buildpacks:set heroku/php
+cp .env.example .env
 ```
 
-#### 4. Project deployment
+5. Générer la clé d'application :
 
-By default, Heroku uses Apache with PHP to start the application from the project root directory.  
-Since the document root of the app is the `public/` subdirectory, create a `Procfile` in the project's root directory with the following line:
+```bash
+php artisan key:generate
+```
+
+6. Configurer la connexion MySQL dans .env
+
+7. Lancer les migrations :
+
+```bash
+php artisan migrate
+```
+
+8. (Optionnel) Injecter des données de test :
+
+```bash
+php artisan db:seed
+```
+
+## Variables d'environnement importantes
+
+En plus des variables Laravel standard (APP*\*, DB*\_, MAIL\_\_), vérifier :
+
+- RECAPTCHA_SECRET_KEY : clé secrète Google reCAPTCHA
+- CURL_CA_BUNDLE : chemin vers le certificat CA si nécessaire pour les appels HTTPS
+
+## Lancement en développement
+
+Terminal 1 (backend Laravel) :
+
+```bash
+php artisan serve
+```
+
+Terminal 2 (frontend Vite) :
+
+```bash
+npm run dev
+```
+
+Application disponible par defaut sur http://localhost:8000
+
+## Tests
+
+Tests backend (Laravel) :
+
+```bash
+php artisan test
+```
+
+Tests frontend (Vitest) :
+
+```bash
+npm run test
+```
+
+## Déploiement Heroku (résumé)
+
+1. Créer une application Heroku
+2. Configurer les buildpacks Node.js et PHP
+3. Vérifier le Procfile :
 
 ```bash
 web: vendor/bin/heroku-php-apache2 public/
 ```
 
-#### 5. Deployment via Git
-
-Add Heroku as a remote and deploy the application:
+4. Configurer les variables d'environnement (APP*KEY, DB*\_, MAIL\_\_, RECAPTCHA_SECRET_KEY, etc.)
+5. Ajouter une base MySQL (ex: JawsDB)
+6. Déployer :
 
 ```bash
-heroku git:remote -a MerryMate
 git push heroku main
 ```
 
-#### 6. Environment variables configuration
-
-Add the necessary environment variables, such as those in the `.env` file, to Heroku's Config Vars to securely manage sensitive data.  
-This can be done through the Heroku dashboard or via the CLI:
+7. Exécuter les migrations :
 
 ```bash
-heroku config:set APP_KEY=<your-app-key>
+heroku run php artisan migrate
 ```
-
-#### 7. Adding a MySQL database
-
-Add the JawsDB MySQL add-on from the Add-ons section of the Heroku dashboard or via the CLI:
-
-```bash
-heroku addons:create jawsdb:kitefin
-```
-
-**Note**: JawsDB is a free add-on with limitations. Regularly back up your data.
-
-#### 8. Migrations management
-
-After deployment, run the migrations to create the tables in the new database:
-
-```bash
-heroku run php artisan migrate:fresh
-```
-
-**Note**: If you encounter the following error:
-> _Syntax error or access violation: 1071 Specified key was too long_  
-
-adjust the default string length by adding the following line in the boot() method of the `AppServiceProvider.php` file:
-
-```bash
-Schema::defaultStringLength(191)
-```
-
-#### 9. Configure PHPMyAdmin (optional)
-
-To easily view the database, configure PHPMyAdmin to connect to your Heroku database by adding the connection details to the `config.inc.php` file.
