@@ -15,6 +15,15 @@ export default {
             boxShadow: {
                 up: "0 4px 4px 4px rgb(0 0 0 / 0.1)",
             },
+            keyframes: {
+                "slide-up": {
+                    from: { opacity: "0", transform: "translateY(1rem)" },
+                    to: { opacity: "1", transform: "translateY(0)" },
+                },
+            },
+            animation: {
+                "slide-up": "slide-up 0.25s ease-out both",
+            },
             fontSize: {
                 "2xs": "0.6rem",
             },

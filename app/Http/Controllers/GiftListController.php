@@ -228,6 +228,8 @@ class GiftListController extends Controller
      */
     public function archive(GiftList $list): RedirectResponse
     {
+        $this->authorize('update', $list);
+
         Idea::where('list_id', $list->id)->where('status', 'reserved')->update(['status' => 'archived']);
         Idea::where('list_id', $list->id)->where('status', 'purchased')->update(['status' => 'archived']);
 

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Idea;
 use App\Models\MultipleIdea;
 use App\Models\GiftList;
+use App\Models\FollowedList;
 use Inertia\Response;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -70,6 +71,8 @@ class IdeaController extends Controller
      */
     public function update(Request $request, Idea $idea): RedirectResponse
     {
+        $this->authorize('update', $idea);
+
         $string = 'nullable|string|max:255';
 
         $validated = $request->validate([
@@ -121,6 +124,7 @@ class IdeaController extends Controller
      */
     public function reserveIdea(Request $request, $ideaId): RedirectResponse
     {
+        $this->authorizeListAccess($ideaId);
         $this->ideaRepository->updateIdeaStatus($ideaId, 'reserved', $request->get('userName'));
         return back();
     }
@@ -130,6 +134,7 @@ class IdeaController extends Controller
      */
     public function purchaseIdea(Request $request, $ideaId): RedirectResponse
     {
+        $this->authorizeListAccess($ideaId);
         $this->ideaRepository->updateIdeaStatus($ideaId, 'purchased', $request->get('userName'));
         return back();
     }
@@ -139,7 +144,24 @@ class IdeaController extends Controller
      */
     public function cancelReservationOrPurchase(Request $request, $ideaId): RedirectResponse
     {
+        $this->authorizeListAccess($ideaId);
         $this->ideaRepository->updateIdeaStatus($ideaId, 'available', '');
         return back();
+    }
+
+    private function authorizeListAccess(int $ideaId): void
+    {
+        $multipleIdea = MultipleIdea::find($ideaId);
+        $listId = $multipleIdea
+            ? $multipleIdea->idea->list_id
+            : optional(Idea::find($ideaId))->list_id;
+
+        abort_unless($listId !== null, 404);
+
+        $userId = Auth::id();
+        $hasAccess = GiftList::where('id', $listId)->where('user_id', $userId)->exists()
+            || FollowedList::where('user_id', $userId)->where('gift_list_id', $listId)->exists();
+
+        abort_unless($hasAccess, 403);
     }
 }

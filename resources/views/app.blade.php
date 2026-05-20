@@ -13,10 +13,17 @@
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Yeseva+One&display=swap" rel="stylesheet">
 
+        <!-- PWA -->
+        <link rel="manifest" href="/manifest.json">
+        <meta name="theme-color" content="#A40E4C">
+        <meta name="mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="default">
+        <meta name="apple-mobile-web-app-title" content="MerryMate">
+
         <!-- Icon -->
-        <meta name="theme-color" content="#000000">
-        <link rel="icon" type="image/png" sizes="192x192" href="/icons/logo-MerryMate-32.png">
-        <link rel="apple-touch-icon" sizes="192x192" href="/icons/icon-192x192.png">
+        <link rel="icon" type="image/png" sizes="32x32" href="/icons/logo-MerryMate-32.png">
+        <link rel="apple-touch-icon" sizes="192x192" href="/icons/logo-MerryMate-192.png">
 
         <!-- Scripts -->
         @routes
@@ -27,5 +34,4 @@
     <body class="font-sans antialiased">
         @inertia
     </body>
-    <script type="module" src="{{ asset('build/manifest.json') }}"></script>
 </html>

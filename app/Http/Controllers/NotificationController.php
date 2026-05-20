@@ -80,7 +80,11 @@ class NotificationController extends Controller
     {
         $listOwner = Auth::user();
 
+        abort_unless($list->user_id === $listOwner->id, 403);
+
         $notification = $listOwner->notifications()->find($notificationId);
+        abort_unless($notification && (int) $notification->data['listId'] === $list->id, 403);
+
         $requestingUser = User::find($notification->data['requestingUserId']);
         $response = $request->input('response');
 
