@@ -22,7 +22,7 @@ export default function AddIdeaAlertModal({
     const handleNoReminder = () => {
         localStorage.setItem(
             `few-ideas-left-reminder-${list.id}`,
-            "no-reminder"
+            "no-reminder",
         );
         closeModal();
     };
@@ -56,7 +56,7 @@ export default function AddIdeaAlertModal({
                     >
                         Ajouter des idées
                     </Link>
-                    {/* <LinkButton onClick={handleNoReminder}>
+                    <LinkButton onClick={handleNoReminder}>
                         Ne plus me le rappeler
                     </LinkButton>
                     <div className="flex justify-center">
@@ -64,7 +64,7 @@ export default function AddIdeaAlertModal({
                             ...pendant 30 jours
                         </p>
                         <span className="text-xs pl-1">😄</span>
-                    </div> */}
+                    </div>
                 </div>
             </div>
         </Modal>
