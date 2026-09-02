@@ -81,7 +81,7 @@ export default function Create({ auth }) {
                                     name="isPrivate"
                                     type="checkbox"
                                     checked={isPrivateList}
-                                    onChange={(e) => {
+                                    onChange={() => {
                                         handlePrivateCheck();
                                         setData("isPrivate", true);
                                     }}
@@ -102,7 +102,7 @@ export default function Create({ auth }) {
                                     name="isPublic"
                                     type="checkbox"
                                     checked={isPublicList}
-                                    onChange={(e) => {
+                                    onChange={() => {
                                         handlePublicCheck();
                                         setData("isPrivate", false);
                                     }}

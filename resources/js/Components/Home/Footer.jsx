@@ -1,6 +1,5 @@
 export default function Footer() {
     return (
-        // <footer className="w-full px-32 py-3 flex flex-col sm:flex-row sm:items-center sm:justify-between text-gray-500 text-sm">
         <footer className="w-full py-3 text-gray-500 text-sm">
             <div className="flex justify-center items-center font-medium">
                 <span className="">Fait avec</span>
@@ -17,42 +16,13 @@ export default function Footer() {
                     <a
                         href="https://www.linkedin.com/in/morgane-l-a7bb5353/"
                         target="_blank"
+                        rel="noreferrer"
                         className="hover:text-orange-500 hover:underline sm:font-medium"
                     >
                         Morgane Lu
                     </a>
                 </span>
             </div>
-
-            {/* <ul className="flex flex-wrap justify-center items-center mt-2 sm:mt-0 space-x-3 sm:space-x-10">
-                <li>
-                    <a
-                        href="https://github.com/morganelepine"
-                        target="_blank"
-                        className="hover:text-orange-500 sm:font-medium"
-                    >
-                        GitHub
-                    </a>
-                </li>
-                <li>
-                    <a
-                        href="https://www.linkedin.com/in/morgane-l-a7bb5353/"
-                        target="_blank"
-                        className="hover:text-orange-500 sm:font-medium"
-                    >
-                        LinkedIn
-                    </a>
-                </li>
-                <li>
-                    <a
-                        href="https://morganelepine.github.io/"
-                        target="_blank"
-                        className="hover:text-orange-500 sm:font-medium"
-                    >
-                        Portfolio
-                    </a>
-                </li>
-            </ul> */}
         </footer>
     );
 }

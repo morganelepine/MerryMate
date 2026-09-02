@@ -1,7 +1,6 @@
 import { Link } from "@inertiajs/react";
-import PropTypes from "prop-types";
 
-export default function LoginRegister({ auth }) {
+export default function LoginRegister() {
     return (
         <div className="flex md:flex-row flex-col items-center justify-between md:px-32 px-8 md:space-y-0 space-y-4 shadow-md w-full py-3">
             <h1 className="md:text-3xl text-2xl text-center font-yeseva bg-gradient-to-r from-orange-500 to-bordeaux-500 inline-block text-transparent bg-clip-text">
@@ -25,7 +24,3 @@ export default function LoginRegister({ auth }) {
         </div>
     );
 }
-
-LoginRegister.propTypes = {
-    auth: PropTypes.object.isRequired,
-};

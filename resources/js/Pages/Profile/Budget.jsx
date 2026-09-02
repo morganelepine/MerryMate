@@ -4,8 +4,6 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import BudgetIdeasPurchased from "@/Components/Profile/Budget/BudgetIdeasPurchased";
 
 export default function Budget({ auth, ideas, totalPrice }) {
-    // console.log("ideas : ", ideas);
-
     // Regrouper les idées par user_name
     const groupedIdeas = ideas.reduce((giftsBoughtByUser, idea) => {
         const { user_name, price } = idea;

@@ -11,10 +11,6 @@ export default function AddIdeaAlert({
     const [fewIdeasLeftModalVisible, setFewIdeasLeftModalVisible] =
         useState(false);
 
-    console.log("ideas.length", ideas.length);
-    console.log("ideas_available.length", ideas_available.length);
-    console.log("condition", ideas.length > 0 && ideas_available.length < 6);
-
     useEffect(() => {
         if (
             ideas.length > 0 &&

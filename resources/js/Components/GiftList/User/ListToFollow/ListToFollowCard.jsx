@@ -35,8 +35,6 @@ export default function ListToFollow({ auth, listToFollow, token }) {
             const response = await fetch(url, settings);
 
             if (response.ok) {
-                const data = await response.json();
-                console.log(data);
                 toast.success("Demande envoyée !");
                 localStorage.setItem(`requestSent-${listId}`, "true");
             } else {
