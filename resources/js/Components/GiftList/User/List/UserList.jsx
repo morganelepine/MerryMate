@@ -142,17 +142,17 @@ export default function UserList({
                                                 {brandData.ideas_available.map(
                                                     (idea) => (
                                                         <IdeasAvailable
-                                                            key={list.id}
+                                                            key={idea.id}
                                                             auth={auth}
                                                             idea={idea}
                                                             brand={brand}
                                                             userName={userName}
                                                         />
-                                                    )
+                                                    ),
                                                 )}
                                             </div>
                                         </div>
-                                    )
+                                    ),
                                 )}
                             </div>
                         </div>
@@ -182,7 +182,7 @@ export default function UserList({
                             <div className="w-full space-y-5 sm:space-y-0">
                                 {ideas_purchased.map((idea) => (
                                     <IdeasPurchased
-                                        key={list.id}
+                                        key={idea.id}
                                         list={list}
                                         idea={idea}
                                         auth={auth}
@@ -232,7 +232,7 @@ export default function UserList({
                             <div className="w-full space-y-5 sm:space-y-0">
                                 {ideas_reserved.map((idea) => (
                                     <IdeasReserved
-                                        key={list.id}
+                                        key={idea.id}
                                         list={list}
                                         idea={idea}
                                         auth={auth}

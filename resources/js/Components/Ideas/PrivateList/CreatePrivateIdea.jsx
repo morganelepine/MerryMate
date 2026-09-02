@@ -1,42 +1,15 @@
-import React from "react";
-import { useForm } from "@inertiajs/react";
 import PropTypes from "prop-types";
 import InputError from "@/Components/Utils/InputError";
 import InputLabel from "@/Components/Utils/InputLabel";
 import TextInput from "@/Components/Utils/TextInput";
 import SmallButton from "@/Components/Buttons/SmallButton";
+import useIdeaForm from "@/hooks/useIdeaForm";
 
 export default function CreatePrivateIdea({ auth, list }) {
-    // console.log("list : ", list);
-
-    const { data, setData, post, processing, reset, errors } = useForm({
-        list_id: list.id,
-        user_name: auth.user.name,
-        idea: "",
-        brand: "",
-        link: "",
-        details: "",
-        price: "",
-        favorite: 0,
-        is_multiple: 0,
-        promo: 0,
-        promo_details: "",
-        membership: "",
-        membership_reduction: "",
-        status: "available",
-        status_user: "",
-        status_user_id: null,
+    const { data, setData, errors, processing, submit } = useIdeaForm({
+        auth,
+        list,
     });
-
-    const submit = (e) => {
-        e.preventDefault();
-        post(route("ideas.store"), {
-            onSuccess: () => reset(),
-            onError: (errors) => {
-                console.error(errors);
-            },
-        });
-    };
 
     return (
         <div className="w-full p-4 bg-gradient-to-r from-orange-100 to-bordeaux-100 shadow-md rounded-xl">

@@ -1,32 +1,16 @@
 import PropTypes from "prop-types";
-import { useForm } from "@inertiajs/react";
 import TextInputSmall from "@/Components/Utils/TextInputSmall";
 import InputError from "@/Components/Utils/InputError";
+import useIdeaForm from "@/hooks/useIdeaForm";
 
 export default function IdeaPrivateEdit({ auth, idea, setEditing }) {
-    // console.log("idea.promo : ", idea.promo);
-
-    const { data, setData, patch, clearErrors, reset, errors } = useForm({
-        user_name: auth.user.id,
-        idea: idea.idea,
-        brand: idea.brand,
-        link: idea.link,
-        details: idea.details,
-        price: idea.price,
-        favorite: idea.favorite,
-        is_multiple: idea.is_multiple,
-        membership: idea.membership,
-        membership_reduction: idea.membership_reduction,
-        promo: idea.promo,
-        promo_details: idea.promo_details,
-    });
-
-    const submit = (e) => {
-        e.preventDefault();
-        patch(route("ideas.update", idea.id), {
+    const { data, setData, errors, submit, reset, clearErrors } = useIdeaForm(
+        {
+            auth,
+            idea,
             onSuccess: () => setEditing(false),
-        });
-    };
+        }
+    );
 
     return (
         <form onSubmit={submit}>
@@ -55,6 +39,7 @@ export default function IdeaPrivateEdit({ auth, idea, setEditing }) {
                     </svg>
                 </button>
                 <button
+                    type="button"
                     className="text-sm italic hover:text-orange-500 ml-3"
                     onClick={() => {
                         setEditing(false);
