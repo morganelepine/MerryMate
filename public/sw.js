@@ -32,6 +32,18 @@ self.addEventListener("fetch", (event) => {
 
     if (request.method !== "GET") return;
 
+    // Met en cache une copie de la réponse, sans jamais faire échouer
+    // la réponse renvoyée à la page si la mise en cache elle-même rate
+    // (ex. Response body already used, quota dépassé, etc.).
+    const cachePut = (req, response) => {
+        if (!response.ok) return;
+        const copy = response.clone();
+        caches
+            .open(CACHE_NAME)
+            .then((cache) => cache.put(req, copy))
+            .catch(() => {});
+    };
+
     // Cache-first for versioned build assets and icons
     if (
         url.pathname.startsWith("/build/") ||
@@ -42,13 +54,7 @@ self.addEventListener("fetch", (event) => {
             caches.match(request).then((cached) => {
                 if (cached) return cached;
                 return fetch(request).then((response) => {
-                    if (response.ok) {
-                        caches
-                            .open(CACHE_NAME)
-                            .then((cache) =>
-                                cache.put(request, response.clone()),
-                            );
-                    }
+                    cachePut(request, response);
                     return response;
                 });
             }),
@@ -66,7 +72,7 @@ self.addEventListener("fetch", (event) => {
             caches.open(CACHE_NAME).then((cache) =>
                 cache.match(request).then((cached) => {
                     const networkFetch = fetch(request).then((response) => {
-                        if (response.ok) cache.put(request, response.clone());
+                        cachePut(request, response);
                         return response;
                     });
                     return cached ?? networkFetch;
@@ -81,13 +87,7 @@ self.addEventListener("fetch", (event) => {
         event.respondWith(
             fetch(request)
                 .then((response) => {
-                    if (response.ok) {
-                        caches
-                            .open(CACHE_NAME)
-                            .then((cache) =>
-                                cache.put(request, response.clone()),
-                            );
-                    }
+                    cachePut(request, response);
                     return response;
                 })
                 .catch(() => caches.match(request)),

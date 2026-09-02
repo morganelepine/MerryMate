@@ -6,8 +6,6 @@ import InputError from "@/Components/Utils/InputError";
 import OutlineButton from "@/Components/Buttons/OutlineButton";
 
 export default function SecretCode({ auth, listToFollow }) {
-    // console.log("listToFollow : ", listToFollow);
-
     const { data, setData, post, processing, reset, errors } = useForm({
         user_id: auth.user.id,
         gift_list_id: listToFollow.id,

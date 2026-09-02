@@ -29,6 +29,12 @@ jobs:
       - name: Install npm dependencies
         run: npm install
 
+      - name: Lint JS/JSX
+        run: npm run lint
+
+      - name: Run frontend tests
+        run: npm run test -- --run
+
       - name: Build React app
         run: npm run build
 

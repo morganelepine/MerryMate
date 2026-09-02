@@ -4,8 +4,6 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import SearchList from "@/Components/GiftList/Action/Search";
 
 export default function ListsToFollow({ auth, listsToFollow, token }) {
-    // console.log("listsToFollow : ", listsToFollow);
-
     return (
         <AuthenticatedLayout
             user={auth.user}

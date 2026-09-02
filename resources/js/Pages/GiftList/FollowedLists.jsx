@@ -6,8 +6,6 @@ import FollowedList from "@/Components/GiftList/User/ListFollowed/FollowedListCa
 import NoListFollowed from "@/Components/GiftList/User/ListFollowed/NoListFollowed";
 
 export default function FollowedLists({ auth, followedLists }) {
-    // console.log("followedLists : ", followedLists);
-
     return (
         <AuthenticatedLayout
             user={auth.user}

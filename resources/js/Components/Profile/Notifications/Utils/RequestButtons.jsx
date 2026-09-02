@@ -20,8 +20,6 @@ export default function RequestButtons({ notification, token }) {
             const response = await fetch(url, settings);
 
             if (response.ok) {
-                const data = await response.json();
-                console.log(data);
                 window.location.reload();
             } else {
                 console.error(

@@ -2,8 +2,6 @@ import PropTypes from "prop-types";
 import Linkify from "linkify-react"; //rendre les liens cliquables
 
 export default function BudgetIdeasPurchased({ idea }) {
-    // console.log("listOfIdeas : ", listOfIdeas);
-
     return (
         <div className="p-3 flex flex-1 flex-col bg-white shadow rounded-lg">
             <div className="flex justify-between">

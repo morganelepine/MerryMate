@@ -3,8 +3,6 @@ import { useForm } from "@inertiajs/react";
 import InputError from "@/Components/Utils/InputError";
 
 export default function EditListTitle({ list, setEditing }) {
-    // console.log("idea.promo : ", idea.promo);
-
     const { data, setData, patch, clearErrors, reset, errors } = useForm({
         name: list.name,
     });
