@@ -12,7 +12,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Set up PHP
         uses: shivammathur/setup-php@v2
@@ -33,6 +33,10 @@ jobs:
         run: npm run lint
 
       - name: Run frontend tests
+        # laravel-vite-plugin refuses to initialize when CI=true (set by GitHub Actions),
+        # even though Vitest reuses vite.config.js without starting a real dev server.
+        env:
+          LARAVEL_BYPASS_ENV_CHECK: 1
         run: npm run test -- --run
 
       - name: Build React app
