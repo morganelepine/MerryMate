@@ -17,16 +17,19 @@ export default function ArchiveReminderModal({
             onSuccess: () => {
                 localStorage.removeItem(`archive-reminder-${list.id}`);
                 closeModal();
+                toast.success("Liste archivée !");
             },
             onError: (errors) => {
                 console.error(
                     "Erreur lors de l'archivage de la liste :",
                     errors
                 );
+                toast.error(
+                    "Oops, une erreur est survenue lors de l'archivage."
+                );
             },
             onFinish: () => reset(),
         });
-        toast.success("Liste archivée !");
     };
 
     return (

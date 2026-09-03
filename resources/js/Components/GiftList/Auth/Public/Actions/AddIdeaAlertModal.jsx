@@ -59,12 +59,6 @@ export default function AddIdeaAlertModal({
                     <LinkButton onClick={handleNoReminder}>
                         Ne plus me le rappeler
                     </LinkButton>
-                    <div className="flex justify-center">
-                        <p className="text-gray-600 text-xs italic">
-                            ...pendant 30 jours
-                        </p>
-                        <span className="text-xs pl-1">😄</span>
-                    </div>
                 </div>
             </div>
         </Modal>

@@ -9,10 +9,11 @@ import InputError from "@/Components/Utils/InputError";
 export default function ButtonPurchase({ idea, userName }) {
     const [purchaseConfirm, setPurchaseConfirm] = useState(false);
 
-    const { data, setData, patch, processing, reset, errors } = useForm({
-        choice: "",
-        userName: userName,
-    });
+    const { data, setData, patch, processing, reset, errors, transform } =
+        useForm({
+            choice: "",
+            userName: userName,
+        });
 
     useEffect(() => {
         setData("userName", userName);
@@ -37,17 +38,21 @@ export default function ButtonPurchase({ idea, userName }) {
                 ? "multiple-ideas.purchase"
                 : "ideas.purchase";
 
-        const payload = { userName };
-        if (idea.is_multiple === 1 && !ignoreChoice && data.choice) {
-            payload.choice = data.choice;
-        }
+        // `transform()` is the mechanism designed to adjust the data right before submission
+        transform((formData) => ({
+            ...formData,
+            userName,
+            choice: ignoreChoice ? "" : formData.choice,
+        }));
 
-        patch(route(routeName, idea.id), payload, {
+        patch(route(routeName, idea.id), {
             preserveScroll: true,
+            onSuccess: () => {
+                closeModal();
+                toast.success("Cadeau acheté !");
+            },
             onError: () => toast.error("Oops, une erreur est survenue."),
         });
-        closeModal();
-        toast.success("Cadeau acheté !");
     };
 
     const handleClickMainButton = (e) => {

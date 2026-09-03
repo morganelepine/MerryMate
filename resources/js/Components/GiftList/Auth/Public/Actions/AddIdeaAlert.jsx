@@ -14,12 +14,12 @@ export default function AddIdeaAlert({
     useEffect(() => {
         if (
             ideas.length > 0 &&
-            ideas_available.length < 6
-            // && !localStorage.getItem(`few-ideas-left-reminder-${list.id}`)
+            ideas_available.length < 6 &&
+            !localStorage.getItem(`few-ideas-left-reminder-${list.id}`)
         ) {
             setFewIdeasLeftModalVisible(true);
         }
-    }, [ideas.length, ideas_available.length]);
+    }, [ideas.length, ideas_available.length, list.id]);
 
     useEffect(() => {
         // If user has not logged in for at least 30 days

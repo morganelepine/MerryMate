@@ -17,16 +17,21 @@ export default function ArchiveListButton({ list }) {
     const archiveList = (e) => {
         e.preventDefault();
         patch(route("lists.archive", list), {
-            onSuccess: () => closeModal(),
+            onSuccess: () => {
+                closeModal();
+                toast.success("Liste archivée !");
+            },
             onError: (errors) => {
                 console.error(
                     "Erreur lors de l'archivage de la liste :",
                     errors
                 );
+                toast.error(
+                    "Oops, une erreur est survenue lors de l'archivage."
+                );
             },
             onFinish: () => reset(),
         });
-        toast.success("Liste archivée !");
     };
 
     const closeModal = () => {
