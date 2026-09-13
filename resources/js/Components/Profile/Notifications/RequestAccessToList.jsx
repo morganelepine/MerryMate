@@ -2,7 +2,7 @@ import PropTypes from "prop-types";
 import RequestButtons from "@/Components/Profile/Notifications/Utils/RequestButtons";
 import NotifDate from "@/Components/Profile/Notifications/Utils/NotifDate";
 
-export default function RequestAccessToList({ notification, token }) {
+export default function RequestAccessToList({ notification }) {
     return (
         <div className="flex flex-col">
             <div className="flex items-center">
@@ -25,7 +25,7 @@ export default function RequestAccessToList({ notification, token }) {
                     <NotifDate notification={notification} />
                 </p>
             </div>
-            <RequestButtons notification={notification} token={token} />
+            <RequestButtons notification={notification} />
         </div>
     );
 }

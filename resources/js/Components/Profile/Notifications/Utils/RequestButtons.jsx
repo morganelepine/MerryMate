@@ -1,37 +1,25 @@
 import PropTypes from "prop-types";
 import { toast } from "sonner";
+import { respondToAccessRequest } from "@/api/notifications";
 
-export default function RequestButtons({ notification, token }) {
+export default function RequestButtons({ notification }) {
     const respondToRequest = async (
         responseToRequest,
         notificationId,
         listId
     ) => {
         try {
-            const url = `/notifications/respond-access/${notificationId}/${listId}`;
-            const settings = {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "X-CSRF-TOKEN": token,
-                },
-                body: JSON.stringify({ response: responseToRequest }),
-            };
-            const response = await fetch(url, settings);
-
-            if (response.ok) {
-                window.location.reload();
-            } else {
-                console.error(
-                    "Error while sending the response:",
-                    response.statusText
-                );
-                toast.error(
-                    "Oops... votre demande n'a pas été envoyée. Veuillez réessayez après avoir rechargé la page."
-                );
-            }
+            await respondToAccessRequest(
+                notificationId,
+                listId,
+                responseToRequest
+            );
+            window.location.reload();
         } catch (error) {
             console.error("Error while sending the response:", error);
+            toast.error(
+                "Oops... votre demande n'a pas été envoyée. Veuillez réessayez après avoir rechargé la page."
+            );
         }
     };
 

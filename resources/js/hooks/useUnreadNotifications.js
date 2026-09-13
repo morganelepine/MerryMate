@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { getUnreadNotifications } from "@/api/notifications";
 
 export default function useUnreadNotifications() {
     const [unreadNotifications, setUnreadNotifications] = useState([]);
@@ -6,19 +7,13 @@ export default function useUnreadNotifications() {
     useEffect(() => {
         let cancelled = false;
 
-        const fetchUnreadNotifications = async () => {
-            try {
-                const response = await fetch("/notifications/unread");
-                const data = await response.json();
-                if (!cancelled) {
-                    setUnreadNotifications(data.unread_notifications);
-                }
-            } catch (error) {
+        getUnreadNotifications()
+            .then((unread) => {
+                if (!cancelled) setUnreadNotifications(unread);
+            })
+            .catch((error) => {
                 console.error("Error fetching unread notifications: ", error);
-            }
-        };
-
-        fetchUnreadNotifications();
+            });
 
         return () => {
             cancelled = true;

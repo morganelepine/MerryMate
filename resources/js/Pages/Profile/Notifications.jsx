@@ -6,22 +6,17 @@ import ListFollowed from "@/Components/Profile/Notifications/ListFollowed";
 import RequestAccessToList from "@/Components/Profile/Notifications/RequestAccessToList";
 import RequestDeclined from "@/Components/Profile/Notifications/RequestDeclined";
 import RequestAccepted from "@/Components/Profile/Notifications/RequestAccepted";
+import { getAllNotifications } from "@/api/notifications";
 
-export default function Notifications({ auth, token }) {
+export default function Notifications({ auth }) {
     const [notifications, setNotifications] = useState([]);
 
-    const fetchNotifications = async () => {
-        try {
-            const response = await fetch("/notifications/all");
-            const data = await response.json();
-            setNotifications(data.notifications);
-        } catch (error) {
-            console.error("Error fetching notifications: ", error);
-        }
-    };
-
     useEffect(() => {
-        fetchNotifications();
+        getAllNotifications()
+            .then(setNotifications)
+            .catch((error) =>
+                console.error("Error fetching notifications: ", error)
+            );
     }, []);
 
     return (
@@ -52,7 +47,6 @@ export default function Notifications({ auth, token }) {
                                 <RequestAccessToList
                                     key={notification.id}
                                     notification={notification}
-                                    token={token}
                                 />
                             );
                         } else if (

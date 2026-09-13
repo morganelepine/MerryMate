@@ -55,4 +55,28 @@ export default [
             "react/no-unescaped-entities": "off",
         },
     },
+    {
+        // Sans ce bloc séparé, les fichiers de test se retrouvent dans un
+        // entre-deux : les .jsx ne correspondent à AUCUN `files` (donc
+        // complètement ignorés, y compris no-undef), tandis que les .js
+        // sont quand même couverts par js.configs.recommended (qui ne
+        // restreint pas `files`) mais sans les globales de Vitest — d'où
+        // des faux positifs "'describe' is not defined" uniquement côté .js.
+        files: ["tests/Front/**/*.{js,jsx}"],
+        languageOptions: {
+            ecmaVersion: "latest",
+            sourceType: "module",
+            parserOptions: { ecmaFeatures: { jsx: true } },
+            globals: {
+                ...globals.browser,
+                ...globals.vitest,
+            },
+        },
+        settings: { react: { version: "18.2" } },
+        rules: {
+            "react/prop-types": "off",
+            "react/react-in-jsx-scope": "off",
+            "react/no-unescaped-entities": "off",
+        },
+    },
 ];

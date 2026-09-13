@@ -3,8 +3,9 @@ import PropTypes from "prop-types";
 import ListToFollow from "@/Components/GiftList/User/ListToFollow/ListToFollowCard";
 import TextInput from "@/Components/Utils/TextInput";
 import SmallButton from "@/Components/Buttons/SmallButton";
+import { searchLists } from "@/api/lists";
 
-export default function SearchList({ auth, token }) {
+export default function SearchList({ auth }) {
     const [search, setSearch] = useState("");
     const [results, setResults] = useState([]);
     const [error, setError] = useState("");
@@ -22,23 +23,21 @@ export default function SearchList({ auth, token }) {
         }
 
         try {
-            const response = await fetch(`/lists/search?search=${search}`);
-            if (response.ok) {
-                const data = await response.json();
-                setResults(data.listsToFollow);
-            } else {
-                const errorData = await response.json();
-                setError(errorData.errorMessage);
-            }
+            const listsToFollow = await searchLists(search);
+            setResults(listsToFollow);
         } catch (error) {
             console.error("Error fetching search results: ", error);
+            setError(
+                error.response?.data?.errorMessage ??
+                    "Oops, une erreur est survenue. Veuillez réessayer.",
+            );
         }
     };
 
     return (
         <>
             <form className="flex flex-col text-center" onSubmit={handleSubmit}>
-                <label htmlFor="link" className="text-xl font-semibold mb-4">
+                <label htmlFor="search" className="text-xl font-semibold mb-4">
                     Rechercher une liste
                 </label>
                 <TextInput
@@ -61,11 +60,7 @@ export default function SearchList({ auth, token }) {
                             className="flex flex-col p-5 my-5 text-center shadow bg-white rounded-xl"
                             key={list.id}
                         >
-                            <ListToFollow
-                                listToFollow={list}
-                                auth={auth}
-                                token={token}
-                            />
+                            <ListToFollow listToFollow={list} auth={auth} />
                         </div>
                     ))}
                 </div>

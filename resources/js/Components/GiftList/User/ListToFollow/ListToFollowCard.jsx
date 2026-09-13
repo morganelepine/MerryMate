@@ -3,12 +3,13 @@ import PropTypes from "prop-types";
 import SecretCode from "@/Components/GiftList/User/ListToFollow/SecretCode";
 import SmallButton from "@/Components/Buttons/SmallButton";
 import { toast } from "sonner";
+import { requestAccessToList } from "@/api/notifications";
 
-export default function ListToFollow({ auth, listToFollow, token }) {
+export default function ListToFollow({ auth, listToFollow }) {
     const [requestSent, setRequestSent] = useState(false);
     useEffect(() => {
         const storedRequestSent = localStorage.getItem(
-            `requestSent-${listToFollow.id}`
+            `requestSent-${listToFollow.id}`,
         );
         if (storedRequestSent === "true") {
             setRequestSent(true);
@@ -24,30 +25,14 @@ export default function ListToFollow({ auth, listToFollow, token }) {
         setRequestSent(true);
 
         try {
-            const url = `/notifications/request-access/${listOwnerId}/${listId}`;
-            const settings = {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "X-CSRF-TOKEN": token,
-                },
-            };
-            const response = await fetch(url, settings);
-
-            if (response.ok) {
-                toast.success("Demande envoyée !");
-                localStorage.setItem(`requestSent-${listId}`, "true");
-            } else {
-                console.error(
-                    "Error while sending the request:",
-                    response.statusText
-                );
-                toast.error(
-                    "Oops... votre demande n'a pas été envoyée. Veuillez réessayer."
-                );
-            }
+            await requestAccessToList(listOwnerId, listId);
+            toast.success("Demande envoyée !");
+            localStorage.setItem(`requestSent-${listId}`, "true");
         } catch (error) {
             console.error("Error while sending the request:", error);
+            toast.error(
+                "Oops... votre demande n'a pas été envoyée. Veuillez réessayez après avoir rechargé la page.",
+            );
             setRequestSent(false);
         }
     };

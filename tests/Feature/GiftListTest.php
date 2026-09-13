@@ -81,10 +81,7 @@ class GiftListTest extends TestCase
 
     public function test_giftlist_name_can_be_updated(): void
     {
-        $user = User::factory()->create();
-        $giftList = GiftList::factory()->create([
-            'user_id' => $user->id,
-            'user_name' => $user->name,
+        [$user, $giftList] = $this->createGiftListWithOwner([
             'name' => 'Mariage',
             'private_code' => '1234',
             'isPrivate' => false,
@@ -107,10 +104,7 @@ class GiftListTest extends TestCase
 
     public function test_giftlist_can_be_deleted(): void
     {
-        $user = User::factory()->create();
-        $giftList = GiftList::factory()->create([
-            'user_id' => $user->id,
-            'user_name' => $user->name,
+        [$user, $giftList] = $this->createGiftListWithOwner([
             'name' => 'Mariage',
             'private_code' => '1234',
             'isPrivate' => false,
@@ -129,10 +123,7 @@ class GiftListTest extends TestCase
 
     public function test_correct_private_code_must_be_provided_to_follow_giftlist(): void
     {
-        $user = User::factory()->create();
-        $giftList = GiftList::factory()->create([
-            'user_id' => $user->id,
-            'user_name' => $user->name,
+        [, $giftList] = $this->createGiftListWithOwner([
             'name' => 'Mariage',
             'private_code' => Crypt::encrypt('1234'),
             'isPrivate' => false,
@@ -157,10 +148,7 @@ class GiftListTest extends TestCase
 
     public function test_request_can_be_sent_to_follow_giftlist(): void
     {
-        $user = User::factory()->create();
-        $giftList = GiftList::factory()->create([
-            'user_id' => $user->id,
-            'user_name' => $user->name,
+        [$user, $giftList] = $this->createGiftListWithOwner([
             'name' => 'Mariage',
             'private_code' => '1234',
             'isPrivate' => false,
@@ -191,11 +179,8 @@ class GiftListTest extends TestCase
 
     public function test_decrypt_private_code_or_use_plain_text(): void
     {
-        $user = User::factory()->create();
-
         // Private code not crypted (old)
-        $plainCodeList = GiftList::factory()->create([
-            'user_id' => $user->id,
+        [, $plainCodeList] = $this->createGiftListWithOwner([
             'private_code' => 'plain_text_code',
         ]);
 
@@ -207,8 +192,7 @@ class GiftListTest extends TestCase
 
         // Private code crypted (new)
         $encryptedCode = Crypt::encrypt('encrypted_text_code');
-        $encryptedCodeList = GiftList::factory()->create([
-            'user_id' => $user->id,
+        [, $encryptedCodeList] = $this->createGiftListWithOwner([
             'private_code' => $encryptedCode,
         ]);
 

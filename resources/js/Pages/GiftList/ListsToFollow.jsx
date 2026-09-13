@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import SearchList from "@/Components/GiftList/Action/Search";
 
-export default function ListsToFollow({ auth, listsToFollow, token }) {
+export default function ListsToFollow({ auth, listsToFollow }) {
     return (
         <AuthenticatedLayout
             user={auth.user}
@@ -17,7 +17,7 @@ export default function ListsToFollow({ auth, listsToFollow, token }) {
             <div className="max-w-7xl mx-auto pb-14 px-4 sm:flex justify-center">
                 <div className="mt-6 sm:w-80">
                     {listsToFollow.length > 0 ? (
-                        <SearchList auth={auth} token={token} />
+                        <SearchList auth={auth} />
                     ) : (
                         <div className="flex flex-col items-center">
                             <p className="text-center">

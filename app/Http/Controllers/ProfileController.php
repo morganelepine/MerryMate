@@ -94,7 +94,6 @@ class ProfileController extends Controller
      */
     public function notifications(): Response
     {
-        $token = csrf_token();
-        return Inertia::render('Profile/Notifications', ['token' => $token]);
+        return Inertia::render('Profile/Notifications');
     }
 }

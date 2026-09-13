@@ -128,11 +128,8 @@ class GiftListController extends Controller
     {
         $listsToFollow = $this->giftListRepository->getListsToFollow();
 
-        $token = csrf_token();
-
         return Inertia::render('GiftList/ListsToFollow', [
             'listsToFollow' => $listsToFollow,
-            'token' => $token
         ]);
     }
 
