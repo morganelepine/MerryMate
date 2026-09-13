@@ -29,9 +29,15 @@ export default [
                 route: "readonly",
             },
         },
-        settings: { react: { version: "18.2" } },
+        settings: {
+            react: { version: "18.2" },
+            "jsx-a11y": { components: { Checkbox: "input" } },
+        },
         rules: {
             ...a11yWarnings,
+
+            // Règle dépréciée, remplacée par label-has-associated-control
+            "jsx-a11y/label-has-for": "off",
 
             "no-console": ["warn", { allow: ["warn", "error"] }],
 

@@ -26,7 +26,10 @@ export default function AuthPrivateList({ auth, list, ideas }) {
                                 <h2 className="font-semibold text-xl text-gray-800 leading-tight mr-3">
                                     Ma liste "{list.name}"
                                 </h2>
-                                <button onClick={() => setEditing(true)}>
+                                <button
+                                    onClick={() => setEditing(true)}
+                                    aria-label="Modifier le titre de la liste"
+                                >
                                     <svg
                                         xmlns="https://www.w3.org/2000/svg"
                                         className="h-5 w-5 text-gray-400 hover:text-orange-500"

@@ -17,7 +17,10 @@ export default function DeleteListButton({ list }) {
     return (
         <>
             <div className="group absolute right-0 justify-center hidden sm:block">
-                <button onClick={confirmListDeletion}>
+                <button
+                    onClick={confirmListDeletion}
+                    aria-label="Supprimer la liste"
+                >
                     <svg
                         xmlns="https://www.w3.org/2000/svg"
                         className="h-7 w-7 text-gray-300 hover:text-orange-500"

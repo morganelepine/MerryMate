@@ -13,8 +13,10 @@ function DisclosureSection({ title, children }) {
 
     return (
         <div className="bg-white shadow-md p-5 mt-6 rounded-xl">
-            <div
-                className="flex cursor-pointer text-orange-500 uppercase tracking-widest"
+            <button
+                type="button"
+                className="flex w-full text-left cursor-pointer text-orange-500 uppercase tracking-widest"
+                aria-expanded={open}
                 onClick={() => setOpen((current) => !current)}
             >
                 {title}
@@ -27,7 +29,7 @@ function DisclosureSection({ title, children }) {
                 >
                     <path d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
                 </svg>
-            </div>
+            </button>
 
             {open && children}
         </div>

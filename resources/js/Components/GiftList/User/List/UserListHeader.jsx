@@ -30,6 +30,7 @@ export default function UserListHeader({ auth, list, setUserName }) {
                     <button
                         className="flex items-center justify-end text-xs text-gray-400 hover:text-gray-800"
                         title="En savoir plus sur le mode Secret Santa"
+                        aria-label="En savoir plus sur le mode Secret Santa"
                         onClick={() => setModalVisible(true)}
                     >
                         <svg
@@ -53,6 +54,7 @@ export default function UserListHeader({ auth, list, setUserName }) {
                 <button
                     onClick={() => setModalVisible(false)}
                     className="text-sm hover:text-orange-500 absolute top-2 right-2"
+                    aria-label="Fermer"
                 >
                     <svg
                         xmlns="http://www.w3.org/2000/svg"

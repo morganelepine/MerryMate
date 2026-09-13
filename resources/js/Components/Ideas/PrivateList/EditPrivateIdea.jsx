@@ -27,7 +27,11 @@ export default function IdeaPrivateEdit({ auth, idea, setEditing }) {
                     />
                     <InputError message={errors.idea} className="mt-2" />
                 </div>
-                <button className="hover:text-orange-600 ml-3">
+                <button
+                    type="submit"
+                    className="hover:text-orange-600 ml-3"
+                    aria-label="Enregistrer"
+                >
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
                         fill="none"
@@ -41,6 +45,7 @@ export default function IdeaPrivateEdit({ auth, idea, setEditing }) {
                 <button
                     type="button"
                     className="text-sm italic hover:text-orange-500 ml-3"
+                    aria-label="Annuler"
                     onClick={() => {
                         setEditing(false);
                         reset();

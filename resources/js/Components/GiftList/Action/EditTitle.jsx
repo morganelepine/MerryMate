@@ -33,7 +33,11 @@ export default function EditListTitle({ list, setEditing }) {
                     <InputError message={errors.name} className="mt-2" />
                 </div>
                 <div className="space-x-2">
-                    <button className="ml-3 hover:text-orange-600">
+                    <button
+                        type="submit"
+                        className="ml-3 hover:text-orange-600"
+                        aria-label="Enregistrer"
+                    >
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
                             fill="none"
@@ -45,7 +49,9 @@ export default function EditListTitle({ list, setEditing }) {
                         </svg>
                     </button>
                     <button
+                        type="button"
                         className="ml-3 text-sm italic hover:text-orange-500"
+                        aria-label="Annuler"
                         onClick={() => {
                             setEditing(false);
                             reset();

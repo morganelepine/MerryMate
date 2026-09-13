@@ -1,4 +1,10 @@
-import { useState, createContext, useContext, Fragment } from "react";
+import {
+    useState,
+    useEffect,
+    createContext,
+    useContext,
+    Fragment,
+} from "react";
 import { Link } from "@inertiajs/react";
 import { Transition } from "@headlessui/react";
 
@@ -11,6 +17,17 @@ const Dropdown = ({ children }) => {
         setOpen((previousState) => !previousState);
     };
 
+    useEffect(() => {
+        if (!open) return;
+
+        const closeOnEscape = (e) => {
+            if (e.key === "Escape") setOpen(false);
+        };
+
+        document.addEventListener("keydown", closeOnEscape);
+        return () => document.removeEventListener("keydown", closeOnEscape);
+    }, [open]);
+
     return (
         <DropDownContext.Provider value={{ open, setOpen, toggleOpen }}>
             <div className="relative">{children}</div>
@@ -21,13 +38,28 @@ const Dropdown = ({ children }) => {
 const Trigger = ({ children }) => {
     const { open, setOpen, toggleOpen } = useContext(DropDownContext);
 
+    const handleKeyDown = (e) => {
+        if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            toggleOpen();
+        }
+    };
+
     return (
         <>
-            <div onClick={toggleOpen}>{children}</div>
+            <div
+                onClick={toggleOpen}
+                onKeyDown={handleKeyDown}
+                role="button"
+                tabIndex={0}
+            >
+                {children}
+            </div>
 
             {open && (
                 <div
                     className="fixed inset-0 z-40"
+                    aria-hidden="true"
                     onClick={() => setOpen(false)}
                 ></div>
             )}
@@ -69,6 +101,10 @@ const Content = ({
                 leaveFrom="opacity-100 scale-100"
                 leaveTo="opacity-0 scale-95"
             >
+                {/* The Esc key (see Dropdown) already closes the menu using the keyboard:
+                    clicking here primarily activates the links it contains (which are already accessible via the keyboard);
+                    this container is not itself a control. */}
+                {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
                 <div
                     className={`absolute z-50 mt-2 rounded-md shadow-lg ${alignmentClasses} ${widthClasses}`}
                     onClick={() => setOpen(false)}

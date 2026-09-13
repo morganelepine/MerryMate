@@ -33,7 +33,10 @@ export default function EditDeleteButtons({ idea, setEditing }) {
     return (
         <>
             {/* EDIT BUTTON */}
-            <button onClick={() => setEditing(true)}>
+            <button
+                onClick={() => setEditing(true)}
+                aria-label="Modifier l'idée"
+            >
                 <svg
                     xmlns="https://www.w3.org/2000/svg"
                     className="h-6 w-6 my-2 text-gray-300 hover:text-orange-500"
@@ -46,7 +49,10 @@ export default function EditDeleteButtons({ idea, setEditing }) {
             </button>
 
             {/* DELETE BUTTON */}
-            <button onClick={confirmListDeletion}>
+            <button
+                onClick={confirmListDeletion}
+                aria-label="Supprimer l'idée"
+            >
                 <svg
                     xmlns="https://www.w3.org/2000/svg"
                     className="h-6 w-6 my-2 text-gray-300 hover:text-orange-500"
