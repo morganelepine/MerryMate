@@ -2,19 +2,20 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Concerns\AuthorizesListAccess;
+use App\Models\GiftList;
 use App\Models\Idea;
 use App\Models\MultipleIdea;
-use App\Models\GiftList;
-use App\Models\FollowedList;
-use Inertia\Response;
+use App\Repositories\IdeaRepository;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
-use App\Repositories\IdeaRepository;
+use Inertia\Response;
 
 class IdeaController extends Controller
 {
+    use AuthorizesListAccess;
+
     protected $ideaRepository;
 
     public function __construct(IdeaRepository $ideaRepository)
@@ -111,7 +112,7 @@ class IdeaController extends Controller
         // Only the auth user can delete the idea
         $this->authorize('delete', $idea);
 
-        if ($isReserved || $isReservedMultiple|| $isPurchased || $isPurchasedMultiple) {
+        if ($isReserved || $isReservedMultiple || $isPurchased || $isPurchasedMultiple) {
             return redirect()->back()->withErrors(['error' => 'Oops, cette idée a déjà été réservée ou achetée...']);
         } else {
             $idea->delete();
@@ -124,8 +125,11 @@ class IdeaController extends Controller
      */
     public function reserveIdea(Request $request, $ideaId): RedirectResponse
     {
-        $this->authorizeListAccess($ideaId);
-        $this->ideaRepository->updateIdeaStatus($ideaId, 'reserved', $request->get('userName'));
+        $idea = Idea::findOrFail($ideaId);
+        $this->authorizeListAccess($idea->list_id);
+
+        $this->ideaRepository->updateIdea($idea, 'reserved', $request->get('userName'));
+
         return back();
     }
 
@@ -134,8 +138,18 @@ class IdeaController extends Controller
      */
     public function purchaseIdea(Request $request, $ideaId): RedirectResponse
     {
-        $this->authorizeListAccess($ideaId);
-        $this->ideaRepository->updateIdeaStatus($ideaId, 'purchased', $request->get('userName'));
+        $idea = Idea::findOrFail($ideaId);
+        $this->authorizeListAccess($idea->list_id);
+
+        // Buying a still-available idea is open to anyone with list access,
+        // but confirming the purchase of an idea already reserved by someone
+        // is only theirs to do.
+        if ($idea->status === 'reserved') {
+            $this->authorizeStatusOwner($idea);
+        }
+
+        $this->ideaRepository->updateIdea($idea, 'purchased', $request->get('userName'));
+
         return back();
     }
 
@@ -144,24 +158,12 @@ class IdeaController extends Controller
      */
     public function cancelReservationOrPurchase(Request $request, $ideaId): RedirectResponse
     {
-        $this->authorizeListAccess($ideaId);
-        $this->ideaRepository->updateIdeaStatus($ideaId, 'available', '');
+        $idea = Idea::findOrFail($ideaId);
+        $this->authorizeListAccess($idea->list_id);
+        $this->authorizeStatusOwner($idea);
+
+        $this->ideaRepository->updateIdea($idea, 'available', '');
+
         return back();
-    }
-
-    private function authorizeListAccess(int $ideaId): void
-    {
-        $multipleIdea = MultipleIdea::find($ideaId);
-        $listId = $multipleIdea
-            ? $multipleIdea->idea->list_id
-            : optional(Idea::find($ideaId))->list_id;
-
-        abort_unless($listId !== null, 404);
-
-        $userId = Auth::id();
-        $hasAccess = GiftList::where('id', $listId)->where('user_id', $userId)->exists()
-            || FollowedList::where('user_id', $userId)->where('gift_list_id', $listId)->exists();
-
-        abort_unless($hasAccess, 403);
     }
 }

@@ -9,13 +9,12 @@ import "dayjs/locale/fr";
 dayjs.extend(relativeTime);
 dayjs.locale("fr");
 
-export default function Ideas_reserved({ auth, idea, userName }) {
+export default function Ideas_reserved({ idea, userName }) {
     return (
         <div key={idea.id}>
             <div className="my-2 sm:flex items-center">
                 {/* CANCEL RESERVATION and CONFIRM PURCHASE BUTTONS */}
-                {(idea.status_user === auth.user.name ||
-                    idea.status_user_id === auth.user.id) && (
+                {idea.is_mine && (
                     <div className="flex sm:flex-col mr-2 mb-1 sm:mb-0">
                         <ButtonPurchase idea={idea} userName={userName} />
                         <ButtonCancel idea={idea} userName={userName} />
@@ -75,10 +74,7 @@ export default function Ideas_reserved({ auth, idea, userName }) {
                     <div className="flex justify-end items-center text-right">
                         <small className="text-xs italic text-gray-700">
                             Réservé
-                            {idea.status_user === auth.user.name ||
-                            idea.status_user_id === auth.user.id
-                                ? " "
-                                : ` par ${idea.status_user} `}
+                            {idea.is_mine ? " " : ` par ${idea.status_user} `}
                             {dayjs(idea.updated_at).fromNow()}
                         </small>
                     </div>
@@ -89,7 +85,6 @@ export default function Ideas_reserved({ auth, idea, userName }) {
 }
 
 Ideas_reserved.propTypes = {
-    auth: PropTypes.object.isRequired,
     idea: PropTypes.object,
     userName: PropTypes.string,
 };

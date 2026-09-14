@@ -5,6 +5,7 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import ListOfIdeas from "@/Components/GiftList/Auth/Public/ListOfIdeas";
 import EditListTitle from "@/Components/GiftList/Action/EditTitle";
 import ArchiveListButton from "@/Components/GiftList/Action/Archive";
+import ShareListButton from "@/Components/GiftList/Action/ShareListButton";
 import AddIdeaAlert from "@/Components/GiftList/Auth/Public/Actions/AddIdeaAlert";
 import ArchiveReminder from "@/Components/GiftList/Auth/Public/Actions/ArchiveReminder";
 import EmptyPublicList from "./EmptyPublicList";
@@ -47,27 +48,27 @@ export default function AuthList({ auth, list, ideas, ideas_available }) {
                             </>
                         )}
                     </div>
-                    {ideas.length > 0 && (
-                        <div className="flex flex-wrap mt-2 sm:mt-0">
-                            <ArchiveListButton list={list} />
-                            <Link
-                                as="button"
-                                href={route("ideas.create", list.id)}
-                                className="flex items-center hover:text-orange-500"
+                    <div className="flex gap-4 mt-2 sm:mt-0">
+                        {ideas.length > 0 && <ArchiveListButton list={list} />}
+                        <ShareListButton list={list} />
+                        <Link
+                            as="button"
+                            href={route("ideas.create", list.id)}
+                            className="flex items-center hover:text-orange-500"
+                            title="Ajouter une idée"
+                        >
+                            <svg
+                                xmlns="https://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                                className="w-5 h-5 mr-1"
                             >
-                                <svg
-                                    xmlns="https://www.w3.org/2000/svg"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                    stroke="currentColor"
-                                    className="w-5 h-5 mr-1"
-                                >
-                                    <path d="M12 9v6m3-3H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                </svg>
-                                <p className="text-sm">Compléter la liste</p>
-                            </Link>
-                        </div>
-                    )}
+                                <path d="M12 9v6m3-3H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            <p className="text-sm">Compléter</p>
+                        </Link>
+                    </div>
                 </div>
             }
         >

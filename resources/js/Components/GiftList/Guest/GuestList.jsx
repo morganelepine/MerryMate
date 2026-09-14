@@ -1,28 +1,22 @@
 import { useState } from "react";
 import PropTypes from "prop-types";
-import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import UserListHeader from "@/Components/GiftList/User/List/UserListHeader";
+import GuestListLayout from "@/Layouts/GuestListLayout";
+import GuestListHeader, {
+    DEFAULT_GUEST_NAME,
+} from "@/Components/GiftList/Guest/GuestListHeader";
 import IdeasToReserve from "@/Components/GiftList/IdeasToReserve";
 
-export default function UserList({
-    auth,
+export default function GuestList({
     list,
     ideas_available,
     ideas_reserved,
     ideas_purchased,
 }) {
-    const [userName, setUserName] = useState(auth.user.name);
+    const [userName, setUserName] = useState(DEFAULT_GUEST_NAME);
 
     return (
-        <AuthenticatedLayout
-            user={auth.user}
-            header={
-                <UserListHeader
-                    auth={auth}
-                    list={list}
-                    setUserName={setUserName}
-                />
-            }
+        <GuestListLayout
+            header={<GuestListHeader list={list} setUserName={setUserName} />}
         >
             <IdeasToReserve
                 list={list}
@@ -31,12 +25,11 @@ export default function UserList({
                 ideas_purchased={ideas_purchased}
                 userName={userName}
             />
-        </AuthenticatedLayout>
+        </GuestListLayout>
     );
 }
 
-UserList.propTypes = {
-    auth: PropTypes.object.isRequired,
+GuestList.propTypes = {
     list: PropTypes.object,
     ideas_available: PropTypes.array,
     ideas_reserved: PropTypes.array,

@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 use App\Models\Idea;
 use App\Models\MultipleIdea;
+use App\Support\GuestIdentity;
 use Illuminate\Support\Facades\Auth;
 
 class IdeaRepository
@@ -13,7 +14,11 @@ class IdeaRepository
         $singleIdeas = Idea::where('list_id', $listId)
             ->where('status', $status)
             ->orderByDesc('updated_at')
-            ->get();
+            ->get()
+            ->map(function ($idea) {
+                $idea->is_mine = GuestIdentity::owns($idea);
+                return $idea;
+            });
 
         $multipleIdeas = MultipleIdea::with('idea')
             ->whereHas('idea', function ($query) use ($listId) {
@@ -37,6 +42,7 @@ class IdeaRepository
                     'status' => $multipleIdea->status,
                     'is_multiple' => 1,
                     'choice' => $multipleIdea->choice,
+                    'is_mine' => GuestIdentity::owns($multipleIdea),
                 ];
             });
 
@@ -46,28 +52,27 @@ class IdeaRepository
     public function getIdeasByStatus(int $listId, array $status)
     {
         return Idea::where('list_id', $listId)
-                   ->whereIn('status', $status)
-                   ->orderBy('brand')
-                   ->orderByDesc('favorite')
-                   ->orderBy('price')
-                   ->orderBy('idea')
-                   ->get();
+            ->whereIn('status', $status)
+            ->orderBy('brand')
+            ->orderByDesc('favorite')
+            ->orderBy('price')
+            ->orderBy('idea')
+            ->get();
     }
 
-    public function updateIdeaStatus(int $ideaId, string $status, string $statusUser, ?string $choice = null)
+    public function updateIdea(Idea $idea, string $status, string $statusUser): void
     {
-        $multipleIdea = MultipleIdea::find($ideaId);
+        $idea->status = $status;
+        $idea->status_user = $statusUser;
+        $idea->status_user_id = $status === 'available' ? null : Auth::id();
+        $idea->status_guest_token = $status === 'available' ? null : GuestIdentity::current();
+        $idea->save();
+    }
 
-        if ($multipleIdea) {
-            $multipleIdea->status = $status;
-            $multipleIdea->choice = $choice;
-            $multipleIdea->save();
-        } else {
-            $idea = Idea::find($ideaId);
-            $idea->status = $status;
-            $idea->status_user = $statusUser;
-            $idea->status_user_id = Auth::user()->id;
-            $idea->save();
-        }
+    public function updateMultipleIdea(MultipleIdea $multipleIdea, string $status, ?string $choice = null): void
+    {
+        $multipleIdea->status = $status;
+        $multipleIdea->choice = $choice;
+        $multipleIdea->save();
     }
 }

@@ -2,16 +2,19 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Concerns\AuthorizesListAccess;
 use App\Models\Idea;
 use App\Models\MultipleIdea;
+use App\Repositories\IdeaRepository;
+use App\Support\GuestIdentity;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Inertia\Inertia;
-use App\Repositories\IdeaRepository;
 
 class MultipleIdeaController extends Controller
 {
+    use AuthorizesListAccess;
+
     protected $ideaRepository;
 
     public function __construct(IdeaRepository $ideaRepository)
@@ -24,14 +27,18 @@ class MultipleIdeaController extends Controller
      */
     public function reserveMultipleIdea(Request $request, $ideaId): RedirectResponse
     {
-        $idea = Idea::find($ideaId);
+        $idea = Idea::findOrFail($ideaId);
+        $this->authorizeListAccess($idea->list_id);
+
         MultipleIdea::create([
             'idea_id' => $idea->id,
             'status_user' => $request->get('userName'),
-            'status_user_id' => Auth::user()->id,
-            'status' => "reserved",
+            'status_user_id' => Auth::id(),
+            'status_guest_token' => GuestIdentity::current(),
+            'status' => 'reserved',
             'choice' => $request->get('choice'),
         ]);
+
         return back();
     }
 
@@ -44,17 +51,27 @@ class MultipleIdeaController extends Controller
         $choice = $request->get('choice');
 
         if ($multipleIdea) {
-            $this->ideaRepository->updateIdeaStatus($ideaId, 'purchased', $request->get('userName'), $choice);
+            $this->authorizeListAccess($multipleIdea->idea->list_id);
+
+            // Confirming the purchase of an idea already reserved by someone is only theirs to do.
+            $this->authorizeStatusOwner($multipleIdea);
+
+            $this->ideaRepository->updateMultipleIdea($multipleIdea, 'purchased', $choice);
+
             return back();
         } else {
-            $idea = Idea::find($ideaId);
+            $idea = Idea::findOrFail($ideaId);
+            $this->authorizeListAccess($idea->list_id);
+
             MultipleIdea::create([
                 'idea_id' => $idea->id,
                 'status_user' => $request->get('userName'),
-                'status_user_id' => Auth::user()->id,
-                'status' => "purchased",
+                'status_user_id' => Auth::id(),
+                'status_guest_token' => GuestIdentity::current(),
+                'status' => 'purchased',
                 'choice' => $choice,
             ]);
+
             return back();
         }
     }
@@ -64,7 +81,12 @@ class MultipleIdeaController extends Controller
      */
     public function cancelMultipleIdea(Request $request, $ideaId): RedirectResponse
     {
-        MultipleIdea::where('id', $ideaId)->where('status_user', Auth::user()->name)->delete();
+        $multipleIdea = MultipleIdea::findOrFail($ideaId);
+        $this->authorizeListAccess($multipleIdea->idea->list_id);
+        $this->authorizeStatusOwner($multipleIdea);
+
+        $multipleIdea->delete();
+
         return back();
     }
 }
