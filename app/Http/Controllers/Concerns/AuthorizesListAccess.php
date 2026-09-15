@@ -7,6 +7,7 @@ use App\Models\GiftList;
 use App\Models\Idea;
 use App\Models\MultipleIdea;
 use App\Support\GuestIdentity;
+use App\Support\GuestListAccess;
 use Illuminate\Support\Facades\Auth;
 
 trait AuthorizesListAccess
@@ -24,7 +25,7 @@ trait AuthorizesListAccess
             || FollowedList::where('user_id', $userId)->where('gift_list_id', $listId)->exists()
         );
 
-        $hasGuestAccess = session()->get("guest_access.{$listId}", false);
+        $hasGuestAccess = GuestListAccess::has($listId);
 
         abort_unless($hasAuthenticatedAccess || $hasGuestAccess, 403);
     }

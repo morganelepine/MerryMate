@@ -3,15 +3,19 @@
 namespace App\Support;
 
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Str;
 
 /**
- * Identifies a signed-out guest across requests within the same browser session,
- * so a reservation/purchase they made can later be recognised as theirs.
+ * Identifies a signed-out guest across visits, so a purchase they made
+ * can later be recognised as theirs.
  */
 class GuestIdentity
 {
-    private const SESSION_KEY = 'guest_identity';
+    private const COOKIE_NAME = 'guest_identity';
+
+    // Keep in sync with GuestListAccess::LIFETIME_IN_MINUTES.
+    private const LIFETIME_IN_MINUTES = 60 * 24 * 60; // ~2 months
 
     /**
      * The current guest's identifier, generating and storing one on first use.
@@ -22,22 +26,28 @@ class GuestIdentity
             return null;
         }
 
-        $token = session(self::SESSION_KEY);
+        $token = self::existing();
 
-        if (! is_string($token)) {
+        if ($token === null) {
             $token = (string) Str::uuid();
-            session([self::SESSION_KEY => $token]);
+            Cookie::queue(self::COOKIE_NAME, $token, self::LIFETIME_IN_MINUTES);
         }
 
         return $token;
     }
 
     /**
-     * The guest identifier already stored in this session, if any.
+     * The guest identifier already stored for this visitor, if any.
      */
     public static function existing(): ?string
     {
-        return Auth::check() ? null : session(self::SESSION_KEY);
+        if (Auth::check()) {
+            return null;
+        }
+
+        $token = request()->cookie(self::COOKIE_NAME);
+
+        return is_string($token) ? $token : null;
     }
 
     /**

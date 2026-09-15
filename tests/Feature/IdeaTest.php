@@ -54,9 +54,9 @@ class IdeaTest extends TestCase
             'status_user_id' => null,
         ]);
 
-        $this->post("/lists/{$giftList->id}/guest-access", ['private_code' => '1234']);
-
-        $response = $this->patch("/ideas/{$idea->id}/purchase", ['userName' => self::DEFAULT_GUEST_NAME]);
+        $response = $this
+            ->actingAsGuestWithAccessTo($giftList)
+            ->patch("/ideas/{$idea->id}/purchase", ['userName' => self::DEFAULT_GUEST_NAME]);
 
         $response->assertSessionHasNoErrors()->assertRedirect();
 
@@ -104,9 +104,9 @@ class IdeaTest extends TestCase
             'status_user_id' => null,
         ]);
 
-        $this->post("/lists/{$giftList->id}/guest-access", ['private_code' => '1234']);
-
-        $response = $this->patch("/ideas/{$idea->id}/reserve", ['userName' => self::DEFAULT_GUEST_NAME]);
+        $response = $this
+            ->actingAsGuestWithAccessTo($giftList)
+            ->patch("/ideas/{$idea->id}/reserve", ['userName' => self::DEFAULT_GUEST_NAME]);
 
         $response->assertForbidden();
 
@@ -127,9 +127,9 @@ class IdeaTest extends TestCase
             'is_multiple' => true,
         ]);
 
-        $this->post("/lists/{$giftList->id}/guest-access", ['private_code' => '1234']);
-
-        $response = $this->patch("/multiple-ideas/{$idea->id}/reserve", ['userName' => self::DEFAULT_GUEST_NAME]);
+        $response = $this
+            ->actingAsGuestWithAccessTo($giftList)
+            ->patch("/multiple-ideas/{$idea->id}/reserve", ['userName' => self::DEFAULT_GUEST_NAME]);
 
         $response->assertForbidden();
 
@@ -187,24 +187,23 @@ class IdeaTest extends TestCase
             'private_code' => '1234',
             'isPrivate' => false,
         ]);
+
         $idea = Idea::factory()->create([
             'list_id' => $giftList->id,
             'user_id' => $owner->id,
             'user_name' => $owner->name,
-            'status' => 'available',
-            'status_user' => '',
+            'status' => 'purchased',
+            'status_user' => self::DEFAULT_GUEST_NAME,
             'status_user_id' => null,
+            'status_guest_token' => 'the-original-guests-token',
         ]);
-
-        $this->post("/lists/{$giftList->id}/guest-access", ['private_code' => '1234']);
-        $this->patch("/ideas/{$idea->id}/purchase", ['userName' => self::DEFAULT_GUEST_NAME]);
 
         // A different guest, who also unlocked the list but made no purchase of their own,
         // must not be able to cancel this one.
-        $response = $this->withSession([
-            "guest_access.{$giftList->id}" => true,
-            'guest_identity' => 'a-different-guest-token',
-        ])->patch("/ideas/{$idea->id}/cancel");
+        $response = $this
+            ->withCookie("list_access_{$giftList->id}", '1')
+            ->withCookie('guest_identity', 'a-different-guest-token')
+            ->patch("/ideas/{$idea->id}/cancel");
 
         $response->assertForbidden();
         $idea->refresh();

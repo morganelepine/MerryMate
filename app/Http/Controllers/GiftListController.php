@@ -10,6 +10,7 @@ use App\Notifications\NotifyListFollowed;
 use App\Repositories\GiftListRepository;
 use App\Repositories\IdeaRepository;
 use App\Services\GiftListService;
+use App\Support\GuestListAccess;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -313,7 +314,7 @@ class GiftListController extends Controller
     }
 
     /**
-     * Grant a signed-out guest access to a list for this browser session,
+     * Grant a signed-out guest access to a list,
      * once they have provided its private code.
      */
     public function guestAccess(Request $request, GiftList $list): RedirectResponse
@@ -323,7 +324,7 @@ class GiftListController extends Controller
         ]);
 
         if ($this->isCorrectPrivateCode($list, $validated['private_code'])) {
-            $request->session()->put("guest_access.{$list->id}", true);
+            GuestListAccess::grant($list->id);
 
             return redirect()->route('lists.show', $list->id);
         }
@@ -334,12 +335,11 @@ class GiftListController extends Controller
     }
 
     /**
-     * Whether a signed-out guest has already unlocked this list
-     * in the current browser session.
+     * Whether a signed-out guest has already unlocked this list.
      */
     private function hasGuestAccess(int $listId): bool
     {
-        return (bool) session()->get("guest_access.{$listId}", false);
+        return GuestListAccess::has($listId);
     }
 
     /**

@@ -237,9 +237,34 @@ class GiftListTest extends TestCase
             ->assertSessionHasNoErrors()
             ->assertRedirect("/lists/{$giftList->id}");
 
-        $this->get("/lists/{$giftList->id}")->assertInertia(fn ($page) => $page
-            ->where('guestAccessGranted', true)
-        );
+        // Unlike the session, this cookie isn't carried over to the next
+        // call automatically — a real browser would resend it, so the test
+        // has to forward it explicitly.
+        $cookie = collect($response->headers->getCookies())
+            ->first(fn ($cookie) => $cookie->getName() === "list_access_{$giftList->id}");
+
+        $this->withUnencryptedCookie($cookie->getName(), $cookie->getValue())
+            ->get("/lists/{$giftList->id}")
+            ->assertInertia(fn ($page) => $page->where('guestAccessGranted', true));
+    }
+
+    public function test_guest_access_is_remembered_for_about_two_months(): void
+    {
+        [, $giftList] = $this->createGiftListWithOwner([
+            'name' => 'Mariage',
+            'private_code' => '1234',
+            'isPrivate' => false,
+        ]);
+
+        $response = $this->post("/lists/{$giftList->id}/guest-access", [
+            'private_code' => '1234',
+        ]);
+
+        $cookie = collect($response->headers->getCookies())
+            ->first(fn ($cookie) => $cookie->getName() === "list_access_{$giftList->id}");
+
+        $this->assertNotNull($cookie);
+        $this->assertGreaterThan(now()->addDays(56)->timestamp, $cookie->getExpiresTime());
     }
 
     public function test_guest_cannot_unlock_list_with_wrong_private_code(): void
@@ -258,6 +283,8 @@ class GiftListTest extends TestCase
             ->assertSessionHasErrors('private_code')
             ->assertRedirect();
 
-        $this->assertFalse(session()->get("guest_access.{$giftList->id}", false));
+        $this->get("/lists/{$giftList->id}")->assertInertia(fn ($page) => $page
+            ->where('guestAccessGranted', false)
+        );
     }
 }

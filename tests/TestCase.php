@@ -27,4 +27,28 @@ abstract class TestCase extends BaseTestCase
 
         return [$owner, $giftList];
     }
+
+    /**
+     * Unlock $list as a signed-out guest, the way a real browser would:
+     * submit the private code, then carry the resulting cookie forward on
+     * every subsequent request this test makes. Unlike the session, this
+     * cookie is never shared across sequential calls automatically — it
+     * has to be forwarded explicitly.
+     *
+     * @return $this
+     */
+    protected function actingAsGuestWithAccessTo(GiftList $list, string $privateCode = '1234'): static
+    {
+        $response = $this->post("/lists/{$list->id}/guest-access", [
+            'private_code' => $privateCode,
+        ]);
+
+        $cookieName = "list_access_{$list->id}";
+        $cookie = collect($response->headers->getCookies())
+            ->first(fn ($cookie) => $cookie->getName() === $cookieName);
+
+        $this->assertNotNull($cookie, "Expected a {$cookieName} cookie to have been set.");
+
+        return $this->withUnencryptedCookie($cookieName, $cookie->getValue());
+    }
 }
