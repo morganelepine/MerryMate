@@ -2,7 +2,7 @@ import { useState } from "react";
 import PropTypes from "prop-types";
 import ListToFollow from "@/Components/GiftList/User/ListToFollow/ListToFollowCard";
 import TextInput from "@/Components/Utils/TextInput";
-import SmallButton from "@/Components/Buttons/SmallButton";
+import PrimaryButton from "@/Components/Buttons/PrimaryButton";
 import { searchLists } from "@/api/lists";
 
 export default function SearchList({ auth }) {
@@ -36,8 +36,11 @@ export default function SearchList({ auth }) {
 
     return (
         <>
-            <form className="flex flex-col text-center" onSubmit={handleSubmit}>
-                <label htmlFor="search" className="text-xl font-semibold mb-4">
+            <form
+                className="flex flex-col text-center gap-4"
+                onSubmit={handleSubmit}
+            >
+                <label htmlFor="search" className="text-xl font-semibold">
                     Rechercher une liste
                 </label>
                 <TextInput
@@ -48,9 +51,7 @@ export default function SearchList({ auth }) {
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
                 />
-                <SmallButton className="my-4" type="submit">
-                    Rechercher
-                </SmallButton>
+                <PrimaryButton type="submit">Rechercher</PrimaryButton>
             </form>
 
             {results.length > 0 && (

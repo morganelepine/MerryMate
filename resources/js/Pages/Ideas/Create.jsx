@@ -19,9 +19,9 @@ export default function Create({ auth, list }) {
                     <Link
                         as="button"
                         href={route("lists.show", list.id)}
-                        className="flex items-center mt-2 sm:mt-0"
+                        className="flex items-center mt-2 sm:mt-0 hover:text-orange-500 "
                     >
-                        <div className="h-6 w-6 mr-1 bg-orange-50 flex items-center justify-center rounded-full">
+                        <div className="h-6 w-6 mr-1 flex items-center justify-center rounded-full">
                             <svg
                                 xmlns="https://www.w3.org/2000/svg"
                                 fill="none"
@@ -33,9 +33,7 @@ export default function Create({ auth, list }) {
                                 <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                             </svg>
                         </div>
-                        <p className="hover:text-orange-500 text-sm">
-                            Consulter la liste
-                        </p>
+                        <p className="text-sm">Consulter la liste</p>
                     </Link>
                 </div>
             }

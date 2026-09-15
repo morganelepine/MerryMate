@@ -1,7 +1,8 @@
 import { useState } from "react";
-import { Link } from "@inertiajs/react";
 import PropTypes from "prop-types";
 import Modal from "@/Components/Utils/Modal";
+import PrimaryButton from "@/Components/Buttons/PrimaryButton";
+import CancelButton from "@/Components/Buttons/CancelButton";
 
 export default function DeleteListButton({ list }) {
     const [confirmingListDeletion, setConfirmingListDeletion] = useState(false);
@@ -48,20 +49,14 @@ export default function DeleteListButton({ list }) {
                     </p>
 
                     <div className="mt-6 flex justify-end">
-                        <button
-                            onClick={closeModal}
-                            className="text-sm mr-3 hover:text-orange-500"
-                        >
-                            Annuler
-                        </button>
-                        <Link
-                            as="button"
+                        <CancelButton onClick={closeModal} />
+                        <PrimaryButton
+                            size="small"
                             href={route("lists.destroy", list.id)}
                             method="delete"
-                            className="items-center px-3 py-1 bg-gradient-to-r from-bordeaux-500 to-orange-500 hover:from-orange-600 hover:to-pink-600 rounded-full text-sm text-white transition ease-in-out duration-150"
                         >
                             Supprimer la liste
-                        </Link>
+                        </PrimaryButton>
                     </div>
                 </div>
             </Modal>

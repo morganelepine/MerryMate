@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import SecretCode from "@/Components/GiftList/User/ListToFollow/SecretCode";
-import SmallButton from "@/Components/Buttons/SmallButton";
+import PrimaryButton from "@/Components/Buttons/PrimaryButton";
 import { toast } from "sonner";
 import { requestAccessToList } from "@/api/notifications";
 
@@ -54,19 +54,20 @@ export default function ListToFollow({ auth, listToFollow }) {
                 </small>
             </div>
 
-            <div className="space-y-5 mt-3">
-                <SmallButton
+            <div className="space-y-4 mt-2">
+                <PrimaryButton
+                    size="small"
                     onClick={() =>
                         requestAccess(listToFollow.user_id, listToFollow.id)
                     }
                     disabled={requestSent}
                 >
                     Demander un accès
-                </SmallButton>
+                </PrimaryButton>
 
-                <SmallButton onClick={showSecretCode}>
+                <PrimaryButton size="small" onClick={showSecretCode}>
                     Renseigner le code secret
-                </SmallButton>
+                </PrimaryButton>
 
                 <div className={"mt-2 " + (isHidden ? "hidden" : "block")}>
                     <SecretCode listToFollow={listToFollow} auth={auth} />

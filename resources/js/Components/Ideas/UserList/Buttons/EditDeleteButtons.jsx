@@ -2,6 +2,8 @@ import { useState } from "react";
 import { useForm } from "@inertiajs/react";
 import { toast } from "sonner";
 import Modal from "@/Components/Utils/Modal";
+import PrimaryButton from "@/Components/Buttons/PrimaryButton";
+import CancelButton from "@/Components/Buttons/CancelButton";
 
 export default function EditDeleteButtons({ idea, setEditing }) {
     const { delete: destroy, processing, reset } = useForm();
@@ -14,7 +16,7 @@ export default function EditDeleteButtons({ idea, setEditing }) {
             },
             onError: () => {
                 toast.error(
-                    "Oops, cette idée a déjà été réservée ou achetée..."
+                    "Oops, cette idée a déjà été réservée ou achetée...",
                 );
             },
         });
@@ -49,10 +51,7 @@ export default function EditDeleteButtons({ idea, setEditing }) {
             </button>
 
             {/* DELETE BUTTON */}
-            <button
-                onClick={confirmListDeletion}
-                aria-label="Supprimer l'idée"
-            >
+            <button onClick={confirmListDeletion} aria-label="Supprimer l'idée">
                 <svg
                     xmlns="https://www.w3.org/2000/svg"
                     className="h-6 w-6 my-2 text-gray-300 hover:text-orange-500"
@@ -71,20 +70,15 @@ export default function EditDeleteButtons({ idea, setEditing }) {
                     </h2>
 
                     <div className="mt-4">
-                        <button
+                        <PrimaryButton
+                            size="small"
                             onClick={deleteIdea}
                             method="delete"
-                            className="items-center px-4 py-2 bg-gradient-to-r from-bordeaux-500 to-orange-500 hover:from-orange-600 hover:to-pink-600 rounded-full text-sm text-white transition ease-in-out duration-150"
                             disabled={processing}
                         >
                             Supprimer
-                        </button>
-                        <button
-                            onClick={closeModal}
-                            className="text-sm ml-3 hover:text-orange-500"
-                        >
-                            Annuler
-                        </button>
+                        </PrimaryButton>
+                        <CancelButton onClick={closeModal} />
                     </div>
                 </div>
             </Modal>

@@ -8,7 +8,7 @@ export default function ShowPrivateCode({ list }) {
     };
 
     return (
-        <div className="mt-4 flex flex-wrap justify-between w-full">
+        <div className="flex flex-wrap justify-between">
             <p className="text-sm text-gray-400">Code</p>
             {showCode ? (
                 <p className="italic text-sm px-3">{list.private_code}</p>

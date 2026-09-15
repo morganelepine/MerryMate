@@ -1,28 +1,25 @@
 import PropTypes from "prop-types";
 import ButtonBase from "@/Components/Buttons/ButtonBase";
 
-export default function LinkButton({
+export default function CancelButton({
     type = "button",
     className = "",
-    children,
+    children = "Annuler",
     ...props
 }) {
     return (
         <ButtonBase
             {...props}
             type={type}
-            className={
-                "px-4 py-2 text-sm text-orange-500 underline underline-offset-4 hover:no-underline " +
-                className
-            }
+            className={"text-sm mx-4 hover:text-orange-500 " + className}
         >
             {children}
         </ButtonBase>
     );
 }
 
-LinkButton.propTypes = {
+CancelButton.propTypes = {
     type: PropTypes.string,
     className: PropTypes.string,
-    children: PropTypes.node.isRequired,
+    children: PropTypes.node,
 };

@@ -2,7 +2,7 @@ import PropTypes from "prop-types";
 import InputError from "@/Components/Utils/InputError";
 import InputLabel from "@/Components/Utils/InputLabel";
 import TextInput from "@/Components/Utils/TextInput";
-import SmallButton from "@/Components/Buttons/SmallButton";
+import PrimaryButton from "@/Components/Buttons/PrimaryButton";
 import useIdeaForm from "@/hooks/useIdeaForm";
 
 export default function CreatePrivateIdea({ auth, list }) {
@@ -31,12 +31,13 @@ export default function CreatePrivateIdea({ auth, list }) {
                             onChange={(e) => setData("idea", e.target.value)}
                         />
                         <InputError message={errors.idea} className="mt-2" />
-                        <SmallButton
+                        <PrimaryButton
+                            size="small"
                             className="sm:ml-4 sm:mt-0 mt-3 sm:w-auto w-full"
                             disabled={processing}
                         >
                             Ajouter
-                        </SmallButton>
+                        </PrimaryButton>
                     </div>
                 </div>
             </form>

@@ -1,7 +1,8 @@
-import { Link } from "@inertiajs/react";
 import PropTypes from "prop-types";
 import ShowPrivateCode from "@/Components/GiftList/Action/ShowPrivateCode";
 import DeleteListButton from "@/Components/GiftList/Action/Delete";
+import PrimaryButton from "@/Components/Buttons/PrimaryButton";
+import OutlineButton from "@/Components/Buttons/OutlineButton";
 
 export default function AuthListCard({ list }) {
     const isSharedList = list.isPrivate === 0;
@@ -26,31 +27,29 @@ export default function AuthListCard({ list }) {
                     </small>{" "}
                 </div>
 
-                <div className="flex flex-col items-center max-w-max">
-                    {/* SEE BUTTON */}
-                    <Link
-                        as="button"
-                        href={route("lists.show", list.id)}
-                        className="items-center max-w-max px-3 py-1 w-full bg-gradient-to-r from-bordeaux-500 to-orange-500 hover:from-orange-600 hover:to-pink-600 rounded-full text-sm text-white transition ease-in-out duration-150"
-                        title="Voir ma liste"
-                    >
-                        {isSharedList ? (
-                            <span>Voir ma liste</span>
-                        ) : (
-                            <span>Voir et compléter ma liste</span>
-                        )}
-                    </Link>
-
-                    {/* EDIT BUTTON */}
-                    {isSharedList && (
-                        <Link
-                            as="button"
-                            href={route("ideas.create", list.id)}
-                            className="px-3 py-1 mt-1 text-sm text-orange-500 underline"
+                <div className="flex flex-col items-center gap-4">
+                    <div className="space-x-2">
+                        <PrimaryButton
+                            size="small"
+                            href={route("lists.show", list.id)}
+                            title="Voir ma liste"
                         >
-                            Compléter ma liste
-                        </Link>
-                    )}
+                            {isSharedList ? (
+                                <span>Voir ma liste</span>
+                            ) : (
+                                <span>Voir et compléter ma liste</span>
+                            )}
+                        </PrimaryButton>
+                        {isSharedList && (
+                            <OutlineButton
+                                size="small"
+                                color="orange"
+                                href={route("ideas.create", list.id)}
+                            >
+                                Compléter
+                            </OutlineButton>
+                        )}
+                    </div>
 
                     {/* PRIVATE CODE */}
                     {isSharedList && <ShowPrivateCode list={list} />}

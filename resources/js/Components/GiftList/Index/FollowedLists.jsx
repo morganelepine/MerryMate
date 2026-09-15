@@ -10,7 +10,7 @@ export default function FollowedLists({ auth, followedLists }) {
 
     return (
         <div className="flex flex-col items-center text-center md:w-1/3 mt-8 md:mt-0">
-            <h1 className="text-xl font-semibold mb-2">Les listes suivies</h1>
+            <h1 className="text-xl font-semibold mb-2">Listes suivies</h1>
             {followedLists.length > 0 ? (
                 <>
                     <div className="sm:hidden">

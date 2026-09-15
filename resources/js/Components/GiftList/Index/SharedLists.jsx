@@ -5,7 +5,7 @@ import NoListCreated from "@/Components/GiftList/Auth/NoListCreated";
 export default function SharedLists({ auth, mySharedLists }) {
     return (
         <div className="flex flex-col items-center text-center md:w-1/3 mt-12 md:mt-0">
-            <h1 className="text-xl font-semibold mb-2">Mes listes partagées</h1>
+            <h1 className="text-xl font-semibold mb-2">Listes partagées</h1>
             {mySharedLists.length > 0 ? (
                 mySharedLists.map((list) => (
                     <div

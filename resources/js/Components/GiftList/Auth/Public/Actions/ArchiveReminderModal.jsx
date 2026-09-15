@@ -1,6 +1,6 @@
 import PropTypes from "prop-types";
 import Modal from "@/Components/Utils/Modal";
-import SmallButton from "@/Components/Buttons/SmallButton";
+import PrimaryButton from "@/Components/Buttons/PrimaryButton";
 import { toast } from "sonner";
 import { useForm } from "@inertiajs/react";
 
@@ -22,10 +22,10 @@ export default function ArchiveReminderModal({
             onError: (errors) => {
                 console.error(
                     "Erreur lors de l'archivage de la liste :",
-                    errors
+                    errors,
                 );
                 toast.error(
-                    "Oops, une erreur est survenue lors de l'archivage."
+                    "Oops, une erreur est survenue lors de l'archivage.",
                 );
             },
             onFinish: () => reset(),
@@ -62,9 +62,9 @@ export default function ArchiveReminderModal({
                     disponibles resteront bien affichées dans votre liste.
                 </p>
                 <div className="mt-4 flex justify-center">
-                    <SmallButton onClick={archiveList}>
+                    <PrimaryButton size="small" onClick={archiveList}>
                         Archiver la liste
-                    </SmallButton>
+                    </PrimaryButton>
                 </div>
             </div>
         </Modal>

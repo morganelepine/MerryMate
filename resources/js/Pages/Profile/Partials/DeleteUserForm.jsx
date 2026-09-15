@@ -1,9 +1,8 @@
 import { useRef, useState } from "react";
-import DangerButton from "@/Components/Buttons/DangerButton";
 import InputError from "@/Components/Utils/InputError";
 import InputLabel from "@/Components/Utils/InputLabel";
 import Modal from "@/Components/Utils/Modal";
-import SecondaryButton from "@/Components/Buttons/SecondaryButton";
+import OutlineButton from "@/Components/Buttons/OutlineButton";
 import TextInput from "@/Components/Utils/TextInput";
 import { useForm } from "@inertiajs/react";
 
@@ -54,9 +53,9 @@ export default function DeleteUserForm({ className = "" }) {
                 </p>
             </header>
 
-            <DangerButton onClick={confirmUserDeletion}>
+            <OutlineButton color="orange" onClick={confirmUserDeletion}>
                 Supprimer mon compte
-            </DangerButton>
+            </OutlineButton>
 
             <Modal show={confirmingUserDeletion} onClose={closeModal}>
                 <form onSubmit={deleteUser} className="p-6">
@@ -97,12 +96,16 @@ export default function DeleteUserForm({ className = "" }) {
                     </div>
 
                     <div className="mt-6 flex justify-end">
-                        <SecondaryButton onClick={closeModal}>
+                        <OutlineButton onClick={closeModal}>
                             Annuler
-                        </SecondaryButton>
-                        <DangerButton className="ml-3" disabled={processing}>
+                        </OutlineButton>
+                        <OutlineButton
+                            color="orange"
+                            className="ml-3"
+                            disabled={processing}
+                        >
                             Supprimer mon compte
-                        </DangerButton>
+                        </OutlineButton>
                     </div>
                 </form>
             </Modal>

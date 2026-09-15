@@ -39,7 +39,12 @@ export default function SecretCode({ auth, listToFollow }) {
                         }
                         required
                     />
-                    <OutlineButton disabled={processing} className="mt-2 ml-2">
+                    <OutlineButton
+                        color="orange"
+                        size="small"
+                        disabled={processing}
+                        className="mt-2 ml-2"
+                    >
                         Envoyer
                     </OutlineButton>
                 </div>

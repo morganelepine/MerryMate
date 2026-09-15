@@ -3,7 +3,8 @@ import { useForm } from "@inertiajs/react";
 import PropTypes from "prop-types";
 import Modal from "@/Components/Utils/Modal";
 import { toast } from "sonner";
-import SmallButton from "@/Components/Buttons/SmallButton";
+import PrimaryButton from "@/Components/Buttons/PrimaryButton";
+import CancelButton from "@/Components/Buttons/CancelButton";
 
 export default function ArchiveListButton({ list }) {
     const [confirmingListArchiving, setConfirmingListArchiving] =
@@ -71,15 +72,10 @@ export default function ArchiveListButton({ list }) {
                     </p>
 
                     <div className="mt-6 flex justify-end">
-                        <button
-                            onClick={closeModal}
-                            className="text-sm mr-3 hover:text-orange-500"
-                        >
-                            Annuler
-                        </button>
-                        <SmallButton onClick={archiveList}>
+                        <CancelButton onClick={closeModal} />
+                        <PrimaryButton size="small" onClick={archiveList}>
                             Archiver la liste
-                        </SmallButton>
+                        </PrimaryButton>
                     </div>
                 </div>
             </Modal>

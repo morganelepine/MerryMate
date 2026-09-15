@@ -5,7 +5,7 @@ import NoListCreated from "@/Components/GiftList/Auth/NoListCreated";
 export default function PrivateLists({ auth, myPrivateLists }) {
     return (
         <div className="flex flex-col items-center text-center md:w-1/3 mt-12 md:mt-0">
-            <h1 className="text-xl font-semibold mb-2">Mes listes privées</h1>
+            <h1 className="text-xl font-semibold mb-2">Listes privées</h1>
             {myPrivateLists.length > 0 ? (
                 myPrivateLists.map((list) => (
                     <div

@@ -1,6 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { Link } from "@inertiajs/react";
+import PrimaryButton from "@/Components/Buttons/PrimaryButton";
 
 export default function FollowedList({ followedList }) {
     return (
@@ -17,14 +17,13 @@ export default function FollowedList({ followedList }) {
                     ? `Créée le ${followedList.formatted_created_at}`
                     : `Mise à jour le ${followedList.formatted_updated_at}`}
             </small>
-            <Link
-                as="button"
+            <PrimaryButton
+                size="small"
                 key={followedList.id}
                 href={route("lists.show", followedList.id)}
-                className="items-center px-3 py-1 bg-gradient-to-r from-bordeaux-500 to-orange-500 hover:from-orange-600 hover:to-pink-600 rounded-full text-sm text-white transition ease-in-out duration-150"
             >
                 Voir la liste
-            </Link>
+            </PrimaryButton>
         </div>
     );
 }

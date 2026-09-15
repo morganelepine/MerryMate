@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useForm } from "@inertiajs/react";
 import { toast } from "sonner";
 import Modal from "@/Components/Utils/Modal";
-import SmallButton from "@/Components/Buttons/SmallButton";
+import PrimaryButton from "@/Components/Buttons/PrimaryButton";
 import InputError from "@/Components/Utils/InputError";
 
 export default function ButtonReserve({ idea, userName }) {
@@ -112,24 +112,20 @@ export default function ButtonReserve({ idea, userName }) {
                         )}
 
                         <div className="flex flex-col justify-center space-y-2 mt-4">
-                            <SmallButton type="submit" disabled={processing}>
+                            <PrimaryButton
+                                size="small"
+                                type="submit"
+                                disabled={processing}
+                            >
                                 Confirmer la réservation
-                            </SmallButton>
+                            </PrimaryButton>
 
                             <button
                                 type="button"
                                 onClick={(e) => submit(e, true)}
-                                className="self-center px-4 py-2 border border-orange-500 hover:bg-orange-50 rounded-full text-sm"
+                                className="mt-2 underline underline-offset-4 text-gray-600 hover:text-orange-500 text-sm"
                             >
-                                Confirmer sans préciser le modèle
-                            </button>
-
-                            <button
-                                type="button"
-                                onClick={closeModal}
-                                className="text-sm italic mr-3 hover:text-orange-500"
-                            >
-                                Annuler
+                                Confirmer sans modèle
                             </button>
                         </div>
                     </form>

@@ -32,7 +32,7 @@ export default function GuestListHeader({ list, setUserName }) {
                     name="guest_first_name"
                     value={firstName}
                     placeholder={DEFAULT_GUEST_NAME}
-                    className="mb-2 py-1 text-sm"
+                    className="!mt-0 py-1 text-sm"
                     onChange={(e) => updateFirstName(e.target.value)}
                 />
             </div>

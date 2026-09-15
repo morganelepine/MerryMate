@@ -1,20 +1,15 @@
 import PropTypes from "prop-types";
-import { Link } from "@inertiajs/react";
-import SmallButton from "@/Components/Buttons/SmallButton";
+import PrimaryButton from "@/Components/Buttons/PrimaryButton";
 
 export default function EmptyPublicList({ list }) {
     return (
-        <div className="text-center">
+        <div className="flex flex-col text-center gap-4">
             <p>
                 Votre liste est vide. Cliquez sur ce bouton pour la compléter :
             </p>
-            <Link
-                as="button"
-                href={route("ideas.create", list.id)}
-                className="mt-2"
-            >
-                <SmallButton>Commencer la liste</SmallButton>
-            </Link>
+            <PrimaryButton href={route("ideas.create", list.id)}>
+                Commencer la liste
+            </PrimaryButton>
         </div>
     );
 }
