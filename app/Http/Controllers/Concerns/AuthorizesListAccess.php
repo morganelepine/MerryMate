@@ -36,4 +36,13 @@ trait AuthorizesListAccess
     {
         abort_unless(GuestIdentity::owns($reservable), 403);
     }
+
+    /**
+     * Ensure the current visitor is signed in.
+     * Reserving an idea is restricted to authenticated users.
+     */
+    protected function authorizeAuthenticated(): void
+    {
+        abort_unless(Auth::check(), 403);
+    }
 }

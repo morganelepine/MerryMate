@@ -39,7 +39,7 @@ class IdeaTest extends TestCase
         $this->assertNull($idea->fresh());
     }
 
-    public function test_guest_can_reserve_idea_after_unlocking_list_with_private_code(): void
+    public function test_guest_can_purchase_idea_after_unlocking_list_with_private_code(): void
     {
         [$owner, $giftList] = $this->createGiftListWithOwner([
             'private_code' => '1234',
@@ -56,12 +56,12 @@ class IdeaTest extends TestCase
 
         $this->post("/lists/{$giftList->id}/guest-access", ['private_code' => '1234']);
 
-        $response = $this->patch("/ideas/{$idea->id}/reserve", ['userName' => self::DEFAULT_GUEST_NAME]);
+        $response = $this->patch("/ideas/{$idea->id}/purchase", ['userName' => self::DEFAULT_GUEST_NAME]);
 
         $response->assertSessionHasNoErrors()->assertRedirect();
 
         $idea->refresh();
-        $this->assertEquals('reserved', $idea->status);
+        $this->assertEquals('purchased', $idea->status);
         $this->assertEquals(self::DEFAULT_GUEST_NAME, $idea->status_user);
         $this->assertNull($idea->status_user_id);
     }
@@ -87,6 +87,53 @@ class IdeaTest extends TestCase
 
         $idea->refresh();
         $this->assertEquals('available', $idea->status);
+    }
+
+    public function test_guest_cannot_reserve_idea_even_with_list_access(): void
+    {
+        [$owner, $giftList] = $this->createGiftListWithOwner([
+            'private_code' => '1234',
+            'isPrivate' => false,
+        ]);
+        $idea = Idea::factory()->create([
+            'list_id' => $giftList->id,
+            'user_id' => $owner->id,
+            'user_name' => $owner->name,
+            'status' => 'available',
+            'status_user' => '',
+            'status_user_id' => null,
+        ]);
+
+        $this->post("/lists/{$giftList->id}/guest-access", ['private_code' => '1234']);
+
+        $response = $this->patch("/ideas/{$idea->id}/reserve", ['userName' => self::DEFAULT_GUEST_NAME]);
+
+        $response->assertForbidden();
+
+        $idea->refresh();
+        $this->assertEquals('available', $idea->status);
+    }
+
+    public function test_guest_cannot_reserve_multiple_idea_even_with_list_access(): void
+    {
+        [$owner, $giftList] = $this->createGiftListWithOwner([
+            'private_code' => '1234',
+            'isPrivate' => false,
+        ]);
+        $idea = Idea::factory()->create([
+            'list_id' => $giftList->id,
+            'user_id' => $owner->id,
+            'user_name' => $owner->name,
+            'is_multiple' => true,
+        ]);
+
+        $this->post("/lists/{$giftList->id}/guest-access", ['private_code' => '1234']);
+
+        $response = $this->patch("/multiple-ideas/{$idea->id}/reserve", ['userName' => self::DEFAULT_GUEST_NAME]);
+
+        $response->assertForbidden();
+
+        $this->assertDatabaseMissing('multiple_ideas', ['idea_id' => $idea->id]);
     }
 
     public function test_only_the_reserver_can_cancel_their_reservation(): void
@@ -134,7 +181,7 @@ class IdeaTest extends TestCase
         $this->assertNull($idea->status_user_id);
     }
 
-    public function test_a_different_guest_cannot_cancel_someone_elses_reservation(): void
+    public function test_a_different_guest_cannot_cancel_someone_elses_purchase(): void
     {
         [$owner, $giftList] = $this->createGiftListWithOwner([
             'private_code' => '1234',
@@ -150,9 +197,9 @@ class IdeaTest extends TestCase
         ]);
 
         $this->post("/lists/{$giftList->id}/guest-access", ['private_code' => '1234']);
-        $this->patch("/ideas/{$idea->id}/reserve", ['userName' => self::DEFAULT_GUEST_NAME]);
+        $this->patch("/ideas/{$idea->id}/purchase", ['userName' => self::DEFAULT_GUEST_NAME]);
 
-        // A different guest, who also unlocked the list but made no reservation of their own,
+        // A different guest, who also unlocked the list but made no purchase of their own,
         // must not be able to cancel this one.
         $response = $this->withSession([
             "guest_access.{$giftList->id}" => true,
@@ -161,6 +208,6 @@ class IdeaTest extends TestCase
 
         $response->assertForbidden();
         $idea->refresh();
-        $this->assertEquals('reserved', $idea->status);
+        $this->assertEquals('purchased', $idea->status);
     }
 }

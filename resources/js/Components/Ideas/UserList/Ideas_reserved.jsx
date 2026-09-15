@@ -17,7 +17,7 @@ export default function Ideas_reserved({ idea, userName }) {
                 {idea.is_mine && (
                     <div className="flex sm:flex-col mr-2 mb-1 sm:mb-0">
                         <ButtonPurchase idea={idea} userName={userName} />
-                        <ButtonCancel idea={idea} userName={userName} />
+                        <ButtonCancel idea={idea} type="reservation" />
                     </div>
                 )}
 

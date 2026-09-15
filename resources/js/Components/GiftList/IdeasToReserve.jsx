@@ -12,6 +12,7 @@ export default function IdeasToReserve({
     ideas_reserved,
     ideas_purchased,
     userName,
+    canReserve,
 }) {
     // Regrouper les idées par marque
     const groupedIdeas = ideas_available.reduce((ideasByBrand, idea) => {
@@ -62,20 +63,23 @@ export default function IdeasToReserve({
                         <h1 className={`bg-orange-500 ${h1}`}>
                             Idées disponibles
                         </h1>
-                        <div className="hidden sm:flex items-center text-gray-500 italic">
-                            <small className="text-xs mr-1">
-                                Pour réserver un cadeau, cliquez sur le picto
-                            </small>
-                            <svg
-                                xmlns="https://www.w3.org/2000/svg"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke="currentColor"
-                                className="w-4 h-4 mr-1"
-                            >
-                                <path d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0111.186 0z" />
-                            </svg>
-                        </div>
+                        {canReserve && (
+                            <div className="hidden sm:flex items-center text-gray-500 italic">
+                                <small className="text-xs mr-1">
+                                    Pour réserver un cadeau, cliquez sur le
+                                    picto
+                                </small>
+                                <svg
+                                    xmlns="https://www.w3.org/2000/svg"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke="currentColor"
+                                    className="w-4 h-4 mr-1"
+                                >
+                                    <path d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0111.186 0z" />
+                                </svg>
+                            </div>
+                        )}
                         <div className="hidden sm:flex items-center mb-3 text-gray-500 italic">
                             <small className="text-xs mr-1">
                                 Pour indiquer que vous avez acheté un cadeau,
@@ -133,6 +137,9 @@ export default function IdeasToReserve({
                                                             idea={idea}
                                                             brand={brand}
                                                             userName={userName}
+                                                            canReserve={
+                                                                canReserve
+                                                            }
                                                         />
                                                     ),
                                                 )}
@@ -184,35 +191,45 @@ export default function IdeasToReserve({
                         <h1 className={`bg-bordeaux-800 ${h1}`}>
                             Cadeaux réservés
                         </h1>
-                        <div className="hidden sm:flex items-center text-gray-500 italic">
-                            <small className="text-xs mr-1">
-                                Pour confirmer votre achat, cliquez sur le picto
+                        {canReserve ? (
+                            <>
+                                <div className="hidden sm:flex items-center text-gray-500 italic">
+                                    <small className="text-xs mr-1">
+                                        Pour confirmer votre achat, cliquez sur
+                                        le picto
+                                    </small>
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        stroke="currentColor"
+                                        className="w-4 h-4"
+                                    >
+                                        <path d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                                    </svg>
+                                </div>
+                                <div className="hidden sm:flex items-center mb-3 text-gray-500 italic">
+                                    <small className="text-xs mr-1">
+                                        Pour annuler votre réservation, cliquez
+                                        sur le picto
+                                    </small>
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        stroke="currentColor"
+                                        className="w-4 h-4"
+                                    >
+                                        <path d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                                    </svg>
+                                </div>
+                            </>
+                        ) : (
+                            <small className="hidden sm:flex items-center mb-3 text-gray-500 italic text-xs">
+                                La réservation d'un cadeau n'est possible qu'en
+                                étant connecté·e.
                             </small>
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke="currentColor"
-                                className="w-4 h-4"
-                            >
-                                <path d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-                            </svg>
-                        </div>
-                        <div className="hidden sm:flex items-center mb-3 text-gray-500 italic">
-                            <small className="text-xs mr-1">
-                                Pour annuler votre réservation, cliquez sur le
-                                picto
-                            </small>
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke="currentColor"
-                                className="w-4 h-4"
-                            >
-                                <path d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-                            </svg>
-                        </div>
+                        )}
                         <div className="flex flex-col justify-center bg-bordeaux-50 rounded-xl mt-0 sm:px-6 sm:py-4 p-3 mb-10">
                             <div className="w-full space-y-5 sm:space-y-0">
                                 {ideas_reserved.map((idea) => (
@@ -238,4 +255,9 @@ IdeasToReserve.propTypes = {
     ideas_reserved: PropTypes.array,
     ideas_purchased: PropTypes.array,
     userName: PropTypes.string,
+    canReserve: PropTypes.bool,
+};
+
+IdeasToReserve.defaultProps = {
+    canReserve: true,
 };

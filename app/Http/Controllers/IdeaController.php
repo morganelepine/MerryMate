@@ -125,6 +125,8 @@ class IdeaController extends Controller
      */
     public function reserveIdea(Request $request, $ideaId): RedirectResponse
     {
+        $this->authorizeAuthenticated();
+
         $idea = Idea::findOrFail($ideaId);
         $this->authorizeListAccess($idea->list_id);
 

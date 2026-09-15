@@ -24,6 +24,7 @@ export default function GuestList({
                 ideas_reserved={ideas_reserved}
                 ideas_purchased={ideas_purchased}
                 userName={userName}
+                canReserve={false}
             />
         </GuestListLayout>
     );

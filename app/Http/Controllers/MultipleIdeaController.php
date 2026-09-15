@@ -27,6 +27,8 @@ class MultipleIdeaController extends Controller
      */
     public function reserveMultipleIdea(Request $request, $ideaId): RedirectResponse
     {
+        $this->authorizeAuthenticated();
+
         $idea = Idea::findOrFail($ideaId);
         $this->authorizeListAccess($idea->list_id);
 

@@ -2,7 +2,7 @@ import PropTypes from "prop-types";
 import { useForm } from "@inertiajs/react";
 import { toast } from "sonner";
 
-export default function ButtonCancel({ idea }) {
+export default function ButtonCancel({ idea, type }) {
     const { patch, processing, reset } = useForm();
     const cancelRoute =
         idea.is_multiple === 0 ? "ideas.cancel" : "multiple-ideas.cancel";
@@ -12,7 +12,9 @@ export default function ButtonCancel({ idea }) {
         patch(route(cancelRoute, idea.id), {
             onSuccess: () => reset(),
         });
-        toast.info("Réservation annulée");
+        toast.info(
+            type === "reservation" ? "Réservation annulée" : "Achat annulé",
+        );
     };
 
     return (
@@ -20,7 +22,11 @@ export default function ButtonCancel({ idea }) {
             <button
                 className="flex items-center justify-end text-xs text-gray-400 hover:text-gray-800"
                 disabled={processing}
-                title="Annuler la réservation"
+                title={
+                    type === "reservation"
+                        ? "Annuler la réservation"
+                        : "Annuler l'achat"
+                }
             >
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -32,7 +38,9 @@ export default function ButtonCancel({ idea }) {
                     <path d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
                 </svg>
                 <p className="block sm:hidden ml-1 mr-3">
-                    Annuler la réservation
+                    {type === "reservation"
+                        ? "Annuler la réservation"
+                        : "Annuler l'achat"}
                 </p>
             </button>
         </form>
@@ -41,4 +49,5 @@ export default function ButtonCancel({ idea }) {
 
 ButtonCancel.propTypes = {
     idea: PropTypes.object,
+    type: PropTypes.string,
 };
