@@ -1,6 +1,7 @@
 import { Head } from "@inertiajs/react";
 import PropTypes from "prop-types";
 import Ideas from "@/Components/Ideas/PublicList/Idea";
+import BrandMembership from "@/Components/Ideas/BrandMembership";
 
 export default function ListOfIdeas({ ideas }) {
     // Regrouper les idées par marque
@@ -16,6 +17,11 @@ export default function ListOfIdeas({ ideas }) {
         return ideasByBrand;
     }, {});
 
+    // An idea with a membership link already entered applies to the entire brand
+    Object.values(groupedIdeas).forEach((brandData) => {
+        brandData.membership = brandData.ideas.find((idea) => idea.membership);
+    });
+
     return (
         <>
             <Head title="Consulter ma liste" />
@@ -29,13 +35,10 @@ export default function ListOfIdeas({ ideas }) {
                             </p>
                             <hr className="w-full h-px mt-3 mb-2 bg-orange-100 border-0"></hr>
                         </div>
+                        <BrandMembership membership={brandData.membership} />
                         {brandData.ideas.map((idea, index) => (
                             <div key={idea.id}>
-                                <Ideas
-                                    idea={idea}
-                                    brand={brand}
-                                    index={index}
-                                />
+                                <Ideas idea={idea} index={index} />
                             </div>
                         ))}
                     </div>

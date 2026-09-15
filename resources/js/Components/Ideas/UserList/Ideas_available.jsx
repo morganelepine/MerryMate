@@ -3,12 +3,7 @@ import Linkify from "linkify-react"; //rendre les liens cliquables
 import ButtonPurchase from "@/Components/Ideas/UserList/Buttons/ButtonPurchase";
 import ButtonReserve from "@/Components/Ideas/UserList/Buttons/ButtonReserve";
 
-export default function Ideas_available({
-    idea,
-    brand,
-    userName,
-    canReserve,
-}) {
+export default function Ideas_available({ idea, userName, canReserve }) {
     return (
         <div key={idea.id}>
             <div className="my-2 sm:flex items-center">
@@ -110,27 +105,6 @@ export default function Ideas_available({
                                 )}
                             </div>
                         )}
-                        {idea.membership && brand !== "Nébuleuse" && (
-                            <div className="flex flex-wrap bg-orange-50 rounded-full px-3 py-1 mt-2.5 max-w-max">
-                                <p className="text-xs italic ">
-                                    Lien/code à utiliser pour bénéficier d'une
-                                    réduction{" "}
-                                    {idea.membership_reduction
-                                        ? `(${idea.membership_reduction})`
-                                        : null}{" "}
-                                    :&nbsp;
-                                </p>
-                                <p className="text-xs italic hover:text-orange-500">
-                                    <Linkify
-                                        options={{
-                                            target: "blank",
-                                        }}
-                                    >
-                                        {idea.membership}
-                                    </Linkify>
-                                </p>
-                            </div>
-                        )}
                     </div>
                 </div>
             </div>
@@ -140,7 +114,6 @@ export default function Ideas_available({
 
 Ideas_available.propTypes = {
     idea: PropTypes.object,
-    brand: PropTypes.string,
     userName: PropTypes.string,
     canReserve: PropTypes.bool,
 };

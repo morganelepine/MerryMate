@@ -8,7 +8,7 @@ import EditDeleteButtons from "@/Components/Ideas/UserList/Buttons/EditDeleteBut
 
 dayjs.extend(relativeTime);
 
-export default function Ideas({ brand, idea }) {
+export default function Ideas({ idea }) {
     const { auth } = usePage().props;
 
     const [editing, setEditing] = useState(false);
@@ -25,7 +25,7 @@ export default function Ideas({ brand, idea }) {
                 {editing ? (
                     <IdeaEdit auth={auth} idea={idea} setEditing={setEditing} />
                 ) : (
-                    <IdeaShow idea={idea} brand={brand} />
+                    <IdeaShow idea={idea} />
                 )}
             </div>
         </div>

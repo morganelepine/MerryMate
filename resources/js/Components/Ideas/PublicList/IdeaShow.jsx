@@ -1,7 +1,7 @@
 import React from "react";
 import Linkify from "linkify-react"; //rendre les liens cliquables
 
-export default function IdeaShow({ brand, idea }) {
+export default function IdeaShow({ idea }) {
     return (
         <div className="flex flex-col">
             <div className="flex justify-between">
@@ -84,23 +84,6 @@ export default function IdeaShow({ brand, idea }) {
                             {idea.promo_details}
                         </p>
                     )}
-                </div>
-            )}
-            {idea.membership && brand !== "Nébuleuse" && (
-                <div className="bg-orange-50 text-center rounded-full px-3 py-0.5 mt-2.5 max-w-max">
-                    <span className="text-xs italic">
-                        Lien/code à utiliser pour bénéficier d'une
-                        réduction&nbsp;
-                        {idea.membership_reduction
-                            ? `(${idea.membership_reduction})\u00A0`
-                            : null}
-                        :&nbsp;
-                    </span>
-                    <span className="text-xs italic hover:text-orange-500 break-all">
-                        <Linkify options={{ target: "blank" }}>
-                            {idea.membership}
-                        </Linkify>
-                    </span>
                 </div>
             )}
         </div>
