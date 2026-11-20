@@ -1,13 +1,21 @@
 import PropTypes from "prop-types";
+import { formatIdeaCount } from "@/Components/Ideas/ideaHelpers";
 
-export default function BrandHeading({ brand, count, as: Heading = "h2" }) {
+export default function BrandHeading({
+    brand,
+    count,
+    as: Heading = "h2",
+    color,
+}) {
     return (
         <div className="flex items-baseline gap-3">
-            <Heading className="font-yeseva text-xl text-orange-600 break-words min-w-0">
+            <Heading
+                className={`font-semibold text-xl break-words min-w-0 ${color}`}
+            >
                 {brand}
             </Heading>
             <p className="shrink-0 text-sm text-gray-500">
-                ({count} {count > 1 ? "idées" : "idée"})
+                ({formatIdeaCount(count)})
             </p>
         </div>
     );

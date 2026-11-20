@@ -1,4 +1,6 @@
 import PropTypes from "prop-types";
+import IdeaLink from "@/Components/Ideas/IdeaLink";
+import { getIdeaTitle } from "@/Components/Ideas/ideaHelpers";
 
 function HeartIcon() {
     return (
@@ -14,26 +16,11 @@ function HeartIcon() {
     );
 }
 
-// The link field is free text: only treat it as a URL when it parses to a real domain.
-function parseLink(link) {
-    if (!link) return null;
-    try {
-        const url = new URL(
-            /^https?:\/\//i.test(link) ? link : `https://${link}`,
-        );
-        if (!url.hostname.includes(".")) return null;
-        return { href: url.href, host: url.hostname.replace(/^www\./, "") };
-    } catch {
-        return null;
-    }
-}
-
 export default function IdeaShow({ idea }) {
     const isFavorite = idea.favorite === 1;
     const isMultiple = idea.is_multiple === 1;
     const isPromo = idea.promo === 1;
-    const link = parseLink(idea.link);
-    const title = idea.idea || link?.host || idea.link;
+    const title = getIdeaTitle(idea);
 
     return (
         <div className="flex flex-col gap-3">
@@ -83,35 +70,10 @@ export default function IdeaShow({ idea }) {
                         </span>
                     )}
 
-                    {link ? (
-                        <a
-                            href={link.href}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="ml-auto inline-flex max-w-full items-center gap-1.5 rounded-full bg-orange-100 px-3 py-1 text-sm text-orange-700 hover:bg-orange-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-300"
-                        >
-                            <span className="truncate">{link.host}</span>
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                strokeWidth="1.5"
-                                stroke="currentColor"
-                                className="w-4 h-4 shrink-0"
-                                aria-hidden="true"
-                            >
-                                <path d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
-                            </svg>
-                            <span className="sr-only">(nouvel onglet)</span>
-                        </a>
-                    ) : (
-                        idea.link &&
-                        idea.idea && (
-                            <span className="ml-auto max-w-full truncate text-sm text-gray-500">
-                                {idea.link}
-                            </span>
-                        )
-                    )}
+                    <IdeaLink
+                        idea={idea}
+                        color="bg-orange-100 text-orange-700 hover:bg-orange-200"
+                    />
                 </div>
             )}
         </div>
