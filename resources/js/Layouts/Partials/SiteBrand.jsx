@@ -5,14 +5,22 @@ import { Link } from "@inertiajs/react";
 export default function SiteBrand({
     href = "/",
     as: Tag = "span",
-    className = "",
+    className = "h-8 sm:h-9",
 }) {
     return (
-        <Link href={href}>
-            <Tag
-                className={`text-2xl font-yeseva text-orange-500 ${className}`}
-            >
-                MerryMate
+        <Link
+            href={href}
+            className="inline-flex rounded focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-300"
+        >
+            <Tag className="flex">
+                {/* Intrinsic size reserves the space before the image loads (no layout shift). */}
+                <img
+                    src="/images/logo-MerryMate.svg"
+                    alt="MerryMate"
+                    width="410"
+                    height="96"
+                    className={`w-auto ${className}`}
+                />
             </Tag>
         </Link>
     );
@@ -21,5 +29,6 @@ export default function SiteBrand({
 SiteBrand.propTypes = {
     href: PropTypes.string,
     as: PropTypes.oneOf(["span", "h1"]),
+    // Height classes for the logo image.
     className: PropTypes.string,
 };

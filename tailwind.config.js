@@ -39,7 +39,7 @@ export default {
                     100: "#eceef8",
                     300: "#C3BEF7", //ref
                     600: "#7b7fca",
-                    800: "#3f4483",
+                    800: "#4357AD",
                 },
                 // Status colors: purchased ideas
                 sage: {
