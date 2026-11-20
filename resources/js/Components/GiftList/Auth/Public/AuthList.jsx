@@ -9,7 +9,11 @@ import AddIdeaAlert from "@/Components/GiftList/Auth/Public/Actions/AddIdeaAlert
 import ArchiveReminder from "@/Components/GiftList/Auth/Public/Actions/ArchiveReminder";
 import EmptyPublicList from "@/Components/GiftList/Auth/Public/EmptyPublicList";
 import PrimaryButton from "@/Components/Buttons/PrimaryButton";
-import { LIST_WIDTH, PAGE_GUTTER } from "@/Layouts/Partials/pageContainer";
+import {
+    LIST_HEADER_CLOSED,
+    LIST_WIDTH,
+    PAGE_GUTTER,
+} from "@/Layouts/Partials/pageContainer";
 
 export default function AuthList({ auth, list, ideas, ideas_available }) {
     const daysSinceLastLogin = usePage().props.days_since_last_login;
@@ -18,6 +22,7 @@ export default function AuthList({ auth, list, ideas, ideas_available }) {
         <AuthenticatedLayout
             user={auth.user}
             headerWidth={LIST_WIDTH}
+            headerClassName={LIST_HEADER_CLOSED}
             header={
                 <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                     <ListTitle list={list} />

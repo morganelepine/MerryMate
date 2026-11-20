@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import UserListHeader from "@/Components/GiftList/User/List/UserListHeader";
 import IdeasToReserve from "@/Components/GiftList/IdeasToReserve";
-import { LIST_WIDTH } from "@/Layouts/Partials/pageContainer";
+import { LIST_HEADER_BAND, LIST_WIDTH } from "@/Layouts/Partials/pageContainer";
 
 export default function UserList({
     auth,
@@ -18,6 +18,10 @@ export default function UserList({
         <AuthenticatedLayout
             user={auth.user}
             headerWidth={LIST_WIDTH}
+            // Continues into the tabs rendered by IdeasToReserve.
+            headerClassName={LIST_HEADER_BAND}
+            // Lets the active tab panel stretch to the bottom of the screen.
+            mainClassName="flex flex-col"
             header={
                 <UserListHeader
                     auth={auth}

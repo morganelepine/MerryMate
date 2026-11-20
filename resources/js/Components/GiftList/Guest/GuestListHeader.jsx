@@ -24,10 +24,10 @@ export default function GuestListHeader({ list, setUserName }) {
                 </p>
             </div>
 
-            <div className="flex items-center">
+            <div className="flex flex-wrap items-center gap-2 shrink-0">
                 <label
                     htmlFor="guest_first_name"
-                    className="text-sm text-gray-500 italic mr-2 whitespace-nowrap"
+                    className="text-sm text-gray-500 whitespace-nowrap"
                 >
                     Votre prénom (facultatif) :
                 </label>
@@ -36,7 +36,7 @@ export default function GuestListHeader({ list, setUserName }) {
                     name="guest_first_name"
                     value={firstName}
                     placeholder={DEFAULT_GUEST_NAME}
-                    className="!mt-0 py-1 text-sm"
+                    className="!mt-0 py-1 text-sm w-full sm:w-auto"
                     onChange={(e) => updateFirstName(e.target.value)}
                 />
             </div>

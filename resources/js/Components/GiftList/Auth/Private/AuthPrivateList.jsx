@@ -2,7 +2,11 @@ import PropTypes from "prop-types";
 import { Head } from "@inertiajs/react";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import ListTitle from "@/Components/GiftList/Action/ListTitle";
-import { LIST_WIDTH, PAGE_GUTTER } from "@/Layouts/Partials/pageContainer";
+import {
+    LIST_HEADER_CLOSED,
+    LIST_WIDTH,
+    PAGE_GUTTER,
+} from "@/Layouts/Partials/pageContainer";
 import PrimaryButton from "@/Components/Buttons/PrimaryButton";
 import CreatePrivateIdea from "@/Components/Ideas/PrivateList/CreatePrivateIdea";
 import ShowPrivateIdea from "@/Components/Ideas/PrivateList/ShowPrivateIdea";
@@ -12,6 +16,7 @@ export default function AuthPrivateList({ auth, list, ideas }) {
         <AuthenticatedLayout
             user={auth.user}
             headerWidth={LIST_WIDTH}
+            headerClassName={LIST_HEADER_CLOSED}
             header={<ListTitle list={list} />}
         >
             <Head title={list.name} />

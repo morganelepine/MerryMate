@@ -3,11 +3,10 @@ import SiteBrand from "@/Layouts/Partials/SiteBrand";
 import SitePage from "@/Layouts/Partials/SitePage";
 import OutlineButton from "@/Components/Buttons/OutlineButton";
 
-export default function GuestListLayout({ header, headerWidth, children }) {
+export default function GuestListLayout({ children, ...pageProps }) {
     return (
         <SitePage
-            header={header}
-            headerWidth={headerWidth}
+            {...pageProps}
             nav={
                 <TopNav>
                     <div className="shrink-0 flex items-center">
