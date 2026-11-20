@@ -10,11 +10,19 @@ export default function ButtonCancel({ idea, type }) {
     const cancelReserve = (e) => {
         e.preventDefault();
         patch(route(cancelRoute, idea.id), {
-            onSuccess: () => reset(),
+            preserveScroll: true,
+            // Keeps the list's open tab (IdeasToReserve state) after the reload.
+            preserveState: true,
+            onSuccess: () => {
+                reset();
+                toast.info(
+                    type === "reservation"
+                        ? "Réservation annulée"
+                        : "Achat annulé",
+                );
+            },
+            onError: () => toast.error("Oops, une erreur est survenue."),
         });
-        toast.info(
-            type === "reservation" ? "Réservation annulée" : "Achat annulé",
-        );
     };
 
     return (

@@ -53,19 +53,6 @@ const TABS = {
 
 const TAB_KEYS = Object.keys(TABS);
 
-// Actions (reserve, purchase, cancel) reload the page and remount this component:
-// remember the tab per list so the visitor stays where they were.
-const tabStorageKey = (listId) => `list-${listId}-tab`;
-
-function readStoredTab(listId) {
-    try {
-        const tab = sessionStorage.getItem(tabStorageKey(listId));
-        return TAB_KEYS.includes(tab) ? tab : "available";
-    } catch {
-        return "available";
-    }
-}
-
 function Icon({ name, className }) {
     return (
         <svg
@@ -115,18 +102,7 @@ export default function IdeasToReserve({
     userName,
     canReserve = true,
 }) {
-    const [activeTab, setActiveTabState] = useState(() =>
-        readStoredTab(list.id),
-    );
-
-    const setActiveTab = (tab) => {
-        setActiveTabState(tab);
-        try {
-            sessionStorage.setItem(tabStorageKey(list.id), tab);
-        } catch {
-            // Storage unavailable (private mode): the tab just won't persist.
-        }
-    };
+    const [activeTab, setActiveTab] = useState("available");
     const tabRefs = useRef({});
 
     const ideasByTab = {
@@ -315,7 +291,6 @@ export default function IdeasToReserve({
 
 IdeasToReserve.propTypes = {
     list: PropTypes.shape({
-        id: PropTypes.number.isRequired,
         name: PropTypes.string.isRequired,
         user_name: PropTypes.string.isRequired,
     }).isRequired,

@@ -40,6 +40,7 @@ export default function ButtonPurchase({ idea, userName }) {
             { userName, choice: ignoreChoice ? "" : data.choice },
             {
                 preserveScroll: true,
+                preserveState: true,
                 onStart: () => setProcessing(true),
                 onFinish: () => setProcessing(false),
                 onSuccess: () => {
