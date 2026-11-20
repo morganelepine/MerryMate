@@ -1,12 +1,13 @@
 import SiteBrand from "@/Layouts/Partials/SiteBrand";
+import { PANEL } from "@/Components/Utils/surfaces";
 
 export default function Guest({ children }) {
     return (
-        <div className="min-h-screen flex justify-center bg-cream">
-            <div className="flex flex-col justify-center items-center">
+        <div className="min-h-screen flex justify-center bg-cream px-4 py-10">
+            <div className="flex flex-col justify-center items-center w-full">
                 <SiteBrand />
 
-                <div className="sm:max-w-md mt-6 mx-6 p-6 bg-white shadow-md rounded-md overflow-hidden sm:rounded-lg">
+                <div className={`${PANEL} w-full sm:max-w-md mt-8`}>
                     {children}
                 </div>
             </div>
