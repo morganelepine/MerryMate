@@ -1,7 +1,8 @@
 import { useState } from "react";
 import PropTypes from "prop-types";
+import { formatOwner } from "@/Components/GiftList/listCard";
 import TextInput from "@/Components/Utils/TextInput";
-import { LIST_TITLE } from "@/Components/GiftList/listTitle";
+import PageHeader from "@/Layouts/Partials/PageHeader";
 
 export const DEFAULT_GUEST_NAME = "Anonyme";
 
@@ -16,31 +17,28 @@ export default function GuestListHeader({ list, setUserName }) {
     };
 
     return (
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-            <div className="min-w-0">
-                <h1 className={LIST_TITLE}>{list.name}</h1>
-                <p className="mt-1 text-sm text-gray-500">
-                    Liste de {list.user_name} {list.user_lastname}
-                </p>
-            </div>
-
-            <div className="flex flex-wrap items-center gap-2 shrink-0">
-                <label
-                    htmlFor="guest_first_name"
-                    className="text-sm text-gray-500 whitespace-nowrap"
-                >
-                    Votre prénom (facultatif) :
-                </label>
-                <TextInput
-                    id="guest_first_name"
-                    name="guest_first_name"
-                    value={firstName}
-                    placeholder={DEFAULT_GUEST_NAME}
-                    className="!mt-0 py-1 text-sm w-full sm:w-auto"
-                    onChange={(e) => updateFirstName(e.target.value)}
-                />
-            </div>
-        </div>
+        <PageHeader
+            title={list.name}
+            subtitle={`Liste de ${formatOwner(list)}`}
+            actions={
+                <div className="flex flex-wrap items-center gap-2 shrink-0">
+                    <label
+                        htmlFor="guest_first_name"
+                        className="text-sm text-gray-500 whitespace-nowrap"
+                    >
+                        Votre prénom (facultatif) :
+                    </label>
+                    <TextInput
+                        id="guest_first_name"
+                        name="guest_first_name"
+                        value={firstName}
+                        placeholder={DEFAULT_GUEST_NAME}
+                        className="!mt-0 py-1 text-sm w-full sm:w-auto"
+                        onChange={(e) => updateFirstName(e.target.value)}
+                    />
+                </div>
+            }
+        />
     );
 }
 

@@ -1,4 +1,5 @@
 import PropTypes from "prop-types";
+import { formatOwner } from "@/Components/GiftList/listCard";
 import { Head } from "@inertiajs/react";
 import GuestListLayout from "@/Layouts/GuestListLayout";
 import PrivateCodeForm from "@/Components/GiftList/PrivateCodeForm";
@@ -6,13 +7,10 @@ import PrivateCodeForm from "@/Components/GiftList/PrivateCodeForm";
 export default function GuestPrivateCode({ list }) {
     return (
         <GuestListLayout
-            header={
-                <h2 className="font-semibold text-xl text-gray-800 leading-tight">
-                    La liste "{list.name}" de {list.user_name}
-                </h2>
-            }
+            title={list.name}
+            subtitle={`Liste de ${formatOwner(list)}`}
         >
-            <Head title="Accès à la liste" />
+            <Head title={list.name} />
             <PrivateCodeForm list={list} routeName="lists.guestAccess" />
         </GuestListLayout>
     );

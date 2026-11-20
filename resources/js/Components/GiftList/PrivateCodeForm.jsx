@@ -1,6 +1,9 @@
 import PropTypes from "prop-types";
 import { useForm } from "@inertiajs/react";
 import TextInput from "@/Components/Utils/TextInput";
+import InputLabel from "@/Components/Utils/InputLabel";
+import { PANEL } from "@/Components/Utils/surfaces";
+import { PAGE_BODY } from "@/Layouts/Partials/pageContainer";
 import InputError from "@/Components/Utils/InputError";
 import PrimaryButton from "@/Components/Buttons/PrimaryButton";
 
@@ -24,20 +27,20 @@ export default function PrivateCodeForm({
     };
 
     return (
-        <div className="max-w-md mx-auto px-4 my-8">
-            <form onSubmit={submit} className="text-center">
-                <p>
-                    Veuillez renseigner le code communiqué par {list.user_name}{" "}
-                    pour accéder à sa liste "{list.name}"
+        <div className={PAGE_BODY}>
+            <form onSubmit={submit} className={`${PANEL} max-w-md`}>
+                <p className="text-gray-700">
+                    Cette liste est protégée. Saisissez le code secret que{" "}
+                    {list.user_name} vous a communiqué pour y accéder.
                 </p>
 
-                <div className="my-3">
+                <div className="mt-5">
+                    <InputLabel htmlFor="private_code" value="Code secret" />
                     <TextInput
                         id="private_code"
                         name="private_code"
                         value={data.private_code}
-                        placeholder="Le code secret"
-                        className="mb-2"
+                        placeholder="Exemple : 12ab"
                         isFocused={true}
                         onChange={(e) =>
                             setData("private_code", e.target.value)
@@ -50,7 +53,7 @@ export default function PrivateCodeForm({
                     />
                 </div>
 
-                <PrimaryButton disabled={processing}>
+                <PrimaryButton className="mt-5" disabled={processing}>
                     Accéder à la liste
                 </PrimaryButton>
             </form>
