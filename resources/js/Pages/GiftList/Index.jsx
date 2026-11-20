@@ -1,9 +1,10 @@
 import { Head } from "@inertiajs/react";
 import PropTypes from "prop-types";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import PrivateLists from "@/Components/GiftList/Index/PrivateLists";
-import SharedLists from "@/Components/GiftList/Index/SharedLists";
+import MyLists from "@/Components/GiftList/Index/MyLists";
 import FollowedLists from "@/Components/GiftList/Index/FollowedLists";
+import QuickActions from "@/Components/GiftList/Index/QuickActions";
+import { HOME_WIDTH, PAGE_GUTTER } from "@/Layouts/Partials/pageContainer";
 
 export default function Index({
     auth,
@@ -14,20 +15,24 @@ export default function Index({
     return (
         <AuthenticatedLayout
             user={auth.user}
-            header={
-                <h2 className="font-semibold text-xl text-gray-800 leading-tight">
-                    Dashboard
-                </h2>
-            }
+            // The quick actions replace the nav links on desktop.
+            showDesktopNav={false}
         >
-            <Head title="Les listes à suivre" />
-            <div className="max-w-7xl mx-auto px-4 sm:p-4">
-                <div className="sm:mt-6 md:flex justify-evenly pb-20 md:space-x-14">
-                    <FollowedLists auth={auth} followedLists={followedLists} />
+            <Head title="Accueil" />
 
-                    <SharedLists auth={auth} mySharedLists={mySharedLists} />
+            <div className={`${HOME_WIDTH} ${PAGE_GUTTER} pb-16`}>
+                <h1 className="hidden sm:block font-yeseva pt-10 text-3xl sm:text-4xl text-gray-900">
+                    Bonjour {auth.user.name}
+                </h1>
 
-                    <PrivateLists auth={auth} myPrivateLists={myPrivateLists} />
+                {/* Mobile keeps the burger menu instead. */}
+                <div className="hidden sm:block mt-8">
+                    <QuickActions />
+                </div>
+
+                <div className="mt-8 sm:mt-12 grid gap-12 md:grid-cols-2">
+                    <FollowedLists followedLists={followedLists} />
+                    <MyLists lists={[...mySharedLists, ...myPrivateLists]} />
                 </div>
             </div>
         </AuthenticatedLayout>
@@ -36,7 +41,7 @@ export default function Index({
 
 Index.propTypes = {
     auth: PropTypes.object.isRequired,
-    followedLists: PropTypes.array,
-    mySharedLists: PropTypes.array,
-    myPrivateLists: PropTypes.array,
+    followedLists: PropTypes.array.isRequired,
+    mySharedLists: PropTypes.array.isRequired,
+    myPrivateLists: PropTypes.array.isRequired,
 };
