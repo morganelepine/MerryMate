@@ -24,6 +24,7 @@
         "globals": "^17.12.0",
         "jsdom": "^26.1.0",
         "laravel-vite-plugin": "^0.8.1",
+        "playwright": "^1.65.1",
         "postcss": "^8.4.18",
         "react": "^18.2.0",
         "react-dom": "^18.2.0",

@@ -28,10 +28,10 @@ const FEATURES = [
 
 export default function Intro() {
     return (
-        <div className={`${HOME_WIDTH} ${PAGE_GUTTER} py-12 lg:py-20`}>
-            <section className="grid items-center gap-12 lg:grid-cols-2">
-                <div>
-                    <p className="text-sm font-medium text-orange-700">
+        <div className={`${HOME_WIDTH} ${PAGE_GUTTER} py-12`}>
+            <section className="grid items-center gap-12 lg:grid-cols-5">
+                <div className="lg:col-span-2">
+                    <p className="text-sm font-medium text-orange-600">
                         Listes de cadeaux partagées
                     </p>
                     <h1
@@ -55,11 +55,11 @@ export default function Intro() {
                 </div>
 
                 <img
-                    src="/images/exemple-liste-merrymate.jpg"
-                    alt="Aperçu d’une liste partagée dans MerryMate"
-                    width="1476"
-                    height="2004"
-                    className={`${CARD_SURFACE} mx-auto w-full max-w-sm object-cover`}
+                    src="/images/home-purchased.webp"
+                    alt="Une liste de Noël partagée : l’onglet des cadeaux déjà achetés, avec qui les a offerts"
+                    width="947"
+                    height="832"
+                    className={`${CARD_SURFACE} mx-auto w-full max-w-xl border-2 lg:col-span-3 lg:max-w-xl lg:mr-0`}
                 />
             </section>
 
