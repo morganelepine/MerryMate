@@ -2,18 +2,21 @@ import { useState } from "react";
 import PropTypes from "prop-types";
 import Checkbox from "@/Components/Utils/Checkbox";
 import Modal from "@/Components/Utils/Modal";
+import { LIST_TITLE } from "@/Components/GiftList/listTitle";
 
 export default function UserListHeader({ auth, list, setUserName }) {
     const [modalVisible, setModalVisible] = useState(false);
 
     return (
         <>
-            <div className="sm:flex items-center justify-between">
-                <h2 className="font-semibold text-xl text-gray-800 leading-tight">
-                    La liste "{list.name}" de {list.user_name}{" "}
-                    {list.user_lastname}
-                </h2>
-                <div className="flex items-center sm:mt-0 mt-2">
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                <div className="min-w-0">
+                    <h1 className={LIST_TITLE}>{list.name}</h1>
+                    <p className="mt-1 text-sm text-gray-500">
+                        Liste de {list.user_name} {list.user_lastname}
+                    </p>
+                </div>
+                <div className="flex items-center shrink-0">
                     <Checkbox
                         id="is_secret_santa"
                         name="is_secret_santa"
@@ -21,7 +24,7 @@ export default function UserListHeader({ auth, list, setUserName }) {
                         defaultChecked={false}
                         onChange={(e) => {
                             setUserName(
-                                e.target.checked ? "Anonyme" : auth.user.name
+                                e.target.checked ? "Anonyme" : auth.user.name,
                             );
                         }}
                     />

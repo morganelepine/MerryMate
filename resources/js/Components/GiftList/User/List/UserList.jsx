@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import UserListHeader from "@/Components/GiftList/User/List/UserListHeader";
 import IdeasToReserve from "@/Components/GiftList/IdeasToReserve";
+import { LIST_WIDTH } from "@/Layouts/Partials/pageContainer";
 
 export default function UserList({
     auth,
@@ -16,6 +17,7 @@ export default function UserList({
     return (
         <AuthenticatedLayout
             user={auth.user}
+            headerWidth={LIST_WIDTH}
             header={
                 <UserListHeader
                     auth={auth}
@@ -25,6 +27,7 @@ export default function UserList({
             }
         >
             <IdeasToReserve
+                list={list}
                 ideas_available={ideas_available}
                 ideas_reserved={ideas_reserved}
                 ideas_purchased={ideas_purchased}

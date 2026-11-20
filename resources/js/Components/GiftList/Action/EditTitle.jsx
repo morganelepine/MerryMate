@@ -15,24 +15,22 @@ export default function EditListTitle({ list, setEditing }) {
     };
 
     return (
-        <div className="sm:flex items-center">
-            <h2 className="font-semibold text-xl text-gray-800 leading-tight mr-3">
-                Ma liste
-            </h2>
-            <form onSubmit={submit} className="flex items-center sm:py-0 py-3">
-                <div>
+        <div>
+            <form onSubmit={submit} className="flex items-center">
+                <div className="flex-1 min-w-0">
                     <input
                         id="name"
                         name="name"
                         value={data.name}
+                        aria-label="Nom de la liste"
                         placeholder="Le nom votre liste"
-                        className="py-1 px-2 block border-gray-300 focus:border-orange-300 focus:ring focus:ring-orange-200 focus:ring-opacity-50 rounded-md shadow-sm"
+                        className="w-full py-1 px-3 block font-yeseva text-xl sm:text-2xl text-gray-900 border-gray-300 focus:border-orange-300 focus:ring focus:ring-orange-200 focus:ring-opacity-50 rounded-md shadow-sm"
                         onChange={(e) => setData("name", e.target.value)}
                     />
 
                     <InputError message={errors.name} className="mt-2" />
                 </div>
-                <div className="space-x-2">
+                <div className="flex shrink-0">
                     <button
                         type="submit"
                         className="ml-3 hover:text-orange-600"
@@ -50,7 +48,7 @@ export default function EditListTitle({ list, setEditing }) {
                     </button>
                     <button
                         type="button"
-                        className="ml-3 text-sm italic hover:text-orange-500"
+                        className="ml-2 text-sm italic hover:text-orange-500"
                         aria-label="Annuler"
                         onClick={() => {
                             setEditing(false);
