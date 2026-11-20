@@ -103,9 +103,6 @@ class GiftListController extends Controller
      */
     public function index(): Response
     {
-        // Get all users except auth user
-        $users = User::where('id', '!=', Auth::id())->get();
-
         // Get PUBLIC lists CREATED by auth user
         $mySharedLists = $this->giftListService->getFormattedUserLists(false);
 
@@ -116,7 +113,6 @@ class GiftListController extends Controller
         $followedLists = $this->giftListService->getFollowedLists();
 
         return Inertia::render('GiftList/Index', [
-            'users' => $users,
             'mySharedLists' => $mySharedLists,
             'myPrivateLists' => $myPrivateLists,
             'followedLists' => $followedLists,
