@@ -1,6 +1,6 @@
 import { useState } from "react";
 import PropTypes from "prop-types";
-import Checkbox from "@/Components/Utils/Checkbox";
+import Toggle from "@/Components/Utils/Toggle";
 import Modal from "@/Components/Utils/Modal";
 import { LIST_TITLE } from "@/Components/GiftList/listTitle";
 
@@ -16,11 +16,12 @@ export default function UserListHeader({ auth, list, setUserName }) {
                         Liste de {list.user_name} {list.user_lastname}
                     </p>
                 </div>
-                <div className="flex items-center shrink-0">
-                    <Checkbox
+                <div className="inline-flex items-center gap-1 self-start sm:self-auto shrink-0 rounded-full bg-white border border-gray-200 shadow-sm pl-2.5 pr-1.5 py-1.5 sm:pl-3 sm:pr-2 sm:py-2">
+                    <Toggle
                         id="is_secret_santa"
                         name="is_secret_santa"
-                        type="checkbox"
+                        label="Mode Secret Santa"
+                        size="responsive"
                         defaultChecked={false}
                         onChange={(e) => {
                             setUserName(
@@ -28,10 +29,9 @@ export default function UserListHeader({ auth, list, setUserName }) {
                             );
                         }}
                     />
-                    <p className="text-sm">Passer en mode Secret Santa</p>
 
                     <button
-                        className="flex items-center justify-end text-xs text-gray-400 hover:text-gray-800"
+                        className="p-1 rounded-full text-gray-400 hover:text-gray-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-300"
                         title="En savoir plus sur le mode Secret Santa"
                         aria-label="En savoir plus sur le mode Secret Santa"
                         onClick={() => setModalVisible(true)}
@@ -41,7 +41,7 @@ export default function UserListHeader({ auth, list, setUserName }) {
                             fill="none"
                             viewBox="0 0 24 24"
                             stroke="currentColor"
-                            className="w-4 h-4 ml-1"
+                            className="w-4 h-4"
                         >
                             <path
                                 strokeLinecap="round"
