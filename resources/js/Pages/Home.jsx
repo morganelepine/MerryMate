@@ -6,11 +6,13 @@ import Footer from "@/Components/Home/Footer";
 export default function Home() {
     return (
         <>
-            <Head title="Home" />
+            <Head title="Listes de cadeaux partagées" />
 
-            <div className="min-h-screen flex flex-col justify-between items-center">
+            <div className="min-h-screen flex flex-col bg-cream">
                 <LoginRegister />
-                <Intro />
+                <main className="flex-1">
+                    <Intro />
+                </main>
                 <Footer />
             </div>
         </>

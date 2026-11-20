@@ -38,7 +38,7 @@ export default function ForgotPassword({ status }) {
                 <InputError message={errors.email} className="mt-2" />
 
                 {status && (
-                    <div className="mt-2 font-medium text-sm text-indigo-500">
+                    <div className="mt-2 font-medium text-sm text-lilac-800">
                         {status}
                     </div>
                 )}

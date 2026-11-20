@@ -39,7 +39,7 @@ export default function Login({ status, canResetPassword }) {
             <Head title="Connexion" />
 
             {status && (
-                <div className="mb-4 font-medium text-sm text-indigo-500">
+                <div className="mb-4 font-medium text-sm text-lilac-800">
                     {status}
                 </div>
             )}
@@ -136,14 +136,13 @@ export default function Login({ status, canResetPassword }) {
                     </label>
                 </div>
 
-                <div className="flex sm:flex-row flex-col items-center justify-end mt-4 sm:space-x-4">
+                <div className="flex flex-col items-center justify-center mt-6 gap-2">
                     <PrimaryButton disabled={processing}>
                         Se connecter
                     </PrimaryButton>
-
                     <Link
                         href={route("register")}
-                        className="underline text-sm text-gray-600 hover:text-orange-500 rounded-md mt-2 sm:mt-0"
+                        className="underline text-sm text-gray-600 hover:text-orange-500"
                     >
                         Pas encore de compte ?
                     </Link>

@@ -65,12 +65,6 @@ export default function InstallPrompt() {
     return (
         <header className="fixed bottom-3 left-3 right-3 z-50 mx-auto max-w-sm animate-slide-up font-sans sm:bottom-4 sm:left-4 sm:right-4 sm:max-w-md">
             <div className="flex items-center gap-2.5 rounded-2xl border border-lilac-100 bg-white p-3 shadow-up sm:gap-3 sm:p-4">
-                <img
-                    src="/icons/logo-MerryMate-192.png"
-                    alt="MerryMate"
-                    className="h-10 w-10 flex-shrink-0 rounded-xl sm:h-11 sm:w-11"
-                />
-
                 <div className="min-w-0 flex-1">
                     <p className="font-yeseva text-sm text-orange-500 sm:text-base">
                         Installer MerryMate
@@ -96,7 +90,7 @@ export default function InstallPrompt() {
                 {!ios && (
                     <button
                         onClick={handleInstall}
-                        className="flex-shrink-0 rounded-lg bg-indigo-500 px-2.5 py-1.5 text-xs text-white transition-colors hover:bg-orange-500 sm:px-3 sm:text-sm"
+                        className="flex-shrink-0 rounded-lg bg-orange-600 px-2.5 py-1.5 text-xs text-white transition-colors hover:bg-orange-500 sm:px-3 sm:text-sm"
                     >
                         Installer
                     </button>
