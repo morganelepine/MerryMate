@@ -8,9 +8,12 @@ dayjs.locale("fr");
 
 export default function NotifDate({ notification }) {
     return (
-        <span className="text-sm italic ml-3 text-gray-400">
+        <time
+            dateTime={notification.created_at}
+            className="block mt-0.5 text-xs text-gray-500"
+        >
             {dayjs(notification.created_at).fromNow()}
-        </span>
+        </time>
     );
 }
 

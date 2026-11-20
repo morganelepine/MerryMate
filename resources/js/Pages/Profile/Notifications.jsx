@@ -7,6 +7,7 @@ import RequestAccessToList from "@/Components/Profile/Notifications/RequestAcces
 import RequestDeclined from "@/Components/Profile/Notifications/RequestDeclined";
 import RequestAccepted from "@/Components/Profile/Notifications/RequestAccepted";
 import { getAllNotifications } from "@/api/notifications";
+import { PAGE_BODY } from "@/Layouts/Partials/pageContainer";
 
 export default function Notifications({ auth }) {
     const [notifications, setNotifications] = useState([]);
@@ -15,66 +16,59 @@ export default function Notifications({ auth }) {
         getAllNotifications()
             .then(setNotifications)
             .catch((error) =>
-                console.error("Error fetching notifications: ", error)
+                console.error("Error fetching notifications: ", error),
             );
     }, []);
 
     return (
-        <AuthenticatedLayout
-            user={auth.user}
-            header={
-                <div className="flex items-center justify-between">
-                    <h2 className="font-semibold text-xl text-gray-800 leading-tight">
-                        Mes notifications
-                    </h2>
-                </div>
-            }
-        >
-            <Head title="Mes notifications" />
+        <AuthenticatedLayout user={auth.user} title="Notifications">
+            <Head title="Notifications" />
 
-            <div className="max-w-4xl mx-auto pb-14 px-4 mt-6 space-y-5">
+            <div className={PAGE_BODY}>
                 {notifications.length ? (
-                    notifications.map((notification) => {
-                        if (notification.type === "list-followed") {
-                            return (
-                                <ListFollowed
-                                    key={notification.id}
-                                    notification={notification}
-                                />
-                            );
-                        } else if (notification.type === "request-access") {
-                            return (
-                                <RequestAccessToList
-                                    key={notification.id}
-                                    notification={notification}
-                                />
-                            );
-                        } else if (
-                            notification.type === "response-to-request" &&
-                            notification.data.response === "décliné"
-                        ) {
-                            return (
-                                <RequestDeclined
-                                    key={notification.id}
-                                    notification={notification}
-                                />
-                            );
-                        } else if (
-                            notification.type === "response-to-request" &&
-                            notification.data.response === "accepté"
-                        ) {
-                            return (
-                                <RequestAccepted
-                                    key={notification.id}
-                                    notification={notification}
-                                />
-                            );
-                        } else {
-                            return null;
-                        }
-                    })
+                    <ul className="space-y-3">
+                        {notifications.map((notification) => {
+                            if (notification.type === "list-followed") {
+                                return (
+                                    <ListFollowed
+                                        key={notification.id}
+                                        notification={notification}
+                                    />
+                                );
+                            } else if (notification.type === "request-access") {
+                                return (
+                                    <RequestAccessToList
+                                        key={notification.id}
+                                        notification={notification}
+                                    />
+                                );
+                            } else if (
+                                notification.type === "response-to-request" &&
+                                notification.data.response === "décliné"
+                            ) {
+                                return (
+                                    <RequestDeclined
+                                        key={notification.id}
+                                        notification={notification}
+                                    />
+                                );
+                            } else if (
+                                notification.type === "response-to-request" &&
+                                notification.data.response === "accepté"
+                            ) {
+                                return (
+                                    <RequestAccepted
+                                        key={notification.id}
+                                        notification={notification}
+                                    />
+                                );
+                            } else {
+                                return null;
+                            }
+                        })}
+                    </ul>
                 ) : (
-                    <p className="text-center">
+                    <p className="text-gray-600">
                         Vous n'avez reçu aucune notification.
                     </p>
                 )}
