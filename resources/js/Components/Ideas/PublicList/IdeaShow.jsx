@@ -1,5 +1,4 @@
 import PropTypes from "prop-types";
-import Linkify from "linkify-react";
 
 function HeartIcon() {
     return (
@@ -8,80 +7,110 @@ function HeartIcon() {
             viewBox="0 0 24 24"
             aria-label="Favori"
             role="img"
-            className="inline-block w-4 h-4 mr-1 -mt-0.5 align-middle fill-orange-500"
+            className="inline-block w-4 h-4 mr-1.5 -mt-1 align-middle fill-orange-500"
         >
             <path d="m11.645 20.91-.007-.003-.022-.012a15.247 15.247 0 0 1-.383-.218 25.18 25.18 0 0 1-4.244-3.17C4.688 15.36 2.25 12.174 2.25 8.25 2.25 5.322 4.714 3 7.688 3A5.5 5.5 0 0 1 12 5.052 5.5 5.5 0 0 1 16.313 3c2.973 0 5.437 2.322 5.437 5.25 0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 0 1-4.244 3.17 15.247 15.247 0 0 1-.383.219l-.022.012-.007.004-.003.001a.752.752 0 0 1-.704 0l-.003-.001Z" />
         </svg>
     );
 }
 
+// The link field is free text: only treat it as a URL when it parses to a real domain.
+function parseLink(link) {
+    if (!link) return null;
+    try {
+        const url = new URL(
+            /^https?:\/\//i.test(link) ? link : `https://${link}`,
+        );
+        if (!url.hostname.includes(".")) return null;
+        return { href: url.href, host: url.hostname.replace(/^www\./, "") };
+    } catch {
+        return null;
+    }
+}
+
 export default function IdeaShow({ idea }) {
     const isFavorite = idea.favorite === 1;
-    const hasHeading = idea.idea || idea.is_multiple === 1 || idea.details;
+    const isMultiple = idea.is_multiple === 1;
+    const isPromo = idea.promo === 1;
+    const link = parseLink(idea.link);
+    const title = idea.idea || link?.host || idea.link;
 
     return (
-        <div className="flex flex-col">
-            <div className="flex justify-between gap-3">
-                <div className="flex flex-col gap-1.5 flex-1 min-w-0">
-                    {/* Inline flow so the heart and the badges follow the title instead of wrapping as whole blocks */}
-                    {hasHeading && (
-                        <p className="text-sm leading-6 break-words">
-                            {isFavorite && idea.idea && <HeartIcon />}
-                            {idea.idea && (
-                                <span className="sm:uppercase font-semibold mr-3">
-                                    {idea.idea}
-                                </span>
-                            )}
-                            {idea.details && (
-                                <span className="inline-block max-w-full text-xs leading-4 text-orange-500 border border-orange-400 rounded-full px-3 py-0.5 mr-3">
-                                    {idea.details}
-                                </span>
-                            )}
-                            {idea.is_multiple === 1 && (
-                                <span className="italic normal-case text-xs text-gray-600 mr-3">
-                                    {idea.idea
-                                        ? "(peut être offert plusieurs fois)"
-                                        : "Peut être offert plusieurs fois"}
-                                </span>
-                            )}
-                        </p>
+        <div className="flex flex-col gap-3">
+            <div className="flex items-start justify-between gap-3">
+                <p className="min-w-0 break-words leading-6">
+                    {isFavorite && <HeartIcon />}
+                    <span className="font-semibold text-gray-900">{title}</span>
+                    {idea.details && (
+                        <span className="ml-2 text-gray-500 text-sm">
+                            ({idea.details})
+                        </span>
                     )}
-                    {idea.link && (
-                        <p className="text-sm italic hover:text-orange-500 truncate">
-                            {isFavorite && !idea.idea && <HeartIcon />}
-                            <Linkify options={{ target: "blank" }}>
-                                {idea.link}
-                            </Linkify>
-                        </p>
-                    )}
-                </div>
-                {idea.price && (
-                    <div className="min-w-max">
-                        <p className="text-xs text-white bg-orange-500 rounded-lg px-2 py-1 text-center">
-                            {idea.price} €
-                        </p>
-                    </div>
+                </p>
+
+                {(idea.price || isPromo) && (
+                    <p className="shrink-0 whitespace-nowrap leading-6">
+                        {isPromo && (
+                            <span className="mr-2 text-xs text-orange-700">
+                                ({idea.promo_details || "en promo"})
+                            </span>
+                        )}
+                        {idea.price && (
+                            <span className="font-semibold text-gray-900">
+                                {idea.price} €
+                            </span>
+                        )}
+                    </p>
                 )}
             </div>
-            {idea.promo === 1 && (
-                <div className="flex items-center mt-2">
-                    <div className="flex items-center">
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            viewBox="0 0 24 24"
-                            fill="currentColor"
-                            aria-hidden="true"
-                            className="w-4 h-4 mr-1"
-                        >
-                            <path d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12zm13.36-1.814a.75.75 0 10-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 00-1.06 1.06l2.25 2.25a.75.75 0 001.14-.094l3.75-5.25z" />
-                        </svg>
 
-                        <p className="text-sm mr-2">en promo</p>
-                    </div>
-                    {idea.promo_details && (
-                        <p className="text-xs text-center italic bg-orange-50 rounded-full px-3 py-1 ml-2 mt-1">
-                            {idea.promo_details}
-                        </p>
+            {(isMultiple || idea.link) && (
+                <div className="flex flex-wrap items-center gap-2">
+                    {isMultiple && (
+                        <span className="inline-flex items-center gap-1.5 rounded-full bg-stone-100 px-3 py-1 text-xs text-stone-600">
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                strokeWidth="1.5"
+                                stroke="currentColor"
+                                className="w-4 h-4"
+                                aria-hidden="true"
+                            >
+                                <path d="M19.5 12c0-1.232-.046-2.453-.138-3.662a4.006 4.006 0 0 0-3.7-3.7 48.678 48.678 0 0 0-7.324 0 4.006 4.006 0 0 0-3.7 3.7c-.017.22-.032.441-.046.662M19.5 12l3-3m-3 3-3-3m-12 3c0 1.232.046 2.453.138 3.662a4.006 4.006 0 0 0 3.7 3.7 48.656 48.656 0 0 0 7.324 0 4.006 4.006 0 0 0 3.7-3.7c.017-.22.032-.441.046-.662M4.5 12l3 3m-3-3-3 3" />
+                            </svg>
+                            Plusieurs fois
+                        </span>
+                    )}
+
+                    {link ? (
+                        <a
+                            href={link.href}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="ml-auto inline-flex max-w-full items-center gap-1.5 rounded-full bg-orange-100 px-3 py-1 text-sm text-orange-700 hover:bg-orange-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-300"
+                        >
+                            <span className="truncate">{link.host}</span>
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                strokeWidth="1.5"
+                                stroke="currentColor"
+                                className="w-4 h-4 shrink-0"
+                                aria-hidden="true"
+                            >
+                                <path d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
+                            </svg>
+                            <span className="sr-only">(nouvel onglet)</span>
+                        </a>
+                    ) : (
+                        idea.link &&
+                        idea.idea && (
+                            <span className="ml-auto max-w-full truncate text-sm text-gray-500">
+                                {idea.link}
+                            </span>
+                        )
                     )}
                 </div>
             )}
@@ -90,5 +119,14 @@ export default function IdeaShow({ idea }) {
 }
 
 IdeaShow.propTypes = {
-    idea: PropTypes.object.isRequired,
+    idea: PropTypes.shape({
+        idea: PropTypes.string,
+        link: PropTypes.string,
+        details: PropTypes.string,
+        price: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+        favorite: PropTypes.number,
+        is_multiple: PropTypes.number,
+        promo: PropTypes.number,
+        promo_details: PropTypes.string,
+    }).isRequired,
 };
