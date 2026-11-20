@@ -69,7 +69,7 @@ export default function Notifications({ auth }) {
                     </ul>
                 ) : (
                     <p className="text-gray-600">
-                        Vous n'avez reçu aucune notification.
+                        Tu n'as reçu aucune notification.
                     </p>
                 )}
             </div>

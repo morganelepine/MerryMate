@@ -26,7 +26,7 @@ export default function GuestListHeader({ list, setUserName }) {
                         htmlFor="guest_first_name"
                         className="text-sm text-gray-500 whitespace-nowrap"
                     >
-                        Votre prénom (facultatif) :
+                        Ton prénom (facultatif) :
                     </label>
                     <TextInput
                         id="guest_first_name"

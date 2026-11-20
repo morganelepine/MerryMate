@@ -19,7 +19,7 @@ export default function SearchList({ auth }) {
         setError("");
 
         if (search.trim() === "") {
-            setError("Veuillez renseigner un nom pour lancer la recherche.");
+            setError("Renseigne un nom pour lancer la recherche.");
             return;
         }
 
@@ -30,7 +30,7 @@ export default function SearchList({ auth }) {
             console.error("Error fetching search results: ", error);
             setError(
                 error.response?.data?.errorMessage ??
-                    "Oops, une erreur est survenue. Veuillez réessayer.",
+                    "Oops, une erreur est survenue. Réessaie.",
             );
         }
     };

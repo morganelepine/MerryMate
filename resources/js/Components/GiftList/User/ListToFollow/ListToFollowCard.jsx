@@ -32,7 +32,7 @@ export default function ListToFollowCard({ auth, listToFollow }) {
         } catch (error) {
             console.error("Error while sending the request:", error);
             toast.error(
-                "Oops... votre demande n'a pas été envoyée. Veuillez réessayez après avoir rechargé la page.",
+                "Oops... ta demande n'a pas été envoyée. Recharge la page et réessaie.",
             );
             setRequestSent(false);
         }

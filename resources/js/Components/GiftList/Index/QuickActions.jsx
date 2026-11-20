@@ -95,7 +95,7 @@ export default function QuickActions() {
                         href={route("profile.purchase")}
                         icon="budget"
                         title="Budget"
-                        subtitle="Suivre vos dépenses"
+                        subtitle="Suivre tes dépenses"
                     />
                 </li>
                 <li>
@@ -103,7 +103,7 @@ export default function QuickActions() {
                         href={route("profile.gifts")}
                         icon="gifts"
                         title="Cadeaux reçus"
-                        subtitle="Ceux qu’on vous a offerts"
+                        subtitle="Ceux qu’on t’a offerts"
                     />
                 </li>
                 <li>

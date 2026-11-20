@@ -20,8 +20,8 @@ export default function ForgotPassword({ status }) {
             <Head title="Mot de passe oublié" />
 
             <div className="mb-4 text-sm text-gray-600">
-                Renseignez votre adresse e-mail afin de recevoir un lien de
-                réinitialisation de votre mot de passe.
+                Renseigne ton adresse e-mail pour recevoir un lien de
+                réinitialisation de ton mot de passe.
             </div>
 
             <form onSubmit={submit}>

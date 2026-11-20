@@ -54,12 +54,12 @@ export default function ArchiveReminderModal({
                     L'événement est passé ?
                 </p>
                 <p className="text-gray-600 font-bold">
-                    Pensez à archiver votre liste !
+                    Pense à archiver ta liste !
                 </p>
                 <p className="text-gray-600 mt-4">
-                    Tous les cadeaux qui vous ont été offerts seront retirés de
-                    la liste. Mais pas d'inquiétude, les idées toujours
-                    disponibles resteront bien affichées dans votre liste.
+                    Tous les cadeaux qui t’ont été offerts seront retirés de la
+                    liste. Mais pas d'inquiétude, les idées toujours disponibles
+                    resteront bien affichées dans ta liste.
                 </p>
                 <div className="mt-4 flex justify-center">
                     <PrimaryButton size="small" onClick={archiveList}>

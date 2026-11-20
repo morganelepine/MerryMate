@@ -44,7 +44,7 @@ export default function FollowedLists({ followedLists }) {
                 </>
             ) : (
                 <p className="mt-6 text-gray-600">
-                    Vous ne suivez pas encore de liste.
+                    Tu ne suis pas encore de liste.
                 </p>
             )}
         </section>

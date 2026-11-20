@@ -20,7 +20,7 @@ export default function RequestButtons({ notification }) {
         } catch (error) {
             console.error("Error while sending the response:", error);
             toast.error(
-                "Oops... votre demande n'a pas été envoyée. Veuillez réessayez après avoir rechargé la page.",
+                "Oops... ta demande n'a pas été envoyée. Recharge la page et réessaie.",
             );
         }
     };
@@ -31,7 +31,7 @@ export default function RequestButtons({ notification }) {
     if (notification.data.response) {
         return (
             <p className="mt-2 text-sm text-gray-600">
-                Vous avez{" "}
+                Tu as{" "}
                 {notification.data.response === "accepté"
                     ? "accepté"
                     : "refusé"}{" "}

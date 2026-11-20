@@ -75,13 +75,13 @@ export default function UserListHeader({ auth, list, setUserName }) {
                         Le mode Secret Santa
                     </h2>
                     <p className="mt-1 text-sm text-gray-600">
-                        En activant le mode Secret Santa, vous restez anonyme
-                        lorsque vous réservez ou achetez un cadeau.
+                        En activant le mode Secret Santa, tu restes anonyme
+                        lorsque tu réserves ou achètes un cadeau.
                     </p>
                     <p className="mt-1 text-sm text-gray-600">
                         En face du cadeau réservé/acheté, les autres
-                        participant·e·s ne verront plus votre nom mais la
-                        mention "Anonyme".
+                        participant·e·s ne verront plus ton nom mais la mention
+                        "Anonyme".
                     </p>
                     <p className="mt-1 text-sm text-gray-600">
                         Cela permet de préserver la surprise lors de l'échange

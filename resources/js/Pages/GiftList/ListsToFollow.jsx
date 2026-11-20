@@ -9,7 +9,7 @@ export default function ListsToFollow({ auth, listsToFollow }) {
         <AuthenticatedLayout
             user={auth.user}
             title="Chercher une liste"
-            subtitle="Retrouvez la liste d’un proche par son prénom ou le nom de la liste"
+            subtitle="Retrouve la liste d’un proche par son prénom ou le nom de la liste"
         >
             <Head title="Chercher une liste" />
 
@@ -18,7 +18,7 @@ export default function ListsToFollow({ auth, listsToFollow }) {
                     <SearchList auth={auth} />
                 ) : (
                     <p className="text-gray-600">
-                        Il n’y a actuellement aucune liste à suivre. Revenez
+                        Il n’y a actuellement aucune liste à suivre. Reviens
                         plus tard&nbsp;!
                     </p>
                 )}

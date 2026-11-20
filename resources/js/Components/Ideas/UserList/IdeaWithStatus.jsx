@@ -61,9 +61,7 @@ export default function IdeaWithStatus({ idea, status, actions }) {
                         className={`inline-flex items-center gap-2 rounded-full border px-3 py-1 text-sm ${idea.is_mine ? variant.badgeMine : variant.badgeOther}`}
                     >
                         {variant.label}
-                        {idea.is_mine
-                            ? " par vous"
-                            : ` par ${idea.status_user}`}
+                        {idea.is_mine ? " par toi" : ` par ${idea.status_user}`}
                         {" · "}
                         {dayjs(idea.updated_at).fromNow()}
                     </p>

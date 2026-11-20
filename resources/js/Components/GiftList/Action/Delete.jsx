@@ -40,7 +40,7 @@ export default function DeleteListButton({ list }) {
             <Modal show={confirmingListDeletion} onClose={closeModal}>
                 <div className="p-6">
                     <h2 className="text-lg font-medium ">
-                        Êtes-vous sûr·e de vouloir supprimer cette liste ?
+                        Es-tu sûr·e de vouloir supprimer cette liste ?
                     </h2>
 
                     <p className="mt-1 text-sm text-gray-600">

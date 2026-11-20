@@ -23,7 +23,7 @@ export default function EditListTitle({ list, setEditing }) {
                         name="name"
                         value={data.name}
                         aria-label="Nom de la liste"
-                        placeholder="Le nom votre liste"
+                        placeholder="Le nom de ta liste"
                         className="w-full py-1 px-3 block font-yeseva text-xl sm:text-2xl text-gray-900 border-gray-300 focus:border-orange-300 focus:ring focus:ring-orange-200 focus:ring-opacity-50 rounded-md shadow-sm"
                         onChange={(e) => setData("name", e.target.value)}
                     />

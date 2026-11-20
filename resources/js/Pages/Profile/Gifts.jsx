@@ -21,7 +21,7 @@ export default function Gifts({ auth, ideas }) {
         <AuthenticatedLayout
             user={auth.user}
             title="Cadeaux reçus"
-            subtitle="Les cadeaux qu’on vous a offerts depuis vos listes"
+            subtitle="Les cadeaux qu’on t’a offerts depuis tes listes"
         >
             <Head title="Cadeaux reçus" />
 
@@ -47,8 +47,8 @@ export default function Gifts({ auth, ideas }) {
                     </div>
                 ) : (
                     <p className="text-gray-600">
-                        Vous n’avez reçu aucun cadeau provenant de vos listes
-                        pour le moment.
+                        Tu n’as reçu aucun cadeau provenant de tes listes pour
+                        le moment.
                     </p>
                 )}
             </div>

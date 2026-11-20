@@ -64,13 +64,13 @@ export default function ArchiveListButton({ list }) {
             <Modal show={confirmingListArchiving} onClose={closeModal}>
                 <div className="p-6">
                     <h2 className="text-lg font-medium ">
-                        Êtes-vous sûr·e de vouloir archiver cette liste ?
+                        Es-tu sûr·e de vouloir archiver cette liste ?
                     </h2>
 
                     <p className="mt-1 text-sm text-gray-600">
-                        Une fois la liste archivée, toutes les idées qui vous
-                        ont été offertes seront définitivement supprimées de
-                        votre liste.
+                        Une fois la liste archivée, toutes les idées qui t’ont
+                        été offertes seront définitivement supprimées de ta
+                        liste.
                     </p>
 
                     <div className="mt-6 flex justify-end">

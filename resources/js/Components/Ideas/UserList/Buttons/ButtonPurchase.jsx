@@ -88,7 +88,7 @@ export default function ButtonPurchase({ idea, userName }) {
             <Modal show={purchaseConfirm} onClose={closeModal}>
                 <div className="p-6 flex flex-col items-center">
                     <h2 className="text-lg text-center font-medium">
-                        Quel modèle souhaitez-vous offrir&nbsp;?
+                        Quel modèle souhaites-tu offrir&nbsp;?
                     </h2>
                     <p className="mt-1 text-sm text-center text-gray-600">
                         Cela permettra aux autres personnes de ne pas acheter le

@@ -16,13 +16,13 @@ const VISIBILITIES = [
         value: "shared",
         title: "Partagée",
         description:
-            "Elle apparaît dans « Chercher ». Vos proches peuvent vous demander l’accès ou saisir votre code secret.",
+            "Elle apparaît dans « Chercher ». Tes proches peuvent te demander l’accès ou saisir ton code secret.",
     },
     {
         value: "private",
         title: "Privée",
         description:
-            "Visible uniquement par vous, pour noter vos idées en toute discrétion.",
+            "Visible uniquement par toi, pour noter tes idées en toute discrétion.",
     },
 ];
 
@@ -145,8 +145,8 @@ export default function Create({ auth }) {
                                 id="private_code_help"
                                 className="mt-2 text-sm text-gray-600"
                             >
-                                Communiquez ce code à vos proches pour qu’ils
-                                accèdent directement à votre liste.
+                                Communique ce code à tes proches pour qu’ils
+                                accèdent directement à ta liste.
                             </p>
                             <InputError
                                 message={errors.private_code}

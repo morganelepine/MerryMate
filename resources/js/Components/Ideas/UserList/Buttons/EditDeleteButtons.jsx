@@ -66,7 +66,7 @@ export default function EditDeleteButtons({ idea, setEditing }) {
             <Modal show={confirmingListDeletion} onClose={closeModal}>
                 <div className="flex flex-col items-center p-6">
                     <h2 className="text-lg text-center font-medium">
-                        Êtes-vous sûr·e de vouloir supprimer cette idée ?
+                        Es-tu sûr·e de vouloir supprimer cette idée ?
                     </h2>
 
                     <div className="mt-4">

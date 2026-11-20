@@ -28,8 +28,8 @@ export default function ConfirmPassword() {
             <Head title="Confirmer le mot de passe" />
 
             <div className="mb-4 text-sm text-gray-600">
-                Il s'agit d'une zone sécurisée de l'application. Veuillez
-                confirmer votre mot de passe avant de continuer.
+                Il s'agit d'une zone sécurisée de l'application. Confirme ton
+                mot de passe avant de continuer.
             </div>
 
             <form onSubmit={submit}>

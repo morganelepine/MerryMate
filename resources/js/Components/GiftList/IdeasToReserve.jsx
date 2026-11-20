@@ -26,7 +26,7 @@ const TABS = {
         label: "Disponibles",
         title: "Idées disponibles",
         icon: "gift",
-        empty: "Toutes les idées ont trouvé preneur pour le moment. Revenez plus tard !",
+        empty: "Toutes les idées ont trouvé preneur pour le moment. Reviens plus tard !",
         text: "text-orange-600",
         band: "",
         activeTab: "bg-orange-50 border-orange-300 text-orange-700",
@@ -77,7 +77,7 @@ Icon.propTypes = {
 // Explains the action icons next to the cards; hidden on mobile where buttons show their label.
 function Hints({ items }) {
     return (
-        <ul className="hidden sm:flex flex-wrap items-center gap-x-6 gap-y-1 mt-3 text-sm text-gray-500">
+        <ul className="hidden sm:flex flex-wrap items-center justify-end gap-x-6 gap-y-1 ml-auto text-sm text-gray-500">
             {items.map(([icon, label]) => (
                 <li key={label} className="inline-flex items-center gap-1.5">
                     <Icon name={icon} className="w-4 h-4" />
@@ -113,16 +113,16 @@ export default function IdeasToReserve({
 
     const hintsByTab = {
         available: [
-            ...(canReserve ? [["reserve", "Réservez une idée"]] : []),
-            ["purchase", "Indiquez votre achat"],
+            ...(canReserve ? [["reserve", "Réserve une idée"]] : []),
+            ["purchase", "Indique ton achat"],
         ],
         reserved: canReserve
             ? [
-                  ["purchase", "Confirmez votre achat"],
-                  ["cancel", "Annulez votre réservation"],
+                  ["purchase", "Confirme ton achat"],
+                  ["cancel", "Annule ta réservation"],
               ]
             : [],
-        purchased: [["cancel", "Annulez votre achat"]],
+        purchased: [["cancel", "Annule ton achat"]],
     };
 
     const renderIdea = (idea) => {
@@ -170,7 +170,7 @@ export default function IdeasToReserve({
                 <p
                     className={`w-full ${LIST_WIDTH} ${PAGE_GUTTER} py-10 text-center`}
                 >
-                    Cette liste est vide pour le moment. Revenez plus tard !
+                    Cette liste est vide pour le moment. Reviens plus tard !
                 </p>
             ) : (
                 <>
@@ -239,12 +239,11 @@ export default function IdeasToReserve({
                                 >
                                     {tab.title}
                                 </h2>
+                                {ideas.length > 0 &&
+                                    hintsByTab[activeTab].length > 0 && (
+                                        <Hints items={hintsByTab[activeTab]} />
+                                    )}
                             </div>
-
-                            {ideas.length > 0 &&
-                                hintsByTab[activeTab].length > 0 && (
-                                    <Hints items={hintsByTab[activeTab]} />
-                                )}
 
                             {activeTab === "reserved" && !canReserve && (
                                 <p className="mt-3 text-sm text-gray-500">

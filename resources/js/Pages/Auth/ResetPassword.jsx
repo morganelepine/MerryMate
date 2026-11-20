@@ -67,7 +67,7 @@ export default function ResetPassword({ token, email }) {
                 <div className="mt-4">
                     <InputLabel
                         htmlFor="password_confirmation"
-                        value="Confirmez votre mot de passe"
+                        value="Confirme ton mot de passe"
                     />
 
                     <TextInput

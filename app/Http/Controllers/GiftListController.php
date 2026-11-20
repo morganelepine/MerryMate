@@ -148,7 +148,7 @@ class GiftListController extends Controller
         $listsToFollow = $this->giftListService->formatEachLists($listsToFollow);
 
         if ($listsToFollow->isEmpty()) {
-            return response()->json(['errorMessage' => 'Oops, aucun résultat ne correspond à votre recherche... Essayez un autre nom !'], 404);
+            return response()->json(['errorMessage' => 'Oops, aucun résultat ne correspond à ta recherche... Essaie un autre nom !'], 404);
         }
 
         return response()->json(['listsToFollow' => $listsToFollow]);

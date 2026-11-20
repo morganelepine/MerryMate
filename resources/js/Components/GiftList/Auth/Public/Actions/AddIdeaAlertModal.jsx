@@ -47,7 +47,7 @@ export default function AddIdeaAlertModal({
             <div className="py-8 px-16 align-center">
                 <p className="text-gray-600 text-center">
                     Ça reste entre nous, mais il ne reste plus
-                    {numberOfAvailableIdeas} dans votre liste...
+                    {numberOfAvailableIdeas} dans ta liste...
                 </p>
                 <div className="mt-4 gap-2 flex flex-col text-center">
                     <PrimaryButton

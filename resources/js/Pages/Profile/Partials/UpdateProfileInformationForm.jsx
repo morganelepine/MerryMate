@@ -33,7 +33,7 @@ export default function UpdateProfileInformation({
                 </h2>
 
                 {/* <p className="mt-1 text-sm text-gray-600">
-                    Mettez à jour votre nom et votre adresse mail.
+                    Mets à jour ton nom et ton adresse mail.
                 </p> */}
             </header>
 
@@ -88,21 +88,21 @@ export default function UpdateProfileInformation({
                 {mustVerifyEmail && user.email_verified_at === null && (
                     <div>
                         <p className="text-sm mt-2 text-gray-800">
-                            Your email address is unverified.
+                            Ton adresse e-mail n’est pas encore vérifiée.
                             <Link
                                 href={route("verification.send")}
                                 method="post"
                                 as="button"
                                 className="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
                             >
-                                Click here to re-send the verification email.
+                                Renvoyer l’e-mail de vérification
                             </Link>
                         </p>
 
                         {status === "verification-link-sent" && (
                             <div className="mt-2 font-medium text-sm text-lilac-800">
-                                A new verification link has been sent to your
-                                email address.
+                                Un nouveau lien de vérification a été envoyé à
+                                ton adresse e-mail.
                             </div>
                         )}
                     </div>
@@ -121,7 +121,7 @@ export default function UpdateProfileInformation({
                         leaveTo="opacity-0"
                     >
                         <p className="text-sm text-gray-600">
-                            Vos informations ont bien été enregistrées.
+                            Tes informations ont bien été enregistrées.
                         </p>
                     </Transition>
                 </div>

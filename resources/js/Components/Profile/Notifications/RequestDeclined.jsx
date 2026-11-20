@@ -9,7 +9,7 @@ export default function RequestDeclined({ notification }) {
             tone="gray"
         >
             <span className="font-medium">{notification.data.listOwner}</span> a
-            refusé votre demande de suivre sa liste{" "}
+            refusé ta demande de suivre sa liste{" "}
             <span className="font-medium">{notification.data.list}</span>
         </NotificationItem>
     );

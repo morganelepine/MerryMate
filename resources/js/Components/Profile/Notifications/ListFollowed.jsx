@@ -9,7 +9,7 @@ export default function ListFollowed({ notification }) {
             tone="lilac"
         >
             <span className="font-medium">{notification.data.follower}</span> a
-            commencé à suivre votre liste{" "}
+            commencé à suivre ta liste{" "}
             <span className="font-medium">
                 {notification.data.listFollowed}
             </span>

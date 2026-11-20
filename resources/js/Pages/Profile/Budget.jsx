@@ -25,7 +25,7 @@ export default function Budget({ auth, ideas, totalPrice }) {
         <AuthenticatedLayout
             user={auth.user}
             title="Mon budget"
-            subtitle="Les cadeaux que vous avez achetés pour vos proches"
+            subtitle="Les cadeaux que tu as achetés pour tes proches"
             actions={
                 ideas.length > 0 ? (
                     <p className="text-right">
@@ -75,7 +75,7 @@ export default function Budget({ auth, ideas, totalPrice }) {
                     </div>
                 ) : (
                     <p className="text-gray-600">
-                        Vous n’avez effectué aucun achat pour le moment.
+                        Tu n’as effectué aucun achat pour le moment.
                     </p>
                 )}
             </div>

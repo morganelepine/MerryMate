@@ -48,12 +48,12 @@ export default function UpdatePasswordForm({ className = "" }) {
         <section className={className}>
             <header>
                 <h2 className="font-yeseva text-xl text-gray-900">
-                    Mettre à jour votre mot de passe
+                    Mettre à jour ton mot de passe
                 </h2>
 
                 <p className="mt-1 text-sm text-gray-600">
-                    Veillez à ce que votre compte utilise un mot de passe long
-                    et aléatoire pour rester sécurisé.
+                    Veille à ce que ton compte utilise un mot de passe long et
+                    aléatoire pour rester sécurisé.
                 </p>
             </header>
 
@@ -104,7 +104,7 @@ export default function UpdatePasswordForm({ className = "" }) {
                 <div>
                     <InputLabel
                         htmlFor="password_confirmation"
-                        value="Confirmez votre nouveau mot de passe"
+                        value="Confirme ton nouveau mot de passe"
                     />
 
                     <TextInput
@@ -137,7 +137,7 @@ export default function UpdatePasswordForm({ className = "" }) {
                         leaveTo="opacity-0"
                     >
                         <p className="text-sm text-gray-600">
-                            Votre nouveau mot de passe a bien été enregistré.
+                            Ton nouveau mot de passe a bien été enregistré.
                         </p>
                     </Transition>
                 </div>

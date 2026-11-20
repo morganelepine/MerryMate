@@ -20,7 +20,7 @@ export default function IdeaPrivateEdit({ auth, idea, setEditing }) {
                         id="idea"
                         name="idea"
                         value={data.idea}
-                        placeholder="Votre idée"
+                        placeholder="Ton idée"
                         className="w-full border-gray-300 focus:border-orange-300 focus:ring focus:ring-orange-200 focus:ring-opacity-50 rounded-md shadow-sm"
                         isFocused={true}
                         onChange={(e) => setData("idea", e.target.value)}

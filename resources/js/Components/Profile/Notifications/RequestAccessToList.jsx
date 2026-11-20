@@ -13,7 +13,7 @@ export default function RequestAccessToList({ notification }) {
             <span className="font-medium">
                 {notification.data.requestingUser}
             </span>{" "}
-            souhaite accéder à votre liste{" "}
+            souhaite accéder à ta liste{" "}
             <span className="font-medium">
                 {notification.data.listToFollow}
             </span>

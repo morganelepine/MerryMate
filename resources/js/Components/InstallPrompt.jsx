@@ -71,7 +71,7 @@ export default function InstallPrompt() {
                     </p>
                     {ios ? (
                         <p className="mt-0.5 text-xs text-gray-500 sm:text-sm">
-                            Appuyez sur{" "}
+                            Appuie sur{" "}
                             <ShareIcon className="mb-0.5 inline h-3 w-3 sm:h-3.5 sm:w-3.5" />{" "}
                             puis{" "}
                             <span className="font-medium">
@@ -81,8 +81,8 @@ export default function InstallPrompt() {
                         </p>
                     ) : (
                         <p className="mt-0.5 text-xs text-gray-500 sm:text-sm">
-                            Pour y accéder depuis votre écran d&apos;accueil
-                            comme une application
+                            Pour y accéder depuis ton écran d&apos;accueil comme
+                            une application
                         </p>
                     )}
                 </div>

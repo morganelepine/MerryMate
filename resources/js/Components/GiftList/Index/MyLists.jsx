@@ -16,7 +16,7 @@ export default function MyLists({ lists }) {
                 </div>
             ) : (
                 <p className="mt-6 text-gray-600">
-                    Vous n’avez pas encore créé de liste.
+                    Tu n’as pas encore créé de liste.
                 </p>
             )}
         </section>

@@ -30,8 +30,8 @@ export default function PrivateCodeForm({
         <div className={PAGE_BODY}>
             <form onSubmit={submit} className={`${PANEL} max-w-md`}>
                 <p className="text-gray-700">
-                    Cette liste est protégée. Saisissez le code secret que{" "}
-                    {list.user_name} vous a communiqué pour y accéder.
+                    Cette liste est protégée. Saisis le code secret que{" "}
+                    {list.user_name} t’a communiqué pour y accéder.
                 </p>
 
                 <div className="mt-5">

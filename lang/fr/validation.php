@@ -15,7 +15,7 @@ return [
 
     'confirmed' => "Les mots de passe ne sont pas identiques.",
     'current_password' => 'Le mot de passe est incorrect.',
-    'email' => 'Veuillez renseigner une adresse email valide.',
+    'email' => 'Renseigne une adresse email valide.',
 
     'integer' => 'Ce champ doit contenir un nombre entier.',
 
@@ -35,7 +35,7 @@ return [
         'mixed' => 'Le mot de passe doit contenir au moins une lettre majuscule et une lettre minuscule.',
         'numbers' => 'Le mot de passe doit contenir au moins un chiffre.',
         'symbols' => 'Le mot de passe doit contenir au moins un caractère spécial.',
-        'uncompromised' => 'Le mot de passe donné est apparu dans une fuite de données. Veuillez choisir un autre :attribute.',
+        'uncompromised' => 'Le mot de passe donné est apparu dans une fuite de données. Choisis un autre :attribute.',
     ],
 
     'required' => 'Ce champ est requis.',

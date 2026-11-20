@@ -4,9 +4,7 @@ import PrimaryButton from "@/Components/Buttons/PrimaryButton";
 export default function EmptyPublicList({ list }) {
     return (
         <div className="flex flex-col text-center gap-4">
-            <p>
-                Votre liste est vide. Cliquez sur ce bouton pour la compléter :
-            </p>
+            <p>Ta liste est vide. Clique sur ce bouton pour la compléter :</p>
             <PrimaryButton href={route("ideas.create", list.id)}>
                 Commencer la liste
             </PrimaryButton>

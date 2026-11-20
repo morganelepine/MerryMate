@@ -34,7 +34,7 @@ export default function AuthLists({ auth, publicLists, privateLists }) {
         <AuthenticatedLayout
             user={auth.user}
             title="Mes listes"
-            subtitle="Les listes que vous avez créées"
+            subtitle="Les listes que tu as créées"
             actions={<CreateListButton />}
         >
             <Head title="Mes listes" />

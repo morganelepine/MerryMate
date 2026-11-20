@@ -16,16 +16,16 @@ export default function VerifyEmail({ status }) {
             <Head title="Vérification de l'e-mail" />
 
             <div className="mb-4 text-sm text-gray-600">
-                Merci pour votre inscription ! Avant de commencer, pourriez-vous
-                vérifier votre adresse e-mail en cliquant sur le lien que nous
-                venons de vous envoyer par e-mail ? Si vous ne l'avez pas reçu,
-                nous vous en enverrons un nouveau.
+                Merci pour ton inscription ! Avant de commencer, peux-tu
+                vérifier ton adresse e-mail en cliquant sur le lien que nous
+                venons de t’envoyer ? Si tu ne l’as pas reçu, nous t’en
+                enverrons un nouveau.
             </div>
 
             {status === "verification-link-sent" && (
                 <div className="mb-4 font-medium text-sm text-lilac-800">
                     Un nouveau lien de vérification a été envoyé à l'adresse que
-                    vous avez fournie lors de votre inscription.
+                    tu as fournie lors de ton inscription.
                 </div>
             )}
 

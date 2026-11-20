@@ -50,7 +50,7 @@ export default function DeleteUserForm({ className = "" }) {
                 </h2>
 
                 <p className="mt-1 text-sm text-gray-600">
-                    Une fois votre compte supprimé, toutes vos listes et données
+                    Une fois ton compte supprimé, toutes tes listes et données
                     seront définitivement supprimées.
                 </p>
             </header>
@@ -62,18 +62,18 @@ export default function DeleteUserForm({ className = "" }) {
             <Modal show={confirmingUserDeletion} onClose={closeModal}>
                 <form onSubmit={deleteUser} className="p-6">
                     <h2 className="text-lg font-medium ">
-                        Êtes-vous sûr·e de vouloir supprimer votre compte ?
+                        Es-tu sûr·e de vouloir supprimer ton compte ?
                     </h2>
 
                     <p className="mt-1 text-sm text-gray-600">
-                        Une fois votre compte supprimé, toutes vos listes et
+                        Une fois ton compte supprimé, toutes tes listes et
                         données seront définitivement supprimées.
                     </p>
 
                     <div className="mt-6">
                         <InputLabel
                             htmlFor="password"
-                            value="Password"
+                            value="Mot de passe"
                             className="sr-only"
                         />
 

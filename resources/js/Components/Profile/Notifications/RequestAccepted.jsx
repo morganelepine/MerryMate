@@ -9,7 +9,7 @@ export default function RequestAccepted({ notification }) {
             tone="sage"
         >
             <span className="font-medium">{notification.data.listOwner}</span> a
-            accepté votre demande de suivre sa liste{" "}
+            accepté ta demande de suivre sa liste{" "}
             <span className="font-medium">{notification.data.list}</span>
         </NotificationItem>
     );

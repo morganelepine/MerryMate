@@ -10,7 +10,7 @@ export default function FollowedLists({ auth, followedLists }) {
         <AuthenticatedLayout
             user={auth.user}
             title="Listes suivies"
-            subtitle="Les listes de vos proches"
+            subtitle="Les listes de tes proches"
             actions={<FindListButton />}
         >
             <Head title="Listes suivies" />
@@ -27,7 +27,7 @@ export default function FollowedLists({ auth, followedLists }) {
                     </div>
                 ) : (
                     <p className="text-gray-600">
-                        Vous ne suivez pas encore de liste.
+                        Tu ne suis pas encore de liste.
                     </p>
                 )}
             </div>
