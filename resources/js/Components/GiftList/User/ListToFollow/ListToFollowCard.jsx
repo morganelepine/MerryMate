@@ -4,6 +4,7 @@ import SecretCode from "@/Components/GiftList/User/ListToFollow/SecretCode";
 import PrimaryButton from "@/Components/Buttons/PrimaryButton";
 import { toast } from "sonner";
 import { requestAccessToList } from "@/api/notifications";
+import { formatListDate } from "@/Components/GiftList/listCard";
 
 export default function ListToFollow({ auth, listToFollow }) {
     const [requestSent, setRequestSent] = useState(false);
@@ -48,9 +49,7 @@ export default function ListToFollow({ auth, listToFollow }) {
                     de {listToFollow.user_name} {listToFollow.user_lastname}
                 </p>
                 <small className="italic text-gray-500 mt-1 mb-2">
-                    {listToFollow.isEmpty
-                        ? `Créée le ${listToFollow.formatted_created_at}`
-                        : `Mise à jour le ${listToFollow.formatted_updated_at}`}
+                    {formatListDate(listToFollow)}{" "}
                 </small>
             </div>
 

@@ -1,4 +1,3 @@
-import React from "react";
 import { Head } from "@inertiajs/react";
 import PropTypes from "prop-types";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
@@ -19,17 +18,12 @@ export default function FollowedLists({ auth, followedLists }) {
             <div className="max-w-7xl mx-auto pb-14 px-4 mt-6">
                 <div className="mt-6 flex justify-center">
                     {followedLists.length > 0 ? (
-                        <div className="flex flex-col sm:flex-row flex-wrap justify-center">
+                        <div className="grid w-full max-w-4xl gap-3 sm:grid-cols-2">
                             {followedLists.map((followedList) => (
-                                <div
-                                    className="p-5 m-5 flex flex-col text-center shadow bg-white rounded-xl"
+                                <FollowedList
                                     key={followedList.id}
-                                >
-                                    <FollowedList
-                                        followedList={followedList}
-                                        auth={auth}
-                                    />
-                                </div>
+                                    followedList={followedList}
+                                />
                             ))}
                         </div>
                     ) : (

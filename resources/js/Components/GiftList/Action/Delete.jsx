@@ -17,25 +17,25 @@ export default function DeleteListButton({ list }) {
 
     return (
         <>
-            <div className="group absolute right-0 justify-center hidden sm:block">
-                <button
-                    onClick={confirmListDeletion}
-                    aria-label="Supprimer la liste"
+            <button
+                type="button"
+                onClick={confirmListDeletion}
+                aria-label={`Supprimer la liste ${list.name}`}
+                title="Supprimer la liste"
+                className="shrink-0 p-2 rounded-full text-gray-500 hover:text-orange-600 hover:bg-gray-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-300"
+            >
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-4 w-4"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth="1.5"
+                    stroke="currentColor"
+                    aria-hidden="true"
                 >
-                    <svg
-                        xmlns="https://www.w3.org/2000/svg"
-                        className="h-7 w-7 text-gray-300 hover:text-orange-500"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                    >
-                        <path d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                </button>
-                <span className="absolute top-8 left-0 scale-0 transition-all rounded bg-orange-100 py-1 px-2 text-xs text-center text-gray-900 group-hover:scale-100">
-                    Supprimer la liste
-                </span>
-            </div>
+                    <path d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
 
             <Modal show={confirmingListDeletion} onClose={closeModal}>
                 <div className="p-6">

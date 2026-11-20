@@ -1,67 +1,56 @@
 import PropTypes from "prop-types";
 import ShowPrivateCode from "@/Components/GiftList/Action/ShowPrivateCode";
 import DeleteListButton from "@/Components/GiftList/Action/Delete";
-import PrimaryButton from "@/Components/Buttons/PrimaryButton";
 import OutlineButton from "@/Components/Buttons/OutlineButton";
+import { LIST_CARD, formatListDate } from "@/Components/GiftList/listCard";
 
 export default function AuthListCard({ list }) {
     const isSharedList = list.isPrivate === 0;
 
     return (
-        <div className="relative flex items-start w-full">
-            <div className="flex flex-col items-center w-full">
-                <div className="flex flex-col items center">
-                    {/* LIST NAME */}
-                    <div className="md:w-52">
-                        <p>
-                            Ma liste{" "}
-                            <span className="uppercase font-semibold text-orange-500">
-                                {list.name}
-                            </span>{" "}
-                        </p>
-                    </div>
-                    <small className="italic text-gray-500 mt-1 mb-2">
-                        {list.isEmpty
-                            ? `Créée le ${list.formatted_created_at}`
-                            : `Mise à jour le ${list.formatted_updated_at}`}
-                    </small>{" "}
-                </div>
-
-                <div className="flex flex-col items-center gap-4">
-                    <div className="space-x-2">
-                        <PrimaryButton
-                            size="small"
-                            href={route("lists.show", list.id)}
-                            title="Voir ma liste"
-                        >
-                            {isSharedList ? (
-                                <span>Voir ma liste</span>
-                            ) : (
-                                <span>Voir et compléter ma liste</span>
-                            )}
-                        </PrimaryButton>
-                        {isSharedList && (
-                            <OutlineButton
-                                size="small"
-                                color="orange"
-                                href={route("ideas.create", list.id)}
-                            >
-                                Compléter
-                            </OutlineButton>
-                        )}
-                    </div>
-
-                    {/* PRIVATE CODE */}
-                    {isSharedList && <ShowPrivateCode list={list} />}
+        <div className={LIST_CARD}>
+            <div className="min-w-0 flex-1">
+                <p className="font-semibold text-gray-900 truncate">
+                    {list.name}
+                </p>
+                <p className="mt-0.5 text-xs text-gray-500">
+                    {formatListDate(list)}
+                </p>
+                <div className="mt-2">
+                    {isSharedList ? (
+                        <ShowPrivateCode list={list} />
+                    ) : (
+                        <span className="inline-block rounded-full bg-stone-100 px-2 py-0.5 text-xs text-stone-600">
+                            Privée
+                        </span>
+                    )}
                 </div>
             </div>
 
-            {/* DELETE BUTTON */}
+            <OutlineButton size="small" href={route("lists.show", list.id)}>
+                Ouvrir<span className="sr-only"> la liste {list.name}</span>
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth="2"
+                    stroke="currentColor"
+                    className="w-3.5 h-3.5 ml-1"
+                    aria-hidden="true"
+                >
+                    <path d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
+                </svg>
+            </OutlineButton>
+
             <DeleteListButton list={list} />
         </div>
     );
 }
 
 AuthListCard.propTypes = {
-    list: PropTypes.object,
+    list: PropTypes.shape({
+        id: PropTypes.number.isRequired,
+        name: PropTypes.string.isRequired,
+        isPrivate: PropTypes.number,
+    }).isRequired,
 };

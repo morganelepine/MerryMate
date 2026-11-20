@@ -45,14 +45,9 @@ export default function AuthLists({ auth, publicLists, privateLists }) {
                             Mes listes partagées
                         </h1>
                         {publicLists.length ? (
-                            <div className="flex flex-col justify-center w-full">
+                            <div className="w-full space-y-3">
                                 {publicLists.map((list) => (
-                                    <div
-                                        key={list.id}
-                                        className="p-5 my-2 flex flex-col text-center shadow bg-white rounded-xl w-full"
-                                    >
-                                        <AuthListCard list={list} />
-                                    </div>
+                                    <AuthListCard key={list.id} list={list} />
                                 ))}
                             </div>
                         ) : (
@@ -65,14 +60,9 @@ export default function AuthLists({ auth, publicLists, privateLists }) {
                             Mes listes privées
                         </h1>
                         {privateLists.length ? (
-                            <div className="flex flex-col justify-center w-full">
+                            <div className="w-full space-y-3">
                                 {privateLists.map((list) => (
-                                    <div
-                                        key={list.id}
-                                        className="p-5 my-2 flex flex-col text-center shadow bg-white rounded-xl w-full"
-                                    >
-                                        <AuthListCard list={list} />
-                                    </div>
+                                    <AuthListCard key={list.id} list={list} />
                                 ))}
                             </div>
                         ) : (
