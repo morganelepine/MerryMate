@@ -28,7 +28,9 @@ export default function UpdateProfileInformation({
     return (
         <section className={className}>
             <header>
-                <h2 className="text-lg font-medium ">Mes informations</h2>
+                <h2 className="font-yeseva text-xl text-gray-900">
+                    Mes informations
+                </h2>
 
                 {/* <p className="mt-1 text-sm text-gray-600">
                     Mettez à jour votre nom et votre adresse mail.

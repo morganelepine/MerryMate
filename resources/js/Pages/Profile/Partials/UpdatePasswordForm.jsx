@@ -47,7 +47,7 @@ export default function UpdatePasswordForm({ className = "" }) {
     return (
         <section className={className}>
             <header>
-                <h2 className="text-lg font-medium ">
+                <h2 className="font-yeseva text-xl text-gray-900">
                     Mettre à jour votre mot de passe
                 </h2>
 
