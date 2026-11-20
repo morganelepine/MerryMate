@@ -53,8 +53,9 @@ export default function IdeaShow({ idea }) {
 
             {(isMultiple || idea.link) && (
                 <div className="flex flex-wrap items-center gap-2">
+                    <IdeaLink idea={idea} />
                     {isMultiple && (
-                        <span className="inline-flex items-center gap-1.5 rounded-full bg-stone-100 px-3 py-1 text-xs text-stone-600">
+                        <span className="ml-auto inline-flex items-center gap-1.5 rounded-full bg-stone-100 px-3 py-1 text-xs text-stone-600">
                             <svg
                                 xmlns="http://www.w3.org/2000/svg"
                                 fill="none"
@@ -69,11 +70,6 @@ export default function IdeaShow({ idea }) {
                             Plusieurs fois
                         </span>
                     )}
-
-                    <IdeaLink
-                        idea={idea}
-                        color="bg-orange-100 text-orange-700 hover:bg-orange-200"
-                    />
                 </div>
             )}
         </div>

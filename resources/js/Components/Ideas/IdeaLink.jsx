@@ -1,13 +1,20 @@
 import PropTypes from "prop-types";
 import { parseLink } from "@/Components/Ideas/ideaHelpers";
 
-export default function IdeaLink({ idea, color }) {
+export default function IdeaLink({
+    idea,
+    color = "bg-orange-100 text-orange-700 hover:bg-orange-200",
+    className = "",
+    iconOnlyOnMobile = false,
+}) {
     const link = parseLink(idea.link);
 
     if (!link) {
         // Free-text link: only worth showing when it isn't already used as the title.
         return idea.link && idea.idea ? (
-            <span className={`ml-auto max-w-full truncate text-sm ${color}`}>
+            <span
+                className={`max-w-full truncate text-sm text-gray-500 ${className}`}
+            >
                 {idea.link}
             </span>
         ) : null;
@@ -18,9 +25,20 @@ export default function IdeaLink({ idea, color }) {
             href={link.href}
             target="_blank"
             rel="noopener noreferrer"
-            className={`ml-auto inline-flex max-w-full shrink-0 items-center gap-1.5 rounded-full px-3 py-1 text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-300 ${color}`}
+            className={`inline-flex max-w-full shrink-0 items-center gap-1.5 rounded-full text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-300 ${
+                iconOnlyOnMobile ? "p-1.5 sm:px-3 sm:py-1" : "px-3 py-1"
+            } ${color} ${className}`}
         >
-            <span className="truncate">{link.host}</span>
+            {/* When icon-only, the domain stays available to screen readers. */}
+            <span
+                className={
+                    iconOnlyOnMobile
+                        ? "sr-only sm:not-sr-only sm:truncate"
+                        : "truncate"
+                }
+            >
+                {link.host}
+            </span>
             <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
@@ -42,4 +60,10 @@ IdeaLink.propTypes = {
         idea: PropTypes.string,
         link: PropTypes.string,
     }).isRequired,
+    // Background/text colours of the pill.
+    color: PropTypes.string,
+    // Layout classes from the parent (e.g. "ml-auto" to push it right).
+    className: PropTypes.string,
+    // Hides the domain on mobile (compact reserved/purchased cards).
+    iconOnlyOnMobile: PropTypes.bool,
 };

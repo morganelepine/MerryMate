@@ -38,16 +38,25 @@ export default function IdeaWithStatus({ idea, status, actions }) {
 
             <div className={`${IDEA_CARD_BASE} ${variant.card}`}>
                 <div className="flex items-center gap-3">
-                    <p className="min-w-0 truncate font-semibold text-gray-900">
-                        {getIdeaTitle(idea)}
+                    <p className="min-w-0 truncate">
+                        <span className="font-semibold text-gray-900">
+                            {getIdeaTitle(idea)}
+                        </span>
+                        {idea.is_multiple === 1 && (
+                            <span className="ml-2 text-sm text-gray-500">
+                                ({idea.choice || "modèle non précisé"})
+                            </span>
+                        )}
                     </p>
                     <IdeaLink
                         idea={idea}
                         color="bg-gray-200 text-gray-700 hover:bg-gray-100"
+                        className="ml-auto"
+                        iconOnlyOnMobile
                     />
                 </div>
 
-                <div className="flex flex-wrap items-center justify-between gap-2 mt-3">
+                <div className="mt-3">
                     <p
                         className={`inline-flex items-center gap-2 rounded-full border px-3 py-1 text-sm ${idea.is_mine ? variant.badgeMine : variant.badgeOther}`}
                     >
@@ -58,19 +67,6 @@ export default function IdeaWithStatus({ idea, status, actions }) {
                         {" · "}
                         {dayjs(idea.updated_at).fromNow()}
                     </p>
-
-                    {idea.is_multiple === 1 && (
-                        <p className="text-sm text-gray-600">
-                            Modèle choisi :{" "}
-                            {idea.choice ? (
-                                <span className="font-medium text-gray-900">
-                                    {idea.choice}
-                                </span>
-                            ) : (
-                                <span className="italic">non précisé</span>
-                            )}
-                        </p>
-                    )}
                 </div>
             </div>
         </div>
