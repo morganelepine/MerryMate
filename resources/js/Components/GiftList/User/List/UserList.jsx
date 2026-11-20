@@ -25,7 +25,6 @@ export default function UserList({
             }
         >
             <IdeasToReserve
-                list={list}
                 ideas_available={ideas_available}
                 ideas_reserved={ideas_reserved}
                 ideas_purchased={ideas_purchased}

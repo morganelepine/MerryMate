@@ -1,5 +1,5 @@
 import PropTypes from "prop-types";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useForm } from "@inertiajs/react";
 import { toast } from "sonner";
 import Modal from "@/Components/Utils/Modal";
@@ -12,12 +12,7 @@ export default function ButtonReserve({ idea, userName }) {
     const { data, setData, patch, processing, reset, errors, transform } =
         useForm({
             choice: "",
-            userName: userName,
         });
-
-    useEffect(() => {
-        setData("userName", userName);
-    }, [userName]);
 
     const openModal = () => {
         reset();

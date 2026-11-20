@@ -72,10 +72,10 @@ export default function AuthList({ auth, list, ideas, ideas_available }) {
                 </div>
             }
         >
-            <div className="max-w-4xl mx-auto pb-14 px-4 mt-6">
+            <div className="max-w-4xl mx-auto pb-8 px-4 mt-6">
                 {ideas.length > 0 ? (
                     <div className="flex w-full" key={list.id}>
-                        <ListOfIdeas list={list} ideas={ideas} auth={auth} />
+                        <ListOfIdeas ideas={ideas} />
                     </div>
                 ) : (
                     <EmptyPublicList auth={auth} list={list} ideas={ideas} />

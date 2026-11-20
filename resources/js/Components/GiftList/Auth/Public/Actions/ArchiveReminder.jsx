@@ -13,7 +13,7 @@ export default function ArchiveReminder({ list, daysSinceLastLogin }) {
                 localStorage.setItem(`archive-reminder-${list.id}`, "shown");
             }
         }
-    }, [daysSinceLastLogin]);
+    }, [daysSinceLastLogin, list.id]);
 
     const closeArchiveReminderModal = () => {
         setArchiveReminderVisible(false);

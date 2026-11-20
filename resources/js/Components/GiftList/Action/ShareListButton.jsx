@@ -4,7 +4,7 @@ import { toast } from "sonner";
 export default function ShareListButton({ list }) {
     const buildShareMessage = () => {
         const url = route("lists.show", list.id);
-        return `Voici le lien vers ma liste MerryMate : ${url}\nCode secret : ${list.private_code}`;
+        return `Voici le lien vers ma liste : ${url}\nCode secret : ${list.private_code}`;
     };
 
     const share = async () => {

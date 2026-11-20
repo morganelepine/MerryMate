@@ -4,7 +4,13 @@ import TextInput from "@/Components/Utils/TextInput";
 import InputError from "@/Components/Utils/InputError";
 import PrimaryButton from "@/Components/Buttons/PrimaryButton";
 
-export default function PrivateCodeForm({ list, routeName, extraData }) {
+const NO_EXTRA_DATA = {};
+
+export default function PrivateCodeForm({
+    list,
+    routeName,
+    extraData = NO_EXTRA_DATA,
+}) {
     const { data, setData, post, processing, reset, errors } = useForm({
         ...extraData,
         private_code: "",
@@ -56,8 +62,4 @@ PrivateCodeForm.propTypes = {
     list: PropTypes.object.isRequired,
     routeName: PropTypes.string.isRequired,
     extraData: PropTypes.object,
-};
-
-PrivateCodeForm.defaultProps = {
-    extraData: {},
 };

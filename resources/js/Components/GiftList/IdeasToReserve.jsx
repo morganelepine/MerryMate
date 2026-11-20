@@ -7,12 +7,11 @@ import BrandMembership from "@/Components/Ideas/BrandMembership";
 
 // The gift-list content
 export default function IdeasToReserve({
-    list,
     ideas_available,
     ideas_reserved,
     ideas_purchased,
     userName,
-    canReserve,
+    canReserve = true,
 }) {
     // Regrouper les idées par marque
     const groupedIdeas = ideas_available.reduce((ideasByBrand, idea) => {
@@ -41,7 +40,7 @@ export default function IdeasToReserve({
         <>
             <Head title="Liste " />
 
-            <div className="max-w-3xl mx-auto pb-14 px-4 mt-6">
+            <div className="max-w-3xl mx-auto pb-8 px-4 mt-6">
                 {ideas_available.length == 0 &&
                     ideas_reserved.length == 0 &&
                     ideas_purchased.length == 0 && (
@@ -102,7 +101,7 @@ export default function IdeasToReserve({
                                 <path d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
                             </svg>
                         </div>
-                        <div className="flex flex-col justify-center bg-orange-50 rounded-xl mt-0 sm:px-6 sm:py-4 p-3 mb-10">
+                        <div className="flex flex-col justify-center bg-orange-50 rounded-xl mt-0 sm:px-6 sm:py-4 p-3 mb-10 last:mb-0">
                             <div className="mt-4 space-y-8">
                                 {Object.entries(groupedIdeas).map(
                                     ([brand, brandData]) => (
@@ -124,7 +123,6 @@ export default function IdeasToReserve({
                                                         <IdeasAvailable
                                                             key={idea.id}
                                                             idea={idea}
-                                                            brand={brand}
                                                             userName={userName}
                                                             canReserve={
                                                                 canReserve
@@ -160,12 +158,11 @@ export default function IdeasToReserve({
                                 <path d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
                             </svg>
                         </div>
-                        <div className="flex flex-col justify-center bg-indigo-50 rounded-xl mt-0 sm:px-6 sm:py-4 p-3 mb-10">
+                        <div className="flex flex-col justify-center bg-indigo-50 rounded-xl mt-0 sm:px-6 sm:py-4 p-3 mb-10 last:mb-0">
                             <div className="w-full space-y-5 sm:space-y-0">
                                 {ideas_purchased.map((idea) => (
                                     <IdeasPurchased
                                         key={idea.id}
-                                        list={list}
                                         idea={idea}
                                         userName={userName}
                                     />
@@ -219,12 +216,11 @@ export default function IdeasToReserve({
                                 étant connecté·e.
                             </small>
                         )}
-                        <div className="flex flex-col justify-center bg-bordeaux-50 rounded-xl mt-0 sm:px-6 sm:py-4 p-3 mb-10">
+                        <div className="flex flex-col justify-center bg-bordeaux-50 rounded-xl mt-0 sm:px-6 sm:py-4 p-3 mb-10 last:mb-0">
                             <div className="w-full space-y-5 sm:space-y-0">
                                 {ideas_reserved.map((idea) => (
                                     <IdeasReserved
                                         key={idea.id}
-                                        list={list}
                                         idea={idea}
                                         userName={userName}
                                     />
@@ -239,7 +235,6 @@ export default function IdeasToReserve({
 }
 
 IdeasToReserve.propTypes = {
-    list: PropTypes.object,
     ideas_available: PropTypes.array,
     ideas_reserved: PropTypes.array,
     ideas_purchased: PropTypes.array,
@@ -247,6 +242,3 @@ IdeasToReserve.propTypes = {
     canReserve: PropTypes.bool,
 };
 
-IdeasToReserve.defaultProps = {
-    canReserve: true,
-};

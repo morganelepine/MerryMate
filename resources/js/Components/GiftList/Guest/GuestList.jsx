@@ -19,7 +19,6 @@ export default function GuestList({
             header={<GuestListHeader list={list} setUserName={setUserName} />}
         >
             <IdeasToReserve
-                list={list}
                 ideas_available={ideas_available}
                 ideas_reserved={ideas_reserved}
                 ideas_purchased={ideas_purchased}

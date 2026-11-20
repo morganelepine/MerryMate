@@ -36,9 +36,9 @@ export default function ListOfIdeas({ ideas }) {
                             <hr className="w-full h-px mt-3 mb-2 bg-orange-100 border-0"></hr>
                         </div>
                         <BrandMembership membership={brandData.membership} />
-                        {brandData.ideas.map((idea, index) => (
+                        {brandData.ideas.map((idea) => (
                             <div key={idea.id}>
-                                <Ideas idea={idea} index={index} />
+                                <Ideas idea={idea} />
                             </div>
                         ))}
                     </div>
