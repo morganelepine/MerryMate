@@ -1,7 +1,7 @@
-import { Head } from "@inertiajs/react";
 import PropTypes from "prop-types";
 import Ideas from "@/Components/Ideas/PublicList/Idea";
 import BrandMembership from "@/Components/Ideas/BrandMembership";
+import BrandHeading from "@/Components/Ideas/BrandHeading";
 
 export default function ListOfIdeas({ ideas }) {
     // Regrouper les idées par marque
@@ -23,28 +23,22 @@ export default function ListOfIdeas({ ideas }) {
     });
 
     return (
-        <>
-            <Head title="Consulter ma liste" />
-
-            <div className="w-full space-y-8">
-                {Object.entries(groupedIdeas).map(([brand, brandData]) => (
-                    <div key={brand} className="">
-                        <div className="inline-flex items-center w-full">
-                            <p className="min-w-max py-1 px-3 text-sm bg-orange-500 text-white rounded-full">
-                                {brand}
-                            </p>
-                            <hr className="w-full h-px mt-3 mb-2 bg-orange-100 border-0"></hr>
-                        </div>
-                        <BrandMembership membership={brandData.membership} />
+        <div className="space-y-12">
+            {Object.entries(groupedIdeas).map(([brand, brandData]) => (
+                <section key={brand}>
+                    <BrandHeading
+                        brand={brand}
+                        count={brandData.ideas.length}
+                    />
+                    <BrandMembership membership={brandData.membership} />
+                    <div className="mt-4 space-y-3">
                         {brandData.ideas.map((idea) => (
-                            <div key={idea.id}>
-                                <Ideas idea={idea} />
-                            </div>
+                            <Ideas key={idea.id} idea={idea} />
                         ))}
                     </div>
-                ))}
-            </div>
-        </>
+                </section>
+            ))}
+        </div>
     );
 }
 
