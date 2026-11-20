@@ -4,9 +4,53 @@ import IdeasAvailable from "@/Components/Ideas/UserList/Ideas_available";
 import IdeasReserved from "@/Components/Ideas/UserList/Ideas_reserved";
 import IdeasPurchased from "@/Components/Ideas/UserList/Ideas_purchased";
 import BrandMembership from "@/Components/Ideas/BrandMembership";
+import BrandHeading from "@/Components/Ideas/BrandHeading";
+import { LIST_WIDTH, PAGE_GUTTER } from "@/Layouts/Partials/pageContainer";
+
+// Each section spans the full page width, tinted with its status color.
+const SECTIONS = {
+    available: { dot: "bg-orange-500", band: "" },
+    purchased: { dot: "bg-sage-300", band: "bg-sage-50" },
+    reserved: { dot: "bg-lilac-300", band: "bg-lilac-50" },
+};
+
+const SECTION_BODY = "mt-4";
+
+function Section({ section, children }) {
+    return (
+        <section className={SECTIONS[section].band}>
+            <div className={`${LIST_WIDTH} ${PAGE_GUTTER} py-10`}>
+                {children}
+            </div>
+        </section>
+    );
+}
+
+Section.propTypes = {
+    section: PropTypes.oneOf(Object.keys(SECTIONS)).isRequired,
+    children: PropTypes.node.isRequired,
+};
+
+function SectionTitle({ section, children }) {
+    return (
+        <h2 className="flex items-center gap-2.5 mb-2 font-yeseva text-2xl text-gray-900">
+            <span
+                className={`w-3 h-3 rounded-full ${SECTIONS[section].dot}`}
+                aria-hidden="true"
+            />
+            {children}
+        </h2>
+    );
+}
+
+SectionTitle.propTypes = {
+    section: PropTypes.oneOf(Object.keys(SECTIONS)).isRequired,
+    children: PropTypes.node.isRequired,
+};
 
 // The gift-list content
 export default function IdeasToReserve({
+    list,
     ideas_available,
     ideas_reserved,
     ideas_purchased,
@@ -33,18 +77,17 @@ export default function IdeasToReserve({
         );
     });
 
-    const h1 =
-        "uppercase tracking-wider text-center rounded-full text-white w-full p-1 mb-3";
-
     return (
         <>
-            <Head title="Liste " />
+            <Head title={`${list.name} de ${list.user_name}`} />
 
-            <div className="max-w-3xl mx-auto pb-8 px-4 mt-6">
+            <div>
                 {ideas_available.length == 0 &&
                     ideas_reserved.length == 0 &&
                     ideas_purchased.length == 0 && (
-                        <p className="text-center">
+                        <p
+                            className={`${LIST_WIDTH} ${PAGE_GUTTER} py-10 text-center`}
+                        >
                             Cette liste est vide pour le moment. Revenez plus
                             tard !
                         </p>
@@ -53,22 +96,22 @@ export default function IdeasToReserve({
                 {ideas_available.length === 0 &&
                     (ideas_purchased.length > 0 ||
                         ideas_reserved.length > 0) && (
-                        <>
-                            <h1 className={`bg-orange-500 ${h1}`}>
+                        <Section section="available">
+                            <SectionTitle section="available">
                                 Idées disponibles
-                            </h1>
-                            <p className="text-center text-sm italic mb-10">
+                            </SectionTitle>
+                            <p className="text-center text-sm italic">
                                 Cette liste est vide pour le moment. Revenez
                                 plus tard !
                             </p>
-                        </>
+                        </Section>
                     )}
 
                 {ideas_available.length > 0 && (
-                    <>
-                        <h1 className={`bg-orange-500 ${h1}`}>
+                    <Section section="available">
+                        <SectionTitle section="available">
                             Idées disponibles
-                        </h1>
+                        </SectionTitle>
                         {canReserve && (
                             <div className="hidden sm:flex items-center text-gray-500 italic">
                                 <small className="text-xs mr-1">
@@ -101,23 +144,25 @@ export default function IdeasToReserve({
                                 <path d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
                             </svg>
                         </div>
-                        <div className="flex flex-col justify-center bg-orange-50 rounded-xl mt-0 sm:px-6 sm:py-4 p-3 mb-10 last:mb-0">
-                            <div className="mt-4 space-y-8">
+                        <div className={SECTION_BODY}>
+                            <div className="space-y-12">
                                 {Object.entries(groupedIdeas).map(
                                     ([brand, brandData]) => (
                                         <div key={brand}>
-                                            <div className="inline-flex items-center w-full">
-                                                <p className="min-w-max py-1 px-2 text-sm bg-orange-500 text-white rounded-full">
-                                                    {brand}
-                                                </p>
-                                                <hr className="w-full h-px mt-3 mb-2 bg-orange-200 border-0"></hr>
-                                            </div>
+                                            <BrandHeading
+                                                as="h3"
+                                                brand={brand}
+                                                count={
+                                                    brandData.ideas_available
+                                                        .length
+                                                }
+                                            />
                                             <BrandMembership
                                                 membership={
                                                     brandData.membership
                                                 }
                                             />
-                                            <div className="w-full space-y-5 sm:space-y-0">
+                                            <div className="mt-4 space-y-3">
                                                 {brandData.ideas_available.map(
                                                     (idea) => (
                                                         <IdeasAvailable
@@ -136,14 +181,14 @@ export default function IdeasToReserve({
                                 )}
                             </div>
                         </div>
-                    </>
+                    </Section>
                 )}
 
                 {ideas_purchased.length > 0 && (
-                    <>
-                        <h1 className={`bg-indigo-500 ${h1}`}>
+                    <Section section="purchased">
+                        <SectionTitle section="purchased">
                             Cadeaux achetés
-                        </h1>
+                        </SectionTitle>
                         <div className="hidden sm:flex items-center mb-3 text-gray-500 italic">
                             <small className="text-xs mr-1">
                                 Pour annuler votre achat, cliquez sur le picto
@@ -158,8 +203,8 @@ export default function IdeasToReserve({
                                 <path d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
                             </svg>
                         </div>
-                        <div className="flex flex-col justify-center bg-indigo-50 rounded-xl mt-0 sm:px-6 sm:py-4 p-3 mb-10 last:mb-0">
-                            <div className="w-full space-y-5 sm:space-y-0">
+                        <div className={SECTION_BODY}>
+                            <div className="space-y-3">
                                 {ideas_purchased.map((idea) => (
                                     <IdeasPurchased
                                         key={idea.id}
@@ -169,14 +214,14 @@ export default function IdeasToReserve({
                                 ))}
                             </div>
                         </div>
-                    </>
+                    </Section>
                 )}
 
                 {ideas_reserved.length > 0 && (
-                    <>
-                        <h1 className={`bg-bordeaux-800 ${h1}`}>
+                    <Section section="reserved">
+                        <SectionTitle section="reserved">
                             Cadeaux réservés
-                        </h1>
+                        </SectionTitle>
                         {canReserve ? (
                             <>
                                 <div className="hidden sm:flex items-center text-gray-500 italic">
@@ -216,8 +261,8 @@ export default function IdeasToReserve({
                                 étant connecté·e.
                             </small>
                         )}
-                        <div className="flex flex-col justify-center bg-bordeaux-50 rounded-xl mt-0 sm:px-6 sm:py-4 p-3 mb-10 last:mb-0">
-                            <div className="w-full space-y-5 sm:space-y-0">
+                        <div className={SECTION_BODY}>
+                            <div className="space-y-3">
                                 {ideas_reserved.map((idea) => (
                                     <IdeasReserved
                                         key={idea.id}
@@ -227,7 +272,7 @@ export default function IdeasToReserve({
                                 ))}
                             </div>
                         </div>
-                    </>
+                    </Section>
                 )}
             </div>
         </>
@@ -235,10 +280,13 @@ export default function IdeasToReserve({
 }
 
 IdeasToReserve.propTypes = {
+    list: PropTypes.shape({
+        name: PropTypes.string.isRequired,
+        user_name: PropTypes.string.isRequired,
+    }).isRequired,
     ideas_available: PropTypes.array,
     ideas_reserved: PropTypes.array,
     ideas_purchased: PropTypes.array,
     userName: PropTypes.string,
     canReserve: PropTypes.bool,
 };
-
