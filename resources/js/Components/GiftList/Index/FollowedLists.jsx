@@ -12,11 +12,7 @@ export default function FollowedLists({ followedLists }) {
 
     return (
         <section>
-            <SectionHeader
-                title="Listes suivies"
-                count={followedLists.length}
-                action={<FindListButton />}
-            />
+            <SectionHeader title="Listes suivies" action={<FindListButton />} />
 
             {followedLists.length > 0 ? (
                 <>

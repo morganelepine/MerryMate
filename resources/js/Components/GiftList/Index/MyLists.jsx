@@ -6,11 +6,7 @@ import SectionHeader from "@/Components/Utils/SectionHeader";
 export default function MyLists({ lists }) {
     return (
         <section>
-            <SectionHeader
-                title="Mes listes"
-                count={lists.length}
-                action={<CreateListButton />}
-            />
+            <SectionHeader title="Mes listes" action={<CreateListButton />} />
 
             {lists.length > 0 ? (
                 <div className="mt-4 space-y-3">

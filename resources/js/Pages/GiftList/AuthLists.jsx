@@ -13,7 +13,7 @@ function ListSection({ title, lists, emptyText }) {
             {lists.length > 0 ? (
                 <div className="mt-4 space-y-3">
                     {lists.map((list) => (
-                        <AuthListCard key={list.id} list={list} />
+                        <AuthListCard key={list.id} list={list} showDelete />
                     ))}
                 </div>
             ) : (
@@ -39,7 +39,7 @@ export default function AuthLists({ auth, publicLists, privateLists }) {
         >
             <Head title="Mes listes" />
 
-            <div className={`${PAGE_BODY} grid gap-12 md:grid-cols-2`}>
+            <div className={`${PAGE_BODY} grid grid-cols-1 gap-12 md:grid-cols-2`}>
                 <ListSection
                     title="Partagées"
                     lists={publicLists}

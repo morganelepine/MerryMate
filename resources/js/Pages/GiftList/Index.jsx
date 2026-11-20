@@ -30,7 +30,7 @@ export default function Index({
                     <QuickActions />
                 </div>
 
-                <div className="mt-8 sm:mt-12 grid gap-12 md:grid-cols-2">
+                <div className="mt-8 sm:mt-12 grid grid-cols-1 gap-12 md:grid-cols-2">
                     <FollowedLists followedLists={followedLists} />
                     <MyLists lists={[...mySharedLists, ...myPrivateLists]} />
                 </div>

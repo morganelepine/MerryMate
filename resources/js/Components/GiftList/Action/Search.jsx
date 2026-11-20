@@ -65,7 +65,7 @@ export default function SearchList({ auth }) {
             </div>
 
             {results.length > 0 && (
-                <div className="mt-8 grid gap-3 sm:grid-cols-2">
+                <div className="mt-8 grid grid-cols-1 gap-3 sm:grid-cols-2">
                     {results.map((list) => (
                         <ListToFollowCard
                             key={list.id}

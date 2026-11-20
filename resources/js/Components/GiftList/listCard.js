@@ -1,6 +1,7 @@
 import { CARD_SURFACE } from "@/Components/Utils/surfaces";
 
 export const LIST_CARD = `flex items-center gap-3 p-4 ${CARD_SURFACE}`;
+export const LIST_CARD_HOVER = "transition hover:border-gray-300 hover:shadow";
 
 export const formatListDate = (list) =>
     list.isEmpty

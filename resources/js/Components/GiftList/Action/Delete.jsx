@@ -22,7 +22,7 @@ export default function DeleteListButton({ list }) {
                 onClick={confirmListDeletion}
                 aria-label={`Supprimer la liste ${list.name}`}
                 title="Supprimer la liste"
-                className="shrink-0 p-2 rounded-full text-gray-500 hover:text-orange-600 hover:bg-gray-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-300"
+                className="shrink-0 p-2 rounded-full text-gray-500 bg-gray-200 hover:text-orange-600 hover:bg-orange-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-300"
             >
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
