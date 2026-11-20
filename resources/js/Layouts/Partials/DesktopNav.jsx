@@ -1,17 +1,20 @@
 import PropTypes from "prop-types";
 import Dropdown from "@/Components/Utils/Dropdown";
-import NavLink from "@/Components/Utils/NavLink";
+import NavLink, { navItemClasses } from "@/Components/Utils/NavLink";
 
 export default function DesktopNav({ unreadCount }) {
     return (
-        <div className="hidden space-x-8 lg:-my-px lg:ml-10 lg:flex">
+        <div className="hidden gap-1 lg:ml-10 lg:flex">
             <div className="hidden lg:flex lg:items-center">
                 <Dropdown>
                     <Dropdown.Trigger>
-                        <span className="inline-flex rounded-md">
+                        <span className="inline-flex">
                             <button
                                 type="button"
-                                className="inline-flex items-center pl-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none transition ease-in-out duration-150"
+                                className={navItemClasses(
+                                    route().current("lists.authLists") ||
+                                        route().current("lists.followedLists"),
+                                )}
                             >
                                 <svg
                                     xmlns="http://www.w3.org/2000/svg"
