@@ -1,5 +1,7 @@
 import { useState } from "react";
-import useUnreadNotifications from "@/hooks/useUnreadNotifications";
+import useUnreadNotifications, {
+    UnreadCountContext,
+} from "@/hooks/useUnreadNotifications";
 import DesktopNav from "@/Layouts/Partials/DesktopNav";
 import UserMenu from "@/Layouts/Partials/UserMenu";
 import NavDropdown from "@/Layouts/Partials/NavDropdown";
@@ -8,7 +10,12 @@ import TopNav from "@/Layouts/Partials/TopNav";
 import SiteBrand from "@/Layouts/Partials/SiteBrand";
 import SitePage from "@/Layouts/Partials/SitePage";
 
-export default function Authenticated({ user, children, ...pageProps }) {
+export default function Authenticated({
+    user,
+    showDesktopNav = true,
+    children,
+    ...pageProps
+}) {
     const [showingNavigationDropdown, setShowingNavigationDropdown] =
         useState(false);
 
@@ -27,25 +34,31 @@ export default function Authenticated({ user, children, ...pageProps }) {
                         />
                     }
                 >
-                    <div className="flex">
-                        <div className="shrink-0 flex items-center">
-                            <SiteBrand href={route("lists.index")} />
-                        </div>
-                        <DesktopNav unreadCount={unreadCount} />
+                    {/* Equal-width sides keep the icons centred between logo and profile menu. */}
+                    <div className="flex flex-1 items-center">
+                        <SiteBrand href={route("lists.index")} />
                     </div>
 
-                    <UserMenu user={user} />
+                    {showDesktopNav && <DesktopNav unreadCount={unreadCount} />}
 
-                    <NavDropdown
-                        showingNavigationDropdown={showingNavigationDropdown}
-                        setShowingNavigationDropdown={
-                            setShowingNavigationDropdown
-                        }
-                    />
+                    <div className="flex flex-1 items-center justify-end">
+                        <UserMenu user={user} />
+
+                        <NavDropdown
+                            showingNavigationDropdown={
+                                showingNavigationDropdown
+                            }
+                            setShowingNavigationDropdown={
+                                setShowingNavigationDropdown
+                            }
+                        />
+                    </div>
                 </TopNav>
             }
         >
-            {children}
+            <UnreadCountContext.Provider value={unreadCount}>
+                {children}
+            </UnreadCountContext.Provider>
         </SitePage>
     );
 }

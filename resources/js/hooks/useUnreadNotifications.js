@@ -1,5 +1,8 @@
-import { useEffect, useState } from "react";
+import { createContext, useEffect, useState } from "react";
 import { getUnreadNotifications } from "@/api/notifications";
+
+// Provided by AuthenticatedLayout so pages can show the count without fetching it again.
+export const UnreadCountContext = createContext(0);
 
 export default function useUnreadNotifications() {
     const [unreadNotifications, setUnreadNotifications] = useState([]);

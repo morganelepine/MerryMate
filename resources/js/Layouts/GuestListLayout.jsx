@@ -9,7 +9,7 @@ export default function GuestListLayout({ children, ...pageProps }) {
             {...pageProps}
             nav={
                 <TopNav>
-                    <div className="shrink-0 flex items-center">
+                    <div className="flex flex-1 items-center">
                         <SiteBrand />
                     </div>
 

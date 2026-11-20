@@ -34,6 +34,16 @@ export default function UserMenu({ user }) {
                         <Dropdown.Link href={route("profile.edit")}>
                             Mon profil
                         </Dropdown.Link>
+                        <Dropdown.Link href={route("profile.purchase")}>
+                            Budget
+                        </Dropdown.Link>
+                        <Dropdown.Link href={route("profile.gifts")}>
+                            Cadeaux reçus
+                        </Dropdown.Link>
+                        <div
+                            role="separator"
+                            className="my-1 border-t border-gray-100"
+                        />
                         <Dropdown.Link
                             href={route("logout")}
                             method="post"
