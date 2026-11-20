@@ -1,7 +1,8 @@
 import { useState } from "react";
 import PropTypes from "prop-types";
-import ListToFollow from "@/Components/GiftList/User/ListToFollow/ListToFollowCard";
+import ListToFollowCard from "@/Components/GiftList/User/ListToFollow/ListToFollowCard";
 import TextInput from "@/Components/Utils/TextInput";
+import InputLabel from "@/Components/Utils/InputLabel";
 import PrimaryButton from "@/Components/Buttons/PrimaryButton";
 import { searchLists } from "@/api/lists";
 
@@ -36,38 +37,44 @@ export default function SearchList({ auth }) {
 
     return (
         <>
-            <form
-                className="flex flex-col text-center gap-4"
-                onSubmit={handleSubmit}
-            >
-                <label htmlFor="search" className="text-xl font-semibold">
-                    Rechercher une liste
-                </label>
-                <TextInput
-                    id="search"
-                    name="search"
-                    placeholder="Prénom ou nom de la liste"
-                    className="py-1 text-center"
-                    value={search}
-                    onChange={(e) => setSearch(e.target.value)}
+            <form className="max-w-xl" onSubmit={handleSubmit}>
+                <InputLabel
+                    htmlFor="search"
+                    value="Prénom ou nom de la liste"
                 />
-                <PrimaryButton type="submit">Rechercher</PrimaryButton>
+                <div className="mt-2 flex gap-2">
+                    <TextInput
+                        id="search"
+                        name="search"
+                        type="search"
+                        placeholder="Marie, Anniversaire…"
+                        className="!mt-0"
+                        value={search}
+                        onChange={(e) => setSearch(e.target.value)}
+                    />
+                    <PrimaryButton type="submit" size="medium">
+                        Rechercher
+                    </PrimaryButton>
+                </div>
             </form>
 
+            <div role="status" aria-live="polite">
+                {error && (
+                    <p className="mt-4 text-sm text-orange-700">{error}</p>
+                )}
+            </div>
+
             {results.length > 0 && (
-                <div className="flex flex-col justify-center">
+                <div className="mt-8 grid gap-3 sm:grid-cols-2">
                     {results.map((list) => (
-                        <div
-                            className="flex flex-col p-5 my-5 text-center shadow bg-white rounded-xl"
+                        <ListToFollowCard
                             key={list.id}
-                        >
-                            <ListToFollow listToFollow={list} auth={auth} />
-                        </div>
+                            listToFollow={list}
+                            auth={auth}
+                        />
                     ))}
                 </div>
             )}
-
-            {error && <div className="text-center mt-4">{error}</div>}
         </>
     );
 }

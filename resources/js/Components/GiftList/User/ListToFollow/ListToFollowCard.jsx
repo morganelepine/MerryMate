@@ -1,13 +1,18 @@
 import { useState, useEffect } from "react";
 import PropTypes from "prop-types";
-import SecretCode from "@/Components/GiftList/User/ListToFollow/SecretCode";
-import PrimaryButton from "@/Components/Buttons/PrimaryButton";
 import { toast } from "sonner";
+import SecretCode from "@/Components/GiftList/User/ListToFollow/SecretCode";
+import OwnerAvatar from "@/Components/GiftList/OwnerAvatar";
+import PrimaryButton from "@/Components/Buttons/PrimaryButton";
+import OutlineButton from "@/Components/Buttons/OutlineButton";
+import { CARD_SURFACE } from "@/Components/Utils/surfaces";
 import { requestAccessToList } from "@/api/notifications";
-import { formatListDate } from "@/Components/GiftList/listCard";
+import { formatListDate, formatOwner } from "@/Components/GiftList/listCard";
 
-export default function ListToFollow({ auth, listToFollow }) {
+export default function ListToFollowCard({ auth, listToFollow }) {
     const [requestSent, setRequestSent] = useState(false);
+    const [showCode, setShowCode] = useState(false);
+
     useEffect(() => {
         const storedRequestSent = localStorage.getItem(
             `requestSent-${listToFollow.id}`,
@@ -16,11 +21,6 @@ export default function ListToFollow({ auth, listToFollow }) {
             setRequestSent(true);
         }
     }, [listToFollow.id]);
-
-    const [isHidden, setIsHidden] = useState(true);
-    const showSecretCode = () => {
-        setIsHidden((current) => !current);
-    };
 
     const requestAccess = async (listOwnerId, listId) => {
         setRequestSent(true);
@@ -38,45 +38,56 @@ export default function ListToFollow({ auth, listToFollow }) {
         }
     };
 
+    const codePanelId = `secret-code-${listToFollow.id}`;
+
     return (
-        <>
-            <div className="flex flex-col">
-                <p>
-                    La liste{" "}
-                    <span className="uppercase font-semibold text-orange-500">
+        <div className={`${CARD_SURFACE} p-4`}>
+            <div className="flex items-center gap-3">
+                <OwnerAvatar list={listToFollow} />
+                <div className="min-w-0 flex-1">
+                    <p className="font-semibold text-gray-900 truncate">
                         {listToFollow.name}
-                    </span>{" "}
-                    de {listToFollow.user_name} {listToFollow.user_lastname}
-                </p>
-                <small className="italic text-gray-500 mt-1 mb-2">
-                    {formatListDate(listToFollow)}{" "}
-                </small>
+                    </p>
+                    <p className="text-sm text-gray-600 truncate">
+                        {formatOwner(listToFollow)}
+                    </p>
+                    <p className="text-xs text-gray-500 mt-1">
+                        {formatListDate(listToFollow)}
+                    </p>
+                </div>
             </div>
 
-            <div className="space-y-4 mt-2">
-                <PrimaryButton
+            <div className="mt-4 flex flex-wrap gap-2">
+                <OutlineButton
                     size="small"
                     onClick={() =>
                         requestAccess(listToFollow.user_id, listToFollow.id)
                     }
                     disabled={requestSent}
                 >
-                    Demander un accès
-                </PrimaryButton>
+                    {requestSent ? "Demande envoyée" : "Demander l’accès"}
+                </OutlineButton>
 
-                <PrimaryButton size="small" onClick={showSecretCode}>
-                    Renseigner le code secret
+                <PrimaryButton
+                    size="small"
+                    onClick={() => setShowCode((current) => !current)}
+                    aria-expanded={showCode}
+                    aria-controls={codePanelId}
+                >
+                    J’ai le code
                 </PrimaryButton>
+            </div>
 
-                <div className={"mt-2 " + (isHidden ? "hidden" : "block")}>
+            {showCode && (
+                <div id={codePanelId} className="mt-4">
                     <SecretCode listToFollow={listToFollow} auth={auth} />
                 </div>
-            </div>
-        </>
+            )}
+        </div>
     );
 }
 
-ListToFollow.propTypes = {
+ListToFollowCard.propTypes = {
     auth: PropTypes.object.isRequired,
-    listToFollow: PropTypes.object,
+    listToFollow: PropTypes.object.isRequired,
 };

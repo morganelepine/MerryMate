@@ -1,36 +1,48 @@
-import React, { useState } from "react";
 import PropTypes from "prop-types";
+import { useForm, Head } from "@inertiajs/react";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import InputError from "@/Components/Utils/InputError";
 import InputLabel from "@/Components/Utils/InputLabel";
 import TextInput from "@/Components/Utils/TextInput";
-import Checkbox from "@/Components/Utils/Checkbox";
 import PrimaryButton from "@/Components/Buttons/PrimaryButton";
-import { useForm, Head } from "@inertiajs/react";
+import { PANEL } from "@/Components/Utils/surfaces";
+import { PAGE_BODY } from "@/Layouts/Partials/pageContainer";
+
+// Private lists still need a code server-side; it's never shown to anyone.
+const PRIVATE_LIST_CODE = "_private";
+
+const VISIBILITIES = [
+    {
+        value: "shared",
+        title: "Partagée",
+        description:
+            "Elle apparaît dans « Chercher ». Vos proches peuvent vous demander l’accès ou saisir votre code secret.",
+    },
+    {
+        value: "private",
+        title: "Privée",
+        description:
+            "Visible uniquement par vous, pour noter vos idées en toute discrétion.",
+    },
+];
 
 export default function Create({ auth }) {
     const { data, setData, post, processing, reset, errors } = useForm({
         user_name: auth.user.name,
         name: "",
-        private_code: "_private",
+        visibility: null,
+        private_code: PRIVATE_LIST_CODE,
         isPrivate: true,
     });
 
-    const [isHidden, setIsHidden] = useState(true);
-    const [isPrivateList, setIsPrivateList] = useState(null);
-    const [isPublicList, setIsPublicList] = useState(null);
-
-    const handlePrivateCheck = () => {
-        setIsPrivateList(true);
-        setIsPublicList(false);
-        setIsHidden(true);
-    };
-
-    const handlePublicCheck = () => {
-        data.private_code = "";
-        setIsPrivateList(false);
-        setIsPublicList(true);
-        setIsHidden(false);
+    const chooseVisibility = (visibility) => {
+        const isPrivate = visibility === "private";
+        setData((current) => ({
+            ...current,
+            visibility,
+            isPrivate,
+            private_code: isPrivate ? PRIVATE_LIST_CODE : "",
+        }));
     };
 
     const submit = (e) => {
@@ -44,115 +56,106 @@ export default function Create({ auth }) {
     };
 
     return (
-        <AuthenticatedLayout
-            user={auth.user}
-            header={
-                <h2 className="font-semibold text-xl text-gray-800 leading-tight">
-                    Créer une nouvelle liste
-                </h2>
-            }
-        >
-            <Head title="Créer une nouvelle liste" />
+        <AuthenticatedLayout user={auth.user} title="Créer une liste">
+            <Head title="Créer une liste" />
 
-            <div className="max-w-2xl mx-auto p-4 sm:p-6 lg:p-8">
-                <form onSubmit={submit}>
-                    <div className="my-2">
-                        <InputLabel htmlFor="link" value="Nom de la liste" />
+            <div className={PAGE_BODY}>
+                <form
+                    onSubmit={submit}
+                    className={`${PANEL} max-w-2xl space-y-8`}
+                >
+                    <div>
+                        <InputLabel htmlFor="name" value="Nom de la liste" />
                         <TextInput
                             id="name"
                             name="name"
                             value={data.name}
-                            placeholder="Noël, Anniversaire, Mariage..."
+                            placeholder="Noël, Anniversaire, Mariage…"
                             isFocused={true}
                             onChange={(e) => setData("name", e.target.value)}
                             required
                         />
-
                         <InputError message={errors.name} className="mt-2" />
                     </div>
 
-                    <div className="mt-6">
-                        <InputLabel htmlFor="link" value="Statut de la liste" />
-
-                        <div className="mt-5">
-                            <div className="flex items-center">
-                                <Checkbox
-                                    id="isPrivate"
-                                    name="isPrivate"
-                                    type="checkbox"
-                                    checked={isPrivateList}
-                                    onChange={() => {
-                                        handlePrivateCheck();
-                                        setData("isPrivate", true);
-                                    }}
-                                />
-                                <p>Je souhaite garder cette liste privée</p>
-                            </div>
-                            <p className="italic text-xs text-gray-600 mt-2">
-                                En cochant cette case, votre liste ne sera
-                                visible que par vous. Vos proches ne pourront
-                                donc pas y accéder.
-                            </p>
+                    <fieldset>
+                        <legend className="text-sm font-medium text-gray-800">
+                            Qui peut voir cette liste ?
+                        </legend>
+                        <div className="mt-2 grid gap-3 sm:grid-cols-2">
+                            {VISIBILITIES.map(
+                                ({ value, title, description }) => {
+                                    const checked = data.visibility === value;
+                                    return (
+                                        <label
+                                            key={value}
+                                            className={`flex gap-3 rounded-xl border p-4 cursor-pointer transition-colors ${
+                                                checked
+                                                    ? "border-orange-300 bg-orange-50"
+                                                    : "border-gray-200 hover:border-gray-300"
+                                            }`}
+                                        >
+                                            <input
+                                                type="radio"
+                                                name="visibility"
+                                                value={value}
+                                                checked={checked}
+                                                onChange={() =>
+                                                    chooseVisibility(value)
+                                                }
+                                                required
+                                                className="mt-0.5 text-orange-600 focus:ring-orange-300"
+                                            />
+                                            <span>
+                                                <span className="block font-medium text-gray-900">
+                                                    {title}
+                                                </span>
+                                                <span className="mt-1 block text-sm text-gray-600">
+                                                    {description}
+                                                </span>
+                                            </span>
+                                        </label>
+                                    );
+                                },
+                            )}
                         </div>
-
-                        <div className="mt-5">
-                            <div className="flex items-center">
-                                <Checkbox
-                                    id="isPublic"
-                                    name="isPublic"
-                                    type="checkbox"
-                                    checked={isPublicList}
-                                    onChange={() => {
-                                        handlePublicCheck();
-                                        setData("isPrivate", false);
-                                    }}
-                                />
-                                <p>Je souhaite partager cette liste</p>
-                            </div>
-                            <p className="italic text-xs text-gray-600 mt-2">
-                                En cochant cette case, votre liste apparaîtra
-                                dans l'onglet "Chercher". Pour la suivre, vos
-                                proches pourront soit vous envoyer une demande,
-                                soit renseigner votre code privé.
-                            </p>
-                        </div>
-
                         <InputError
                             message={errors.isPrivate}
                             className="mt-2"
                         />
-                    </div>
+                    </fieldset>
 
-                    <div
-                        className={
-                            "mt-6 bg-orange-50 shadow-md p-5 rounded-xl " +
-                            (isHidden ? "hidden" : "block")
-                        }
-                    >
-                        <InputLabel htmlFor="link" value="Code privé" />
-                        <TextInput
-                            id="private_code"
-                            name="private_code"
-                            value={data.private_code}
-                            placeholder="Exemple : 12ab"
-                            onChange={(e) =>
-                                setData("private_code", e.target.value)
-                            }
-                            // required={isPrivateList} // only if list is not private
-                        />
-                        <p className="italic text-xs text-gray-600 mt-2">
-                            Communiquez ce code à vos proches pour leur
-                            permettre d'accéder à votre liste. Ils pourront
-                            également vous envoyer directement une demande.
-                        </p>
+                    {data.visibility === "shared" && (
+                        <div>
+                            <InputLabel
+                                htmlFor="private_code"
+                                value="Code secret"
+                            />
+                            <TextInput
+                                id="private_code"
+                                name="private_code"
+                                value={data.private_code}
+                                placeholder="Exemple : 12ab"
+                                aria-describedby="private_code_help"
+                                onChange={(e) =>
+                                    setData("private_code", e.target.value)
+                                }
+                            />
+                            <p
+                                id="private_code_help"
+                                className="mt-2 text-sm text-gray-600"
+                            >
+                                Communiquez ce code à vos proches pour qu’ils
+                                accèdent directement à votre liste.
+                            </p>
+                            <InputError
+                                message={errors.private_code}
+                                className="mt-2"
+                            />
+                        </div>
+                    )}
 
-                        <InputError
-                            message={errors.private_code}
-                            className="mt-2"
-                        />
-                    </div>
-
-                    <PrimaryButton className="mt-6" disabled={processing}>
+                    <PrimaryButton disabled={processing}>
                         Créer la liste
                     </PrimaryButton>
                 </form>
