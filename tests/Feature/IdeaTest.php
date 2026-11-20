@@ -181,6 +181,38 @@ class IdeaTest extends TestCase
         $this->assertNull($idea->status_user_id);
     }
 
+    public function test_reserving_or_purchasing_requires_a_user_name(): void
+    {
+        [$owner, $giftList] = $this->createGiftListWithOwner([
+            'private_code' => '1234',
+            'isPrivate' => false,
+        ]);
+        $idea = Idea::factory()->create([
+            'list_id' => $giftList->id,
+            'user_id' => $owner->id,
+            'user_name' => $owner->name,
+            'status' => 'available',
+            'status_user' => '',
+            'status_user_id' => null,
+        ]);
+
+        $follower = User::factory()->create();
+        FollowedList::create([
+            'user_id' => $follower->id,
+            'gift_list_id' => $giftList->id,
+            'private_code' => '1234',
+        ]);
+
+        // A missing name used to crash the request (500) instead of failing validation.
+        foreach (['reserve', 'purchase'] as $action) {
+            $this->actingAs($follower)
+                ->patch("/ideas/{$idea->id}/{$action}")
+                ->assertSessionHasErrors('userName');
+        }
+
+        $this->assertEquals('available', $idea->fresh()->status);
+    }
+
     public function test_a_different_guest_cannot_cancel_someone_elses_purchase(): void
     {
         [$owner, $giftList] = $this->createGiftListWithOwner([

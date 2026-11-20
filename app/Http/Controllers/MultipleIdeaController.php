@@ -34,7 +34,7 @@ class MultipleIdeaController extends Controller
 
         MultipleIdea::create([
             'idea_id' => $idea->id,
-            'status_user' => $request->get('userName'),
+            'status_user' => $this->validatedUserName($request),
             'status_user_id' => Auth::id(),
             'status_guest_token' => GuestIdentity::current(),
             'status' => 'reserved',
@@ -67,7 +67,7 @@ class MultipleIdeaController extends Controller
 
             MultipleIdea::create([
                 'idea_id' => $idea->id,
-                'status_user' => $request->get('userName'),
+                'status_user' => $this->validatedUserName($request),
                 'status_user_id' => Auth::id(),
                 'status_guest_token' => GuestIdentity::current(),
                 'status' => 'purchased',

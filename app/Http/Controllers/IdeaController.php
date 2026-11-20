@@ -130,7 +130,7 @@ class IdeaController extends Controller
         $idea = Idea::findOrFail($ideaId);
         $this->authorizeListAccess($idea->list_id);
 
-        $this->ideaRepository->updateIdea($idea, 'reserved', $request->get('userName'));
+        $this->ideaRepository->updateIdea($idea, 'reserved', $this->validatedUserName($request));
 
         return back();
     }
@@ -150,7 +150,7 @@ class IdeaController extends Controller
             $this->authorizeStatusOwner($idea);
         }
 
-        $this->ideaRepository->updateIdea($idea, 'purchased', $request->get('userName'));
+        $this->ideaRepository->updateIdea($idea, 'purchased', $this->validatedUserName($request));
 
         return back();
     }

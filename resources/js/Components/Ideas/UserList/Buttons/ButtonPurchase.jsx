@@ -1,6 +1,6 @@
 import PropTypes from "prop-types";
 import { useState } from "react";
-import { useForm } from "@inertiajs/react";
+import { router, useForm } from "@inertiajs/react";
 import { toast } from "sonner";
 import Modal from "@/Components/Utils/Modal";
 import PrimaryButton from "@/Components/Buttons/PrimaryButton";
@@ -9,10 +9,10 @@ import InputError from "@/Components/Utils/InputError";
 export default function ButtonPurchase({ idea, userName }) {
     const [purchaseConfirm, setPurchaseConfirm] = useState(false);
 
-    const { data, setData, patch, processing, reset, errors, transform } =
-        useForm({
-            choice: "",
-        });
+    const { data, setData, reset, errors, setError } = useForm({
+        choice: "",
+    });
+    const [processing, setProcessing] = useState(false);
 
     const openModal = () => {
         reset();
@@ -33,21 +33,25 @@ export default function ButtonPurchase({ idea, userName }) {
                 ? "multiple-ideas.purchase"
                 : "ideas.purchase";
 
-        // `transform()` is the mechanism designed to adjust the data right before submission
-        transform((formData) => ({
-            ...formData,
-            userName,
-            choice: ignoreChoice ? "" : formData.choice,
-        }));
-
-        patch(route(routeName, idea.id), {
-            preserveScroll: true,
-            onSuccess: () => {
-                closeModal();
-                toast.success("Cadeau acheté !");
+        // Payload sent explicitly: with @inertiajs/react 1.0, useForm's transform()
+        // is ignored when the form re-renders without its data changing.
+        router.patch(
+            route(routeName, idea.id),
+            { userName, choice: ignoreChoice ? "" : data.choice },
+            {
+                preserveScroll: true,
+                onStart: () => setProcessing(true),
+                onFinish: () => setProcessing(false),
+                onSuccess: () => {
+                    closeModal();
+                    toast.success("Cadeau acheté !");
+                },
+                onError: (errors) => {
+                    setError(errors);
+                    toast.error("Oops, une erreur est survenue.");
+                },
             },
-            onError: () => toast.error("Oops, une erreur est survenue."),
-        });
+        );
     };
 
     const handleClickMainButton = (e) => {
