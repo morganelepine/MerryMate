@@ -3,7 +3,7 @@ import ButtonBase from "@/Components/Buttons/ButtonBase";
 import { BUTTON_SIZE_CLASSES } from "@/Components/Buttons/buttonSizes";
 
 const COLOR_CLASSES = {
-    gray: "bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 focus:ring-gray-300",
+    gray: "bg-white border border-gray-200 text-gray-800 hover:bg-gray-50 focus:ring-gray-300",
     orange: "border border-orange-500 text-orange-500 hover:bg-orange-50 focus:ring-orange-300",
 };
 
@@ -34,7 +34,7 @@ export default function OutlineButton({
 
 OutlineButton.propTypes = {
     type: PropTypes.string,
-    size: PropTypes.oneOf(["small", "large"]),
+    size: PropTypes.oneOf(Object.keys(BUTTON_SIZE_CLASSES)),
     color: PropTypes.oneOf(["gray", "orange"]),
     className: PropTypes.string,
     disabled: PropTypes.bool,

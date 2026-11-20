@@ -64,7 +64,7 @@ export default function InstallPrompt() {
 
     return (
         <header className="fixed bottom-3 left-3 right-3 z-50 mx-auto max-w-sm animate-slide-up font-sans sm:bottom-4 sm:left-4 sm:right-4 sm:max-w-md">
-            <div className="flex items-center gap-2.5 rounded-2xl border border-bordeaux-100 bg-white p-3 shadow-up sm:gap-3 sm:p-4">
+            <div className="flex items-center gap-2.5 rounded-2xl border border-lilac-100 bg-white p-3 shadow-up sm:gap-3 sm:p-4">
                 <img
                     src="/icons/logo-MerryMate-192.png"
                     alt="MerryMate"

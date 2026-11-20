@@ -1,13 +1,19 @@
 import PropTypes from "prop-types";
+import { PAGE_GUTTER } from "@/Layouts/Partials/pageContainer";
 
-export default function SitePage({ nav, header, children }) {
+export default function SitePage({
+    nav,
+    header,
+    headerWidth = "max-w-7xl",
+    children,
+}) {
     return (
-        <div className="min-h-screen bg-lavande-20">
+        <div className="min-h-screen bg-cream">
             {nav}
 
             {header && (
-                <header className="bg-white shadow">
-                    <div className="max-w-7xl mx-auto p-4 sm:px-6 lg:px-8">
+                <header>
+                    <div className={`${headerWidth} ${PAGE_GUTTER} pt-8 pb-2`}>
                         {header}
                     </div>
                 </header>
@@ -21,5 +27,6 @@ export default function SitePage({ nav, header, children }) {
 SitePage.propTypes = {
     nav: PropTypes.node.isRequired,
     header: PropTypes.node,
+    headerWidth: PropTypes.string,
     children: PropTypes.node,
 };

@@ -8,7 +8,7 @@ import TopNav from "@/Layouts/Partials/TopNav";
 import SiteBrand from "@/Layouts/Partials/SiteBrand";
 import SitePage from "@/Layouts/Partials/SitePage";
 
-export default function Authenticated({ user, header, children }) {
+export default function Authenticated({ user, header, headerWidth, children }) {
     const [showingNavigationDropdown, setShowingNavigationDropdown] =
         useState(false);
 
@@ -18,6 +18,7 @@ export default function Authenticated({ user, header, children }) {
     return (
         <SitePage
             header={header}
+            headerWidth={headerWidth}
             nav={
                 <TopNav
                     below={

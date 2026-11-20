@@ -14,7 +14,7 @@ export default function PrimaryButton({
             {...props}
             disabled={disabled}
             className={
-                `inline-flex self-center items-center text-white bg-gradient-to-r from-bordeaux-500 to-orange-500 hover:from-orange-600 hover:to-pink-600 rounded-full transition ease-in-out duration-150 ${BUTTON_SIZE_CLASSES[size]} ${
+                `inline-flex self-center items-center font-medium text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-300 focus-visible:ring-offset-2 rounded-full transition ease-in-out duration-150 ${BUTTON_SIZE_CLASSES[size]} ${
                     disabled && "opacity-25"
                 } ` + className
             }
@@ -25,7 +25,7 @@ export default function PrimaryButton({
 }
 
 PrimaryButton.propTypes = {
-    size: PropTypes.oneOf(["small", "large"]),
+    size: PropTypes.oneOf(Object.keys(BUTTON_SIZE_CLASSES)),
     className: PropTypes.string,
     disabled: PropTypes.bool,
     children: PropTypes.node,

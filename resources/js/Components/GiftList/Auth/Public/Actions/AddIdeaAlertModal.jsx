@@ -1,7 +1,7 @@
 import PropTypes from "prop-types";
 import Modal from "@/Components/Utils/Modal";
 import LinkButton from "@/Components/Buttons/LinkButton";
-import { Link } from "@inertiajs/react";
+import PrimaryButton from "@/Components/Buttons/PrimaryButton";
 
 export default function AddIdeaAlertModal({
     list,
@@ -49,14 +49,13 @@ export default function AddIdeaAlertModal({
                     Ça reste entre nous, mais il ne reste plus
                     {numberOfAvailableIdeas} dans votre liste...
                 </p>
-                <div className="mt-4 flex flex-col text-center">
-                    <Link
-                        as="button"
+                <div className="mt-4 gap-2 flex flex-col text-center">
+                    <PrimaryButton
+                        size="medium"
                         href={route("ideas.create", list.id)}
-                        className="self-center px-5 pt-1 pb-1.5 bg-gradient-to-r from-bordeaux-500 to-orange-500 hover:from-orange-600 hover:to-pink-600 rounded-full text-sm text-white transition ease-in-out duration-150"
                     >
                         Ajouter des idées
-                    </Link>
+                    </PrimaryButton>
                     <LinkButton onClick={handleNoReminder}>
                         Ne plus me le rappeler
                     </LinkButton>

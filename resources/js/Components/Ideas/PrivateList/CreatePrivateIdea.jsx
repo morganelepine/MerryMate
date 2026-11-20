@@ -12,7 +12,7 @@ export default function CreatePrivateIdea({ auth, list }) {
     });
 
     return (
-        <div className="w-full p-4 bg-gradient-to-r from-orange-100 to-bordeaux-100 shadow-md rounded-xl">
+        <div className="w-full p-4 bg-orange-50 border border-orange-100 rounded-2xl shadow-sm">
             <form onSubmit={submit}>
                 <div className="flex flex-col text-center w-full">
                     <InputLabel

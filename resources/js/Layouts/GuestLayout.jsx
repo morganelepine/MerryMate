@@ -2,7 +2,7 @@ import SiteBrand from "@/Layouts/Partials/SiteBrand";
 
 export default function Guest({ children }) {
     return (
-        <div className="min-h-screen flex justify-center bg-gradient-to-r from-bordeaux-100 to-orange-100">
+        <div className="min-h-screen flex justify-center bg-cream">
             <div className="flex flex-col justify-center items-center">
                 <SiteBrand />
 
