@@ -1,9 +1,9 @@
 import { useState } from "react";
 import PropTypes from "prop-types";
 import FollowedListCard from "@/Components/GiftList/User/ListFollowed/FollowedListCard";
-import OutlineButton from "@/Components/Buttons/OutlineButton";
+import FindListButton from "@/Components/GiftList/Action/FindListButton";
 import LinkButton from "@/Components/Buttons/LinkButton";
-import ColumnHeader from "@/Components/GiftList/Index/ColumnHeader";
+import SectionHeader from "@/Components/Utils/SectionHeader";
 
 const MOBILE_PREVIEW = 2;
 
@@ -12,28 +12,10 @@ export default function FollowedLists({ followedLists }) {
 
     return (
         <section>
-            <ColumnHeader
+            <SectionHeader
                 title="Listes suivies"
                 count={followedLists.length}
-                action={
-                    <OutlineButton
-                        size="medium"
-                        href={route("lists.listsToFollow")}
-                    >
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            strokeWidth="2"
-                            stroke="currentColor"
-                            className="w-4 h-4 mr-1.5 -ml-0.5"
-                            aria-hidden="true"
-                        >
-                            <path d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
-                        </svg>
-                        Trouver
-                    </OutlineButton>
-                }
+                action={<FindListButton />}
             />
 
             {followedLists.length > 0 ? (
