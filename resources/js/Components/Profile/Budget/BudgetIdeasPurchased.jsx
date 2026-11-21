@@ -7,14 +7,26 @@ import {
     linkIsTitle,
 } from "@/Components/Ideas/ideaHelpers";
 import { LIST_CARD } from "@/Components/GiftList/listCard";
+import { STATUS_VARIANTS } from "@/Components/Ideas/ideaCard";
+
+const RESERVED = STATUS_VARIANTS.reserved;
 
 export default function BudgetIdeasPurchased({ idea }) {
-    const meta = [idea.brand, idea.details].filter(Boolean).join(" · ");
+    const meta = [idea.brand, idea.details, idea.choice]
+        .filter(Boolean)
+        .join(" ~ ");
     const paidPrice = getPaidPrice(idea);
 
     return (
         <div className={LIST_CARD}>
             <div className="min-w-0 flex-1">
+                {idea.status === "reserved" && (
+                    <p
+                        className={`mb-1 inline-flex rounded-full border px-2 py-0.5 text-xs ${RESERVED.badgeMine}`}
+                    >
+                        {RESERVED.label}
+                    </p>
+                )}
                 {linkIsTitle(idea) ? (
                     <IdeaLink idea={idea} />
                 ) : (
@@ -44,5 +56,7 @@ BudgetIdeasPurchased.propTypes = {
         details: PropTypes.string,
         price: PropTypes.number,
         paid_price: PropTypes.number,
+        choice: PropTypes.string,
+        status: PropTypes.string,
     }).isRequired,
 };

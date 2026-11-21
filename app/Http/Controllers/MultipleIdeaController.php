@@ -72,6 +72,7 @@ class MultipleIdeaController extends Controller
                 'status_guest_token' => GuestIdentity::current(),
                 'status' => 'purchased',
                 'choice' => $choice,
+                'paid_price' => $idea->currentPrice(),
             ]);
 
             return back();

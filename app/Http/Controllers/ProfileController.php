@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 use Inertia\Response;
 use App\Models\Idea;
+use App\Models\MultipleIdea;
 
 class ProfileController extends Controller
 {
@@ -68,8 +69,26 @@ class ProfileController extends Controller
      */
     public function purchase(): Response
     {
-        $ideas = Idea::where('status_user_id', Auth::id())->get();
-        $totalPrice = round($ideas->sum(fn (Idea $idea) => $idea->paid_price ?? $idea->price), 2);
+        // Reservations count too: buyers often never confirm them once the gift is bought.
+        $ideas = Idea::where('status_user_id', Auth::id())->get()->map(fn (Idea $idea) => [
+            ...$idea->toArray(),
+            'key' => "idea-{$idea->id}",
+        ]);
+
+        // Each reservation or purchase of a multiple idea is its own row, shaped like an idea.
+        $multiplePurchases = MultipleIdea::with('idea')
+            ->where('status_user_id', Auth::id())
+            ->get()
+            ->map(fn (MultipleIdea $purchase) => [
+                ...$purchase->idea->only(['idea', 'brand', 'details', 'link', 'price', 'user_name']),
+                'key' => "multiple-{$purchase->id}",
+                'status' => $purchase->status,
+                'choice' => $purchase->choice,
+                'paid_price' => $purchase->paid_price,
+            ]);
+
+        $ideas = $ideas->concat($multiplePurchases)->values();
+        $totalPrice = round($ideas->sum(fn (array $idea) => $idea['paid_price'] ?? $idea['price']), 2);
 
         return Inertia::render('Profile/Budget', [
             'ideas' => $ideas,

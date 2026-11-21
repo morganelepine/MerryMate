@@ -26,6 +26,7 @@ class MultipleIdea extends Model
         'status_user_id',
         'status_guest_token',
         'choice',
+        'paid_price',
     ];
 
     /**
@@ -38,5 +39,9 @@ class MultipleIdea extends Model
      */
     protected $hidden = [
         'status_guest_token',
+    ];
+
+    protected $casts = [
+        'paid_price' => 'float',
     ];
 }

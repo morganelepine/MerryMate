@@ -4,32 +4,20 @@ import relativeTime from "dayjs/plugin/relativeTime";
 import "dayjs/locale/fr";
 import IdeaLink from "@/Components/Ideas/IdeaLink";
 import { getIdeaTitle, linkIsTitle } from "@/Components/Ideas/ideaHelpers";
-import { IDEA_ACTIONS, IDEA_CARD_BASE } from "@/Components/Ideas/ideaCard";
+import {
+    IDEA_ACTIONS,
+    IDEA_CARD_BASE,
+    STATUS_VARIANTS,
+} from "@/Components/Ideas/ideaCard";
 
 dayjs.extend(relativeTime);
 dayjs.locale("fr");
-
-const VARIANTS = {
-    reserved: {
-        label: "Réservé",
-        card: "border-lilac-300",
-        // Filled when it's the viewer's own action, outlined when someone else's.
-        badgeMine: "bg-lilac-100 border-lilac-100 text-lilac-800",
-        badgeOther: "bg-white border-lilac-300 text-lilac-800",
-    },
-    purchased: {
-        label: "Acheté",
-        card: "border-sage-300",
-        badgeMine: "bg-sage-100 border-sage-100 text-sage-800",
-        badgeOther: "bg-white border-sage-300 text-sage-800",
-    },
-};
 
 // Neutral grey pill: the card border already carries the status colour.
 const LINK_COLOR = "bg-gray-200 text-gray-700 hover:bg-gray-100";
 
 export default function IdeaWithStatus({ idea, status, actions }) {
-    const variant = VARIANTS[status];
+    const variant = STATUS_VARIANTS[status];
     const linkAsTitle = linkIsTitle(idea);
 
     return (
@@ -83,6 +71,6 @@ export default function IdeaWithStatus({ idea, status, actions }) {
 
 IdeaWithStatus.propTypes = {
     idea: PropTypes.object.isRequired,
-    status: PropTypes.oneOf(Object.keys(VARIANTS)).isRequired,
+    status: PropTypes.oneOf(Object.keys(STATUS_VARIANTS)).isRequired,
     actions: PropTypes.node,
 };

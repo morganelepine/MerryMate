@@ -70,7 +70,7 @@ export default function Budget({ auth, ideas, totalPrice }) {
                                 <div className="mt-4 space-y-3">
                                     {group.ideas.map((idea) => (
                                         <BudgetIdeasPurchased
-                                            key={idea.id}
+                                            key={idea.key}
                                             idea={idea}
                                         />
                                     ))}

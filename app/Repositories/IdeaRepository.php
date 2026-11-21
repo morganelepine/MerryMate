@@ -75,6 +75,7 @@ class IdeaRepository
     {
         $multipleIdea->status = $status;
         $multipleIdea->choice = $choice;
+        $multipleIdea->paid_price = $status === 'purchased' ? $multipleIdea->idea->currentPrice() : null;
         $multipleIdea->save();
     }
 }
