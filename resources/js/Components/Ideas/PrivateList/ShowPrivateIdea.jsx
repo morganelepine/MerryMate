@@ -1,41 +1,26 @@
-import React, { useState } from "react";
 import PropTypes from "prop-types";
 import EditPrivateIdea from "@/Components/Ideas/PrivateList/EditPrivateIdea";
-import Buttons from "@/Components/Ideas/UserList/Buttons/EditDeleteButtons";
+import EditableIdea from "@/Components/Ideas/EditableIdea";
 
 export default function ShowPrivateIdea({ auth, idea }) {
-    const [editing, setEditing] = useState(false);
-
     return (
-        <>
-            {/* EDIT & DELETE BUTTONS */}
-            <div className="w-16 flex items-center">
-                <Buttons idea={idea} setEditing={setEditing} />
-            </div>
-
-            {/* IDEA */}
-            <div className="p-3 bg-white shadow rounded-lg w-full">
-                {editing ? (
-                    <EditPrivateIdea
-                        auth={auth}
-                        idea={idea}
-                        setEditing={setEditing}
-                    />
-                ) : (
-                    <>
-                        {idea.idea && (
-                            <p className="text-sm sm:uppercase font-semibold">
-                                {idea.idea}
-                            </p>
-                        )}
-                    </>
-                )}
-            </div>
-        </>
+        <EditableIdea
+            idea={idea}
+            className="p-3 bg-white border border-transparent shadow rounded-lg w-full"
+            renderEdit={(close) => (
+                <EditPrivateIdea auth={auth} idea={idea} onClose={close} />
+            )}
+        >
+            {idea.idea && (
+                <p className="text-sm sm:uppercase font-semibold">
+                    {idea.idea}
+                </p>
+            )}
+        </EditableIdea>
     );
 }
 
 ShowPrivateIdea.propTypes = {
     auth: PropTypes.object.isRequired,
-    ideas: PropTypes.array,
+    idea: PropTypes.object.isRequired,
 };

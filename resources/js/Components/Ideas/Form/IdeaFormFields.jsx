@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useId } from "react";
 import InputError from "@/Components/Utils/InputError";
 import InputLabel from "@/Components/Utils/InputLabel";
 import TextInput from "@/Components/Utils/TextInput";
@@ -8,49 +8,33 @@ import Checkbox from "@/Components/Utils/Checkbox";
 const EDIT_FIELD_CLASSNAME =
     "block w-full mt-1 border-gray-300 focus:border-orange-300 focus:ring focus:ring-orange-200 focus:ring-opacity-50 rounded-md shadow-sm";
 
-function DisclosureSection({ title, children }) {
-    const [open, setOpen] = useState(false);
-
-    return (
-        <div className="bg-white shadow-md p-5 mt-6 rounded-xl">
-            <button
-                type="button"
-                className="flex w-full text-left cursor-pointer text-orange-500 uppercase tracking-widest"
-                aria-expanded={open}
-                onClick={() => setOpen((current) => !current)}
-            >
-                {title}
-                <svg
-                    xmlns="https://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    className="w-6 h-6 pl-1"
-                >
-                    <path d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
-                </svg>
-            </button>
-
-            {open && children}
-        </div>
-    );
-}
-
 export default function IdeaFormFields({ variant, data, setData, errors }) {
     const isEdit = variant === "edit";
     const Input = isEdit ? TextInputSmall : TextInput;
     const inputClassName = isEdit ? EDIT_FIELD_CLASSNAME : "py-1";
+    // Several edit forms can be open at once: ids must stay unique on the page.
+    const formId = useId();
+    const idFor = (name) => `${formId}-${name}`;
 
     const field = (
         name,
         label,
         placeholder,
-        { className = inputClassName, wrapperClassName = "" } = {},
+        {
+            className = inputClassName,
+            wrapperClassName = "",
+            labelClassName = "",
+        } = {},
     ) => (
         <div className={wrapperClassName}>
-            {!isEdit && <InputLabel htmlFor={name} value={label} />}
+            {/* The edit variant has no visible labels: its placeholders name the fields. */}
+            <InputLabel
+                htmlFor={idFor(name)}
+                value={isEdit ? placeholder : label}
+                className={isEdit ? "sr-only" : labelClassName}
+            />
             <Input
-                id={name}
+                id={idFor(name)}
                 name={name}
                 value={data[name]}
                 placeholder={placeholder}
@@ -70,7 +54,7 @@ export default function IdeaFormFields({ variant, data, setData, errors }) {
         <div className={wrapperClassName}>
             {isEdit ? (
                 <TextInputSmall
-                    id={name}
+                    id={idFor(name)}
                     name={name}
                     type="checkbox"
                     defaultChecked={Boolean(data[name])}
@@ -79,13 +63,15 @@ export default function IdeaFormFields({ variant, data, setData, errors }) {
                 />
             ) : (
                 <Checkbox
-                    id={name}
+                    id={idFor(name)}
                     name={name}
                     defaultChecked={false}
                     onChange={(e) => setData(name, e.target.checked)}
                 />
             )}
-            <p>{label}</p>
+            <label htmlFor={idFor(name)} className="cursor-pointer">
+                {label}
+            </label>
             <InputError message={errors[name]} className="mt-2" />
         </div>
     );
@@ -93,83 +79,81 @@ export default function IdeaFormFields({ variant, data, setData, errors }) {
     if (isEdit) {
         return (
             <div className="space-y-2">
-                {field("idea", null, "Le nom de l'idée")}
-                {field("brand", null, "La marque")}
-                {field("link", null, "Le lien")}
+                {field("idea", null, "Nom de l'idée")}
+                {field("brand", null, "Marque")}
+                {field("link", null, "Lien")}
                 {field(
                     "details",
                     null,
-                    "Des détails sur l'article : taille, coloris...",
+                    "Détails sur l'article : taille, coloris...",
                 )}
-                {field("price", null, "Le prix (chiffre rond : 34,99 = 35)", {
+                {field("price", null, "Prix (chiffre rond : 34,99 = 35)", {
                     className: EDIT_FIELD_CLASSNAME + " py-1",
                 })}
 
-                {checkboxField("favorite", "L'article est un coup de cœur")}
+                {checkboxField("favorite", "Coup de cœur")}
                 {checkboxField(
                     "is_multiple",
-                    "L'article peut être offert plusieurs fois",
+                    "Peut être offert plusieurs fois",
                 )}
-                {checkboxField("promo", "L'article est en promo")}
+                {checkboxField("promo", "En promo")}
 
                 {field(
                     "promo_details",
                     null,
-                    "Des détails sur la promo en cours : durée, conditions...",
+                    "Détails sur la promo : durée, conditions...",
                 )}
             </div>
         );
     }
 
     return (
-        <>
-            <div className="bg-white shadow-md space-y-5 p-5 rounded-xl">
-                {field("idea", "Nom de l'idée", "Puzzle 500 pièces")}
-                {field(
-                    "link",
-                    "Lien",
-                    "https://www.fleux.com/puzzle-snowdonia-500-pieces.html",
-                )}
+        <div className="space-y-5">
+            {field("idea", "Nom de l'idée", "Puzzle 500 pièces")}
+            {field(
+                "link",
+                "Lien",
+                "https://www.fleux.com/puzzle-snowdonia-500-pieces.html",
+            )}
 
-                <div className="flex sm:flex-row flex-col w-full space-y-5 sm:space-y-0 sm:space-x-8">
-                    <div className="sm:w-2/5">
-                        {field("brand", "Marque", "Fleux")}
-                    </div>
-                    <div className="sm:w-2/5">
-                        {field(
-                            "details",
-                            "Détails",
-                            "Taille, coloris, quantité...",
-                        )}
-                    </div>
-                    <div className="sm:w-1/5">
-                        {field("price", "Prix", "35")}
-                    </div>
+            <div className="flex sm:flex-row flex-col w-full space-y-5 sm:space-y-0 sm:space-x-8">
+                <div className="sm:w-2/5">
+                    {field("brand", "Marque", "Fleux")}
                 </div>
-
-                {checkboxField(
-                    "favorite",
-                    "L'article est un coup de cœur",
-                    "flex items-center",
-                )}
-                {checkboxField(
-                    "is_multiple",
-                    "L'article peut être offert plusieurs fois",
-                    "flex items-center",
-                )}
-            </div>
-
-            <DisclosureSection title="Promotion">
-                <div className="space-y-5">
-                    {checkboxField("promo", "L'article est en promo")}
+                <div className="sm:w-2/5">
                     {field(
-                        "promo_details",
-                        "Détails sur la promo en cours",
-                        "Durée, conditions...",
-                        { wrapperClassName: "my-2" },
+                        "details",
+                        "Détails",
+                        "Taille, coloris, quantité...",
                     )}
                 </div>
-            </DisclosureSection>
-        </>
+                <div className="sm:w-1/5">{field("price", "Prix", "35")}</div>
+            </div>
+
+            {checkboxField("favorite", "Coup de cœur", "flex items-center")}
+            {checkboxField(
+                "is_multiple",
+                "Peut être offert plusieurs fois",
+                "flex items-center",
+            )}
+
+            <div className="flex items-center gap-4">
+                {checkboxField(
+                    "promo",
+                    "En promo",
+                    "flex items-center shrink-0",
+                )}
+                {field(
+                    "promo_details",
+                    "Détails de la promo",
+                    "Durée, conditions...",
+                    {
+                        className: "py-1 !mt-0",
+                        wrapperClassName: "flex-1 min-w-0",
+                        labelClassName: "sr-only",
+                    },
+                )}
+            </div>
+        </div>
     );
 }

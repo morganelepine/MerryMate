@@ -1,14 +1,15 @@
 import PropTypes from "prop-types";
 import TextInputSmall from "@/Components/Utils/TextInputSmall";
 import InputError from "@/Components/Utils/InputError";
+import DeleteIdeaButton from "@/Components/Ideas/DeleteIdeaButton";
 import useIdeaForm from "@/hooks/useIdeaForm";
 
-export default function IdeaPrivateEdit({ auth, idea, setEditing }) {
+export default function IdeaPrivateEdit({ auth, idea, onClose }) {
     const { data, setData, errors, submit, reset, clearErrors } = useIdeaForm(
         {
             auth,
             idea,
-            onSuccess: () => setEditing(false),
+            onSuccess: onClose,
         }
     );
 
@@ -47,9 +48,9 @@ export default function IdeaPrivateEdit({ auth, idea, setEditing }) {
                     className="text-sm italic hover:text-orange-500 ml-3"
                     aria-label="Annuler"
                     onClick={() => {
-                        setEditing(false);
                         reset();
                         clearErrors();
+                        onClose();
                     }}
                 >
                     <svg
@@ -63,12 +64,15 @@ export default function IdeaPrivateEdit({ auth, idea, setEditing }) {
                     </svg>
                 </button>
             </div>
+            <div className="flex justify-end mt-2">
+                <DeleteIdeaButton idea={idea} onBlocked={onClose} />
+            </div>
         </form>
     );
 }
 
 IdeaPrivateEdit.propTypes = {
     auth: PropTypes.object.isRequired,
-    idea: PropTypes.object,
-    setEditing: PropTypes.func,
+    idea: PropTypes.object.isRequired,
+    onClose: PropTypes.func.isRequired,
 };

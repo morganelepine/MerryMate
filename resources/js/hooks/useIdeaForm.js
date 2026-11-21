@@ -20,15 +20,13 @@ export default function useIdeaForm({ auth, list, idea = null, onSuccess }) {
         isEditing
             ? {
                   user_name: auth.user.name,
-                  idea: idea.idea,
-                  brand: idea.brand,
-                  link: idea.link,
-                  details: idea.details,
-                  price: idea.price,
-                  favorite: idea.favorite,
-                  is_multiple: idea.is_multiple,
-                  promo: idea.promo,
-                  promo_details: idea.promo_details,
+                  // Empty columns come back as null, which React inputs refuse as a value.
+                  ...Object.fromEntries(
+                      Object.entries(EMPTY_IDEA).map(([key, empty]) => [
+                          key,
+                          idea[key] ?? empty,
+                      ]),
+                  ),
               }
             : {
                   list_id: list.id,
@@ -45,15 +43,15 @@ export default function useIdeaForm({ auth, list, idea = null, onSuccess }) {
     const submit = (e) => {
         e.preventDefault();
 
+        if (!data.brand) {
+            data.brand = NO_BRAND;
+        }
+
         if (isEditing) {
             patch(route("ideas.update", idea.id), {
                 onSuccess: () => onSuccess?.(),
             });
             return;
-        }
-
-        if (!data.brand) {
-            data.brand = NO_BRAND;
         }
 
         post(route("ideas.store"), {

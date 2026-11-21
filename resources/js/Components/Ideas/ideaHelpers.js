@@ -3,11 +3,12 @@ export const formatIdeaCount = (count) =>
 
 export const NO_BRAND = "Sans marque";
 
-// Keeps the incoming order.
+// Keeps the incoming order. Ideas saved without a brand (older data) join the "no brand" group.
 export function groupByBrand(ideas) {
     const groups = new Map();
 
-    for (const { brand, ...idea } of ideas) {
+    for (const { brand: rawBrand, ...idea } of ideas) {
+        const brand = rawBrand || NO_BRAND;
         if (!groups.has(brand)) groups.set(brand, { brand, ideas: [] });
         groups.get(brand).ideas.push(idea);
     }

@@ -1,30 +1,26 @@
-import React, { useState } from "react";
+import PropTypes from "prop-types";
 import { usePage } from "@inertiajs/react";
 import IdeaShow from "@/Components/Ideas/PublicList/IdeaShow";
 import IdeaEdit from "@/Components/Ideas/PublicList/IdeaEdit";
+import EditableIdea from "@/Components/Ideas/EditableIdea";
 import { IDEA_CARD } from "@/Components/Ideas/ideaCard";
-import EditDeleteButtons from "@/Components/Ideas/UserList/Buttons/EditDeleteButtons";
 
-export default function Ideas({ idea }) {
+export default function Idea({ idea }) {
     const { auth } = usePage().props;
 
-    const [editing, setEditing] = useState(false);
-
     return (
-        <div className="sm:flex items-center">
-            {/* EDIT & DELETE BUTTONS */}
-            <div className="flex items-center w-16">
-                <EditDeleteButtons idea={idea} setEditing={setEditing} />
-            </div>
-
-            {/* IDEA */}
-            <div className={IDEA_CARD}>
-                {editing ? (
-                    <IdeaEdit auth={auth} idea={idea} setEditing={setEditing} />
-                ) : (
-                    <IdeaShow idea={idea} />
-                )}
-            </div>
-        </div>
+        <EditableIdea
+            idea={idea}
+            className={IDEA_CARD}
+            renderEdit={(close) => (
+                <IdeaEdit auth={auth} idea={idea} onClose={close} />
+            )}
+        >
+            <IdeaShow idea={idea} />
+        </EditableIdea>
     );
 }
+
+Idea.propTypes = {
+    idea: PropTypes.object.isRequired,
+};
