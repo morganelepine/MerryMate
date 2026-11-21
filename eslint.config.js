@@ -85,4 +85,12 @@ export default [
             "react/no-unescaped-entities": "off",
         },
     },
+    {
+        files: ["public/sw.js"],
+        languageOptions: {
+            ecmaVersion: "latest",
+            sourceType: "script",
+            globals: globals.serviceworker,
+        },
+    },
 ];

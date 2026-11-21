@@ -1,17 +1,17 @@
-const CACHE_NAME = "merrymate-v2";
+const CACHE_NAME = "merrymate-v3";
 const STATIC_PRECACHE = [
     "/icons/logo-MerryMate-192-v2.png",
     "/icons/logo-MerryMate-512-v2.png",
 ];
 
-self.addEventListener("install", (event) => {
+globalThis.addEventListener("install", (event) => {
     event.waitUntil(
         caches.open(CACHE_NAME).then((cache) => cache.addAll(STATIC_PRECACHE)),
     );
     globalThis.skipWaiting();
 });
 
-self.addEventListener("activate", (event) => {
+globalThis.addEventListener("activate", (event) => {
     event.waitUntil(
         caches
             .keys()
@@ -26,7 +26,7 @@ self.addEventListener("activate", (event) => {
     globalThis.clients.claim();
 });
 
-self.addEventListener("fetch", (event) => {
+globalThis.addEventListener("fetch", (event) => {
     const { request } = event;
     const url = new URL(request.url);
 
@@ -83,7 +83,7 @@ self.addEventListener("fetch", (event) => {
     }
 
     // Network-first for same-origin navigation and API (Inertia)
-    if (url.origin === self.location.origin) {
+    if (url.origin === globalThis.location.origin) {
         event.respondWith(
             fetch(request)
                 .then((response) => {
