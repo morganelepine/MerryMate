@@ -85,7 +85,7 @@ describe("RequestButtons", () => {
             screen.queryByRole("button", { name: /accepter/i })
         ).toBeNull();
         expect(
-            screen.getByText(/vous avez accepté la demande/i)
+            screen.getByText(/tu as accepté la demande/i)
         ).toBeInTheDocument();
     });
 });

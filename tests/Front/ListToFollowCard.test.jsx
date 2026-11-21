@@ -21,6 +21,9 @@ const listToFollow = {
     formatted_created_at: "01/01/2026",
 };
 
+const requestButton = () =>
+    screen.getByRole("button", { name: /demande/i });
+
 describe("ListToFollowCard", () => {
     beforeEach(() => {
         vi.clearAllMocks();
@@ -30,7 +33,7 @@ describe("ListToFollowCard", () => {
         requestAccessToList.mockResolvedValueOnce({});
         render(<ListToFollow auth={auth} listToFollow={listToFollow} />);
 
-        fireEvent.click(screen.getByText("Demander un accès"));
+        fireEvent.click(requestButton());
 
         await waitFor(() => {
             expect(requestAccessToList).toHaveBeenCalledWith(9, 3);
@@ -42,9 +45,9 @@ describe("ListToFollowCard", () => {
         requestAccessToList.mockReturnValue(new Promise(() => {}));
         render(<ListToFollow auth={auth} listToFollow={listToFollow} />);
 
-        fireEvent.click(screen.getByText("Demander un accès"));
+        fireEvent.click(requestButton());
 
-        expect(screen.getByText("Demander un accès")).toBeDisabled();
+        expect(requestButton()).toBeDisabled();
     });
 
     it("re-enables the button and shows an error toast when the request fails", async () => {
@@ -52,10 +55,10 @@ describe("ListToFollowCard", () => {
         requestAccessToList.mockRejectedValueOnce(new Error("network"));
         render(<ListToFollow auth={auth} listToFollow={listToFollow} />);
 
-        fireEvent.click(screen.getByText("Demander un accès"));
+        fireEvent.click(requestButton());
 
         await waitFor(() => expect(toast.error).toHaveBeenCalled());
-        expect(screen.getByText("Demander un accès")).not.toBeDisabled();
+        expect(requestButton()).not.toBeDisabled();
         expect(localStorage.getItem("requestSent-3")).toBeNull();
     });
 
@@ -63,6 +66,6 @@ describe("ListToFollowCard", () => {
         localStorage.setItem("requestSent-3", "true");
         render(<ListToFollow auth={auth} listToFollow={listToFollow} />);
 
-        expect(screen.getByText("Demander un accès")).toBeDisabled();
+        expect(requestButton()).toBeDisabled();
     });
 });
