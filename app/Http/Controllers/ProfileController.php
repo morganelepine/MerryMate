@@ -69,7 +69,7 @@ class ProfileController extends Controller
     {
         // Get all ideas purchased by auth user
         $ideas = Idea::where('status_user_id', Auth::id())->get();
-        $totalPrice = $ideas->sum('price');
+        $totalPrice = round($ideas->sum('price'), 2);
 
         return Inertia::render('Profile/Budget', [
             'ideas' => $ideas,

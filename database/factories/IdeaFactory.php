@@ -33,7 +33,7 @@ class IdeaFactory extends Factory
             'brand' => fake()->word(),
             'link' => fake()->url(),
             'details' => fake()->word(),
-            'price' => fake()->randomNumber(3),
+            'price' => fake()->randomFloat(2, 5, 300),
             'favorite' => fake()->boolean(),
             'is_multiple' => fake()->boolean(),
             'promo' => fake()->boolean(),

@@ -1,6 +1,10 @@
 import PropTypes from "prop-types";
 import IdeaLink from "@/Components/Ideas/IdeaLink";
-import { getIdeaTitle, linkIsTitle } from "@/Components/Ideas/ideaHelpers";
+import {
+    formatPrice,
+    getIdeaTitle,
+    linkIsTitle,
+} from "@/Components/Ideas/ideaHelpers";
 
 function HeartIcon() {
     return (
@@ -76,9 +80,9 @@ export default function IdeaShow({ idea }) {
                                 ({idea.promo_details || "en promo"})
                             </span>
                         )}
-                        {idea.price && (
+                        {idea.price > 0 && (
                             <span className="font-semibold text-gray-900">
-                                {idea.price} €
+                                {formatPrice(idea.price)}
                             </span>
                         )}
                     </p>
@@ -100,7 +104,7 @@ IdeaShow.propTypes = {
         idea: PropTypes.string,
         link: PropTypes.string,
         details: PropTypes.string,
-        price: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+        price: PropTypes.number,
         favorite: PropTypes.number,
         is_multiple: PropTypes.number,
         promo: PropTypes.number,

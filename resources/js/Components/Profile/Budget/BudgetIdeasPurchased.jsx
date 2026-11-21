@@ -1,6 +1,10 @@
 import PropTypes from "prop-types";
 import IdeaLink from "@/Components/Ideas/IdeaLink";
-import { getIdeaTitle, linkIsTitle } from "@/Components/Ideas/ideaHelpers";
+import {
+    formatPrice,
+    getIdeaTitle,
+    linkIsTitle,
+} from "@/Components/Ideas/ideaHelpers";
 import { LIST_CARD } from "@/Components/GiftList/listCard";
 
 export default function BudgetIdeasPurchased({ idea }) {
@@ -20,10 +24,10 @@ export default function BudgetIdeasPurchased({ idea }) {
                     <p className="text-sm text-gray-500 truncate">{meta}</p>
                 )}
             </div>
-            {!linkIsTitle(idea) && <IdeaLink idea={idea} />}
-            {idea.price && (
+            {!linkIsTitle(idea) && <IdeaLink idea={idea} iconOnlyOnMobile />}
+            {idea.price > 0 && (
                 <p className="shrink-0 font-semibold text-gray-900">
-                    {idea.price} €
+                    {formatPrice(idea.price)}
                 </p>
             )}
         </div>

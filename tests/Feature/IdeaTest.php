@@ -241,4 +241,41 @@ class IdeaTest extends TestCase
         $idea->refresh();
         $this->assertEquals('purchased', $idea->status);
     }
+
+    public function test_price_accepts_decimals_typed_with_a_comma(): void
+    {
+        [$owner, $giftList] = $this->createGiftListWithOwner();
+
+        $this->actingAs($owner)
+            ->post('/ideas', [
+                'list_id' => $giftList->id,
+                'user_name' => $owner->name,
+                'idea' => 'Puzzle',
+                'price' => '34,99',
+            ])
+            ->assertSessionHasNoErrors();
+
+        $idea = Idea::where('list_id', $giftList->id)->firstOrFail();
+        $this->assertSame(34.99, $idea->price);
+
+        $this->actingAs($owner)
+            ->patch("/ideas/{$idea->id}", ['price' => '12.5'])
+            ->assertSessionHasNoErrors();
+
+        $this->assertSame(12.5, $idea->fresh()->price);
+    }
+
+    public function test_price_rejects_more_than_two_decimals(): void
+    {
+        [$owner, $giftList] = $this->createGiftListWithOwner();
+
+        $this->actingAs($owner)
+            ->post('/ideas', [
+                'list_id' => $giftList->id,
+                'user_name' => $owner->name,
+                'idea' => 'Puzzle',
+                'price' => '34,999',
+            ])
+            ->assertSessionHasErrors('price');
+    }
 }

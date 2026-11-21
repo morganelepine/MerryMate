@@ -3,12 +3,25 @@ export const formatIdeaCount = (count) =>
 
 export const NO_BRAND = "Sans marque";
 
+// "35 €" for a round price, "34,99 €" otherwise.
+export const formatPrice = (price) =>
+    new Intl.NumberFormat("fr-FR", {
+        style: "currency",
+        currency: "EUR",
+        minimumFractionDigits: Number.isInteger(price) ? 0 : 2,
+    }).format(price);
+
+// Shown in the edit form the way it is typed: "34,99".
+export const priceToInput = (price) =>
+    price == null ? "" : String(price).replace(".", ",");
+
 // Keeps the incoming order. Ideas saved without a brand (older data) join the "no brand" group.
 export function groupByBrand(ideas) {
     const groups = new Map();
 
-    for (const { brand: rawBrand, ...idea } of ideas) {
-        const brand = rawBrand || NO_BRAND;
+    // Ideas keep their own `brand`: the edit form needs it.
+    for (const idea of ideas) {
+        const brand = idea.brand || NO_BRAND;
         if (!groups.has(brand)) groups.set(brand, { brand, ideas: [] });
         groups.get(brand).ideas.push(idea);
     }

@@ -8,6 +8,9 @@ import Checkbox from "@/Components/Utils/Checkbox";
 const EDIT_FIELD_CLASSNAME =
     "block w-full mt-1 border-gray-300 focus:border-orange-300 focus:ring focus:ring-orange-200 focus:ring-opacity-50 rounded-md shadow-sm";
 
+// Opens the numeric keypad (with a comma) on mobile.
+const PRICE_INPUT_PROPS = { inputMode: "decimal" };
+
 export default function IdeaFormFields({ variant, data, setData, errors }) {
     const isEdit = variant === "edit";
     const Input = isEdit ? TextInputSmall : TextInput;
@@ -24,6 +27,7 @@ export default function IdeaFormFields({ variant, data, setData, errors }) {
             className = inputClassName,
             wrapperClassName = "",
             labelClassName = "",
+            inputProps = {},
         } = {},
     ) => (
         <div className={wrapperClassName}>
@@ -41,6 +45,7 @@ export default function IdeaFormFields({ variant, data, setData, errors }) {
                 className={className}
                 isFocused={name === "idea"}
                 onChange={(e) => setData(name, e.target.value)}
+                {...inputProps}
             />
             <InputError message={errors[name]} className="mt-2" />
         </div>
@@ -87,8 +92,9 @@ export default function IdeaFormFields({ variant, data, setData, errors }) {
                     null,
                     "Détails sur l'article : taille, coloris...",
                 )}
-                {field("price", null, "Prix (chiffre rond : 34,99 = 35)", {
+                {field("price", null, "Prix", {
                     className: EDIT_FIELD_CLASSNAME + " py-1",
+                    inputProps: PRICE_INPUT_PROPS,
                 })}
 
                 {checkboxField("favorite", "Coup de cœur")}
@@ -127,7 +133,11 @@ export default function IdeaFormFields({ variant, data, setData, errors }) {
                         "Taille, coloris, quantité...",
                     )}
                 </div>
-                <div className="sm:w-1/5">{field("price", "Prix", "35")}</div>
+                <div className="sm:w-1/5">
+                    {field("price", "Prix", "34,99", {
+                        inputProps: PRICE_INPUT_PROPS,
+                    })}
+                </div>
             </div>
 
             {checkboxField("favorite", "Coup de cœur", "flex items-center")}

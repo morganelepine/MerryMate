@@ -57,8 +57,11 @@ return [
     */
 
     'custom' => [
-        'attribute-name' => [
-            'rule-name' => 'custom-message',
+        'price' => [
+            'numeric' => 'Renseigne un prix valide, par exemple 34,99.',
+            'decimal' => 'Le prix ne peut pas avoir plus de 2 chiffres après la virgule.',
+            'min' => 'Le prix ne peut pas être négatif.',
+            'max' => 'Le prix ne peut pas dépasser 999 999,99 €.',
         ],
     ],
 

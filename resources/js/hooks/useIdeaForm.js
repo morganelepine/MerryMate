@@ -1,5 +1,5 @@
 import { useForm } from "@inertiajs/react";
-import { NO_BRAND } from "@/Components/Ideas/ideaHelpers";
+import { NO_BRAND, priceToInput } from "@/Components/Ideas/ideaHelpers";
 
 const EMPTY_IDEA = {
     idea: "",
@@ -27,6 +27,7 @@ export default function useIdeaForm({ auth, list, idea = null, onSuccess }) {
                           idea[key] ?? empty,
                       ]),
                   ),
+                  price: priceToInput(idea.price),
               }
             : {
                   list_id: list.id,

@@ -57,4 +57,9 @@ class Idea extends Model
     protected $hidden = [
         'status_guest_token',
     ];
+
+    // A decimal column is read as a string: cast it so the front can add prices up.
+    protected $casts = [
+        'price' => 'float',
+    ];
 }
