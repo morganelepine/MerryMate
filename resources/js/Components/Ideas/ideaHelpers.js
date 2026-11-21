@@ -32,3 +32,7 @@ export function parseLink(link) {
 
 export const getIdeaTitle = (idea) =>
     idea.idea || parseLink(idea.link)?.host || idea.link;
+
+// No name but a web link: the link pill itself stands as the title (shown once).
+export const linkIsTitle = (idea) =>
+    !idea.idea && Boolean(parseLink(idea.link));

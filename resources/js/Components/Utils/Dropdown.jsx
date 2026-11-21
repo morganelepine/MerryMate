@@ -86,7 +86,7 @@ const Content = ({
     let widthClasses = "";
 
     if (width === "30") {
-        widthClasses = "w-30";
+        widthClasses = "w-36";
     }
 
     return (

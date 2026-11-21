@@ -8,9 +8,9 @@ export default function BrandHeading({
     color,
 }) {
     return (
-        <div className="flex items-baseline gap-3">
+        <div className="flex items-baseline gap-2">
             <Heading
-                className={`font-semibold text-xl break-words min-w-0 ${color}`}
+                className={`font-semibold text-lg break-words min-w-0 ${color}`}
             >
                 {brand}
             </Heading>

@@ -1,6 +1,6 @@
 import PropTypes from "prop-types";
 import IdeaLink from "@/Components/Ideas/IdeaLink";
-import { getIdeaTitle } from "@/Components/Ideas/ideaHelpers";
+import { getIdeaTitle, linkIsTitle } from "@/Components/Ideas/ideaHelpers";
 
 function HeartIcon() {
     return (
@@ -16,18 +16,49 @@ function HeartIcon() {
     );
 }
 
+function MultipleBadge() {
+    return (
+        <span className="ml-auto inline-flex shrink-0 items-center gap-1.5 rounded-full bg-stone-100 px-3 py-1 text-xs text-stone-600">
+            <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth="1.5"
+                stroke="currentColor"
+                className="w-4 h-4"
+                aria-hidden="true"
+            >
+                <path d="M19.5 12c0-1.232-.046-2.453-.138-3.662a4.006 4.006 0 0 0-3.7-3.7 48.678 48.678 0 0 0-7.324 0 4.006 4.006 0 0 0-3.7 3.7c-.017.22-.032.441-.046.662M19.5 12l3-3m-3 3-3-3m-12 3c0 1.232.046 2.453.138 3.662a4.006 4.006 0 0 0 3.7 3.7 48.656 48.656 0 0 0 7.324 0 4.006 4.006 0 0 0 3.7-3.7c.017-.22.032-.441.046-.662M4.5 12l3 3m-3-3-3 3" />
+            </svg>
+            Plusieurs fois
+        </span>
+    );
+}
+
 export default function IdeaShow({ idea }) {
     const isFavorite = idea.favorite === 1;
     const isMultiple = idea.is_multiple === 1;
     const isPromo = idea.promo === 1;
     const title = getIdeaTitle(idea);
+    const hasPrice = Boolean(idea.price || isPromo);
+    const linkAsTitle = linkIsTitle(idea);
+    // Without a name, the link is already the title (pill or free text): don't repeat it.
+    const showsLink = Boolean(idea.idea && idea.link);
+    // With no price and a single extra (link or "Plusieurs fois"), it fits on the title line.
+    const extrasInline = !hasPrice && showsLink !== isMultiple;
 
     return (
         <div className="flex flex-col gap-3">
             <div className="flex items-start justify-between gap-3">
                 <p className="min-w-0 break-words leading-6">
                     {isFavorite && <HeartIcon />}
-                    <span className="font-semibold text-gray-900">{title}</span>
+                    {linkAsTitle ? (
+                        <IdeaLink idea={idea} />
+                    ) : (
+                        <span className="font-semibold text-gray-900">
+                            {title}
+                        </span>
+                    )}
                     {idea.details && (
                         <span className="ml-2 text-gray-500 text-sm">
                             ({idea.details})
@@ -35,7 +66,10 @@ export default function IdeaShow({ idea }) {
                     )}
                 </p>
 
-                {(idea.price || isPromo) && (
+                {extrasInline &&
+                    (showsLink ? <IdeaLink idea={idea} /> : <MultipleBadge />)}
+
+                {hasPrice && (
                     <p className="shrink-0 whitespace-nowrap leading-6">
                         {isPromo && (
                             <span className="mr-2 text-xs text-orange-700">
@@ -51,25 +85,10 @@ export default function IdeaShow({ idea }) {
                 )}
             </div>
 
-            {(isMultiple || idea.link) && (
+            {!extrasInline && (isMultiple || showsLink) && (
                 <div className="flex flex-wrap items-center gap-2">
                     <IdeaLink idea={idea} />
-                    {isMultiple && (
-                        <span className="ml-auto inline-flex items-center gap-1.5 rounded-full bg-stone-100 px-3 py-1 text-xs text-stone-600">
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                strokeWidth="1.5"
-                                stroke="currentColor"
-                                className="w-4 h-4"
-                                aria-hidden="true"
-                            >
-                                <path d="M19.5 12c0-1.232-.046-2.453-.138-3.662a4.006 4.006 0 0 0-3.7-3.7 48.678 48.678 0 0 0-7.324 0 4.006 4.006 0 0 0-3.7 3.7c-.017.22-.032.441-.046.662M19.5 12l3-3m-3 3-3-3m-12 3c0 1.232.046 2.453.138 3.662a4.006 4.006 0 0 0 3.7 3.7 48.656 48.656 0 0 0 7.324 0 4.006 4.006 0 0 0 3.7-3.7c.017-.22.032-.441.046-.662M4.5 12l3 3m-3-3-3 3" />
-                            </svg>
-                            Plusieurs fois
-                        </span>
-                    )}
+                    {isMultiple && <MultipleBadge />}
                 </div>
             )}
         </div>

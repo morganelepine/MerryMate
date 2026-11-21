@@ -10,7 +10,7 @@ export default function OwnerAvatar({ list }) {
     return (
         <span
             aria-hidden="true"
-            className="flex items-center justify-center w-10 h-10 shrink-0 rounded-full bg-orange-100 text-sm font-semibold text-orange-800"
+            className="flex items-center justify-center w-10 h-10 shrink-0 rounded-full bg-orange-100 text-sm font-semibold text-orange-600"
         >
             {initials}
         </span>

@@ -3,7 +3,7 @@ import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import "dayjs/locale/fr";
 import IdeaLink from "@/Components/Ideas/IdeaLink";
-import { getIdeaTitle } from "@/Components/Ideas/ideaHelpers";
+import { getIdeaTitle, linkIsTitle } from "@/Components/Ideas/ideaHelpers";
 import { IDEA_ACTIONS, IDEA_CARD_BASE } from "@/Components/Ideas/ideaCard";
 
 dayjs.extend(relativeTime);
@@ -25,8 +25,12 @@ const VARIANTS = {
     },
 };
 
+// Neutral grey pill: the card border already carries the status colour.
+const LINK_COLOR = "bg-gray-200 text-gray-700 hover:bg-gray-100";
+
 export default function IdeaWithStatus({ idea, status, actions }) {
     const variant = VARIANTS[status];
+    const linkAsTitle = linkIsTitle(idea);
 
     return (
         <div className="sm:flex items-center">
@@ -39,21 +43,27 @@ export default function IdeaWithStatus({ idea, status, actions }) {
             <div className={`${IDEA_CARD_BASE} ${variant.card}`}>
                 <div className="flex items-center gap-3">
                     <p className="min-w-0 truncate">
-                        <span className="font-semibold text-gray-900">
-                            {getIdeaTitle(idea)}
-                        </span>
+                        {linkAsTitle ? (
+                            <IdeaLink idea={idea} color={LINK_COLOR} />
+                        ) : (
+                            <span className="font-semibold text-gray-900">
+                                {getIdeaTitle(idea)}
+                            </span>
+                        )}
                         {idea.is_multiple === 1 && (
                             <span className="ml-2 text-sm text-gray-500">
                                 ({idea.choice || "modèle non précisé"})
                             </span>
                         )}
                     </p>
-                    <IdeaLink
-                        idea={idea}
-                        color="bg-gray-200 text-gray-700 hover:bg-gray-100"
-                        className="ml-auto"
-                        iconOnlyOnMobile
-                    />
+                    {!linkAsTitle && (
+                        <IdeaLink
+                            idea={idea}
+                            color={LINK_COLOR}
+                            className="ml-auto"
+                            iconOnlyOnMobile
+                        />
+                    )}
                 </div>
 
                 <div className="mt-3">
