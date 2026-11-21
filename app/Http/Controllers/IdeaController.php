@@ -18,6 +18,11 @@ class IdeaController extends Controller
 
     private const PRICE_RULE = 'nullable|numeric|decimal:0,2|min:0|max:999999.99';
 
+    private const PROMO_RULES = [
+        'promo_price' => self::PRICE_RULE,
+        'promo_end_date' => 'nullable|date_format:Y-m-d',
+    ];
+
     protected $ideaRepository;
 
     public function __construct(IdeaRepository $ideaRepository)
@@ -57,13 +62,13 @@ class IdeaController extends Controller
             'favorite' => 'boolean',
             'is_multiple' => 'boolean',
             'promo' => 'boolean',
-            'promo_details' => $string,
+            ...self::PROMO_RULES,
             'status' => $string,
             'status_user' => $string,
             'status_user_id' => 'nullable|integer',
         ]);
 
-        $request->user()->ideas()->create($validated);
+        $request->user()->ideas()->create($this->withoutStalePromo($validated));
 
         return redirect()->route('lists.show', ['list' => $validated['list_id']]);
     }
@@ -87,13 +92,13 @@ class IdeaController extends Controller
             'favorite' => 'boolean',
             'is_multiple' => 'boolean',
             'promo' => 'boolean',
-            'promo_details' => $string,
+            ...self::PROMO_RULES,
             'status' => $string,
             'status_user' => $string,
             'status_user_id' => 'nullable|integer',
         ]);
 
-        $idea->update($validated);
+        $idea->update($this->withoutStalePromo($validated));
 
         return back();
     }
@@ -174,8 +179,23 @@ class IdeaController extends Controller
      */
     private function normalizePrice(Request $request): void
     {
-        if (is_string($request->input('price'))) {
-            $request->merge(['price' => str_replace(',', '.', trim($request->input('price')))]);
+        foreach (['price', 'promo_price'] as $field) {
+            if (is_string($request->input($field))) {
+                $request->merge([$field => str_replace(',', '.', trim($request->input($field)))]);
+            }
         }
+    }
+
+    /**
+     * Unticking "promo" hides its fields in the form but still sends them: don't keep them.
+     */
+    private function withoutStalePromo(array $validated): array
+    {
+        if (array_key_exists('promo', $validated) && ! $validated['promo']) {
+            $validated['promo_price'] = null;
+            $validated['promo_end_date'] = null;
+        }
+
+        return $validated;
     }
 }

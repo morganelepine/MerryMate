@@ -10,6 +10,7 @@ const EDIT_FIELD_CLASSNAME =
 
 // Opens the numeric keypad (with a comma) on mobile.
 const PRICE_INPUT_PROPS = { inputMode: "decimal" };
+const DATE_INPUT_PROPS = { type: "date" };
 
 export default function IdeaFormFields({ variant, data, setData, errors }) {
     const isEdit = variant === "edit";
@@ -28,6 +29,8 @@ export default function IdeaFormFields({ variant, data, setData, errors }) {
             wrapperClassName = "",
             labelClassName = "",
             inputProps = {},
+            // A date input shows no placeholder: its label must stay visible.
+            showEditLabel = false,
         } = {},
     ) => (
         <div className={wrapperClassName}>
@@ -35,7 +38,13 @@ export default function IdeaFormFields({ variant, data, setData, errors }) {
             <InputLabel
                 htmlFor={idFor(name)}
                 value={isEdit ? placeholder : label}
-                className={isEdit ? "sr-only" : labelClassName}
+                className={
+                    isEdit
+                        ? showEditLabel
+                            ? "text-sm text-gray-600"
+                            : "sr-only"
+                        : labelClassName
+                }
             />
             <Input
                 id={idFor(name)}
@@ -62,7 +71,7 @@ export default function IdeaFormFields({ variant, data, setData, errors }) {
                     id={idFor(name)}
                     name={name}
                     type="checkbox"
-                    defaultChecked={Boolean(data[name])}
+                    checked={Boolean(data[name])}
                     onChange={(e) => setData(name, e.target.checked)}
                     className="mr-2"
                 />
@@ -70,7 +79,7 @@ export default function IdeaFormFields({ variant, data, setData, errors }) {
                 <Checkbox
                     id={idFor(name)}
                     name={name}
-                    defaultChecked={false}
+                    checked={Boolean(data[name])}
                     onChange={(e) => setData(name, e.target.checked)}
                 />
             )}
@@ -104,10 +113,23 @@ export default function IdeaFormFields({ variant, data, setData, errors }) {
                 )}
                 {checkboxField("promo", "En promo")}
 
-                {field(
-                    "promo_details",
-                    null,
-                    "Détails sur la promo : durée, conditions...",
+                {Boolean(data.promo) && (
+                    <div className="grid grid-cols-2 gap-2 items-end">
+                        {field("promo_price", "Nouveau prix", "Prix promo", {
+                            className: EDIT_FIELD_CLASSNAME + " py-1",
+                            inputProps: PRICE_INPUT_PROPS,
+                        })}
+                        {field(
+                            "promo_end_date",
+                            null,
+                            "Fin de la promo (facultatif)",
+                            {
+                                className: EDIT_FIELD_CLASSNAME + " py-1",
+                                inputProps: DATE_INPUT_PROPS,
+                                showEditLabel: true,
+                            },
+                        )}
+                    </div>
                 )}
             </div>
         );
@@ -147,23 +169,25 @@ export default function IdeaFormFields({ variant, data, setData, errors }) {
                 "flex items-center",
             )}
 
-            <div className="flex items-center gap-4">
-                {checkboxField(
-                    "promo",
-                    "En promo",
-                    "flex items-center shrink-0",
-                )}
-                {field(
-                    "promo_details",
-                    "Détails de la promo",
-                    "Durée, conditions...",
-                    {
-                        className: "py-1 !mt-0",
-                        wrapperClassName: "flex-1 min-w-0",
-                        labelClassName: "sr-only",
-                    },
-                )}
-            </div>
+            {checkboxField("promo", "En promo", "flex items-center")}
+
+            {Boolean(data.promo) && (
+                <div className="flex sm:flex-row flex-col space-y-5 sm:space-y-0 sm:space-x-8">
+                    <div className="sm:w-1/5">
+                        {field("promo_price", "Prix promo", "29,99", {
+                            inputProps: PRICE_INPUT_PROPS,
+                        })}
+                    </div>
+                    <div className="sm:w-2/5">
+                        {field(
+                            "promo_end_date",
+                            "Fin de la promo (facultatif)",
+                            null,
+                            { inputProps: DATE_INPUT_PROPS },
+                        )}
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

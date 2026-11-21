@@ -2,7 +2,9 @@ import PropTypes from "prop-types";
 import IdeaLink from "@/Components/Ideas/IdeaLink";
 import {
     formatPrice,
+    formatPromoEnd,
     getIdeaTitle,
+    isPromoActive,
     linkIsTitle,
 } from "@/Components/Ideas/ideaHelpers";
 
@@ -42,9 +44,11 @@ function MultipleBadge() {
 export default function IdeaShow({ idea }) {
     const isFavorite = idea.favorite === 1;
     const isMultiple = idea.is_multiple === 1;
-    const isPromo = idea.promo === 1;
+    const isPromo = isPromoActive(idea);
+    const promoPrice =
+        isPromo && idea.promo_price > 0 ? idea.promo_price : null;
     const title = getIdeaTitle(idea);
-    const hasPrice = Boolean(idea.price || isPromo);
+    const hasPrice = idea.price > 0 || isPromo;
     const linkAsTitle = linkIsTitle(idea);
     // Without a name, the link is already the title (pill or free text): don't repeat it.
     const showsLink = Boolean(idea.idea && idea.link);
@@ -74,18 +78,45 @@ export default function IdeaShow({ idea }) {
                     (showsLink ? <IdeaLink idea={idea} /> : <MultipleBadge />)}
 
                 {hasPrice && (
-                    <p className="shrink-0 whitespace-nowrap leading-6">
-                        {isPromo && (
-                            <span className="mr-2 text-xs text-orange-700">
-                                ({idea.promo_details || "en promo"})
-                            </span>
+                    <div className="shrink-0 text-right leading-6">
+                        <p className="whitespace-nowrap">
+                            {isPromo && !promoPrice && (
+                                <span className="mr-2 text-xs text-orange-700">
+                                    (en promo)
+                                </span>
+                            )}
+                            {promoPrice && idea.price > 0 && (
+                                <>
+                                    {/* Screen readers don't announce <del>. */}
+                                    <span className="sr-only">
+                                        Prix initial :
+                                    </span>
+                                    <del className="mr-2 text-sm text-gray-500">
+                                        {formatPrice(idea.price)}
+                                    </del>
+                                    <span className="sr-only">
+                                        Prix promo :
+                                    </span>
+                                </>
+                            )}
+                            {promoPrice ? (
+                                <span className="font-semibold text-orange-700">
+                                    {formatPrice(promoPrice)}
+                                </span>
+                            ) : (
+                                idea.price > 0 && (
+                                    <span className="font-semibold text-gray-900">
+                                        {formatPrice(idea.price)}
+                                    </span>
+                                )
+                            )}
+                        </p>
+                        {isPromo && idea.promo_end_date && (
+                            <p className="text-xs text-orange-700">
+                                jusqu'au {formatPromoEnd(idea.promo_end_date)}
+                            </p>
                         )}
-                        {idea.price > 0 && (
-                            <span className="font-semibold text-gray-900">
-                                {formatPrice(idea.price)}
-                            </span>
-                        )}
-                    </p>
+                    </div>
                 )}
             </div>
 
@@ -108,6 +139,7 @@ IdeaShow.propTypes = {
         favorite: PropTypes.number,
         is_multiple: PropTypes.number,
         promo: PropTypes.number,
-        promo_details: PropTypes.string,
+        promo_price: PropTypes.number,
+        promo_end_date: PropTypes.string,
     }).isRequired,
 };

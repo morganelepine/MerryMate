@@ -33,7 +33,7 @@ export default function CreatePrivateIdea({ auth, list }) {
                         <InputError message={errors.idea} className="mt-2" />
                         <PrimaryButton
                             size="small"
-                            className="sm:ml-4 sm:mt-0 mt-3 sm:w-auto w-full"
+                            className="sm:ml-4 sm:mt-0 mt-3 sm:w-auto"
                             disabled={processing}
                         >
                             Ajouter

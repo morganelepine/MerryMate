@@ -11,7 +11,6 @@ export default function ListOfIdeas({ ideas, brandNotes = {} }) {
                 <section key={brandData.brand}>
                     <BrandHeading
                         brand={brandData.brand}
-                        count={brandData.ideas.length}
                         color="text-orange-600"
                     />
                     {brandData.brand && brandData.brand !== NO_BRAND && (

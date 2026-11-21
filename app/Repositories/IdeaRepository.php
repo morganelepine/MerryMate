@@ -66,6 +66,8 @@ class IdeaRepository
         $idea->status_user = $statusUser;
         $idea->status_user_id = $status === 'available' ? null : Auth::id();
         $idea->status_guest_token = $status === 'available' ? null : GuestIdentity::current();
+        // Frozen at purchase: the promo may end, or the owner change the price, afterwards.
+        $idea->paid_price = $status === 'purchased' ? $idea->currentPrice() : null;
         $idea->save();
     }
 

@@ -278,4 +278,37 @@ class IdeaTest extends TestCase
             ])
             ->assertSessionHasErrors('price');
     }
+
+    public function test_purchase_records_the_promo_price_only_while_the_promo_runs(): void
+    {
+        [$owner, $giftList] = $this->createGiftListWithOwner([
+            'private_code' => '1234',
+            'isPrivate' => false,
+        ]);
+        $promo = ['price' => 40, 'promo' => true, 'promo_price' => 29.99];
+        $cases = [
+            [today('Europe/Paris')->toDateString(), 29.99],
+            [today('Europe/Paris')->subDay()->toDateString(), 40.0],
+            [null, 29.99],
+        ];
+
+        foreach ($cases as [$endDate, $expectedPaid]) {
+            $idea = Idea::factory()->create([
+                'list_id' => $giftList->id,
+                'user_id' => $owner->id,
+                'user_name' => $owner->name,
+                'status' => 'available',
+                'status_user' => '',
+                'status_user_id' => null,
+                ...$promo,
+                'promo_end_date' => $endDate,
+            ]);
+
+            $this->actingAsGuestWithAccessTo($giftList)
+                ->patch("/ideas/{$idea->id}/purchase", ['userName' => self::DEFAULT_GUEST_NAME])
+                ->assertSessionHasNoErrors();
+
+            $this->assertSame($expectedPaid, $idea->fresh()->paid_price, "End date: {$endDate}");
+        }
+    }
 }

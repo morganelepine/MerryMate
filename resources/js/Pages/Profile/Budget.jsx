@@ -5,7 +5,7 @@ import BudgetIdeasPurchased from "@/Components/Profile/Budget/BudgetIdeasPurchas
 import SectionHeader from "@/Components/Utils/SectionHeader";
 import OutlineButton from "@/Components/Buttons/OutlineButton";
 import { PAGE_BODY } from "@/Layouts/Partials/pageContainer";
-import { formatPrice } from "@/Components/Ideas/ideaHelpers";
+import { formatPrice, getPaidPrice } from "@/Components/Ideas/ideaHelpers";
 
 // Purchases grouped by the person they were bought for, with a subtotal each.
 function groupByRecipient(ideas) {
@@ -17,7 +17,7 @@ function groupByRecipient(ideas) {
         const group = groups.get(idea.user_name);
         group.ideas.push(idea);
         // Summed in cents to avoid floating-point drift (0.1 + 0.2).
-        group.totalCents += Math.round((idea.price ?? 0) * 100);
+        group.totalCents += Math.round((getPaidPrice(idea) ?? 0) * 100);
     }
     return [...groups.entries()].map(([recipient, { ideas, totalCents }]) => [
         recipient,

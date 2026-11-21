@@ -10,7 +10,8 @@ const EMPTY_IDEA = {
     favorite: 0,
     is_multiple: 0,
     promo: 0,
-    promo_details: "",
+    promo_price: "",
+    promo_end_date: "",
 };
 
 export default function useIdeaForm({ auth, list, idea = null, onSuccess }) {
@@ -28,6 +29,7 @@ export default function useIdeaForm({ auth, list, idea = null, onSuccess }) {
                       ]),
                   ),
                   price: priceToInput(idea.price),
+                  promo_price: priceToInput(idea.promo_price),
               }
             : {
                   list_id: list.id,

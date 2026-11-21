@@ -3,12 +3,14 @@ import IdeaLink from "@/Components/Ideas/IdeaLink";
 import {
     formatPrice,
     getIdeaTitle,
+    getPaidPrice,
     linkIsTitle,
 } from "@/Components/Ideas/ideaHelpers";
 import { LIST_CARD } from "@/Components/GiftList/listCard";
 
 export default function BudgetIdeasPurchased({ idea }) {
     const meta = [idea.brand, idea.details].filter(Boolean).join(" · ");
+    const paidPrice = getPaidPrice(idea);
 
     return (
         <div className={LIST_CARD}>
@@ -25,9 +27,9 @@ export default function BudgetIdeasPurchased({ idea }) {
                 )}
             </div>
             {!linkIsTitle(idea) && <IdeaLink idea={idea} iconOnlyOnMobile />}
-            {idea.price > 0 && (
+            {paidPrice > 0 && (
                 <p className="shrink-0 font-semibold text-gray-900">
-                    {formatPrice(idea.price)}
+                    {formatPrice(paidPrice)}
                 </p>
             )}
         </div>
@@ -41,5 +43,6 @@ BudgetIdeasPurchased.propTypes = {
         brand: PropTypes.string,
         details: PropTypes.string,
         price: PropTypes.number,
+        paid_price: PropTypes.number,
     }).isRequired,
 };

@@ -264,7 +264,6 @@ export default function IdeasToReserve({
                                             <BrandHeading
                                                 as="h3"
                                                 brand={group.brand}
-                                                count={group.ideas.length}
                                                 color={TABS[activeTab].text}
                                             />
                                             {activeTab === "available" && (

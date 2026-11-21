@@ -15,6 +15,25 @@ export const formatPrice = (price) =>
 export const priceToInput = (price) =>
     price == null ? "" : String(price).replace(".", ",");
 
+// The viewer's local day as "YYYY-MM-DD", comparable as a string with the date column.
+const today = () => new Date().toLocaleDateString("sv-SE");
+
+// The promo ends at the end of its last day; without an end date it runs until unticked.
+export const isPromoActive = (idea) =>
+    Boolean(idea.promo) &&
+    (!idea.promo_end_date || idea.promo_end_date >= today());
+
+// "30/11" for the end of a promo.
+export const formatPromoEnd = (date) =>
+    new Intl.DateTimeFormat("fr-FR", {
+        day: "2-digit",
+        month: "2-digit",
+        timeZone: "UTC",
+    }).format(new Date(date));
+
+// Purchases made before paid_price existed fall back on the regular price.
+export const getPaidPrice = (idea) => idea.paid_price ?? idea.price;
+
 // Keeps the incoming order. Ideas saved without a brand (older data) join the "no brand" group.
 export function groupByBrand(ideas) {
     const groups = new Map();

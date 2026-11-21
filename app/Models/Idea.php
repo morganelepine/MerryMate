@@ -39,7 +39,8 @@ class Idea extends Model
         'favorite',
         'is_multiple',
         'promo',
-        'promo_details',
+        'promo_price',
+        'promo_end_date',
         'status',
         'status_user',
         'status_user_id',
@@ -61,5 +62,22 @@ class Idea extends Model
     // A decimal column is read as a string: cast it so the front can add prices up.
     protected $casts = [
         'price' => 'float',
+        'promo_price' => 'float',
+        'paid_price' => 'float',
     ];
+
+    // Promo end dates are typed by French users: the last day ends at midnight Paris time.
+    private const PROMO_TIMEZONE = 'Europe/Paris';
+
+    /**
+     * The price a buyer pays today: the promo price while the promo runs, the regular price otherwise.
+     */
+    public function currentPrice(): ?float
+    {
+        $promoRuns = $this->promo
+            && $this->promo_price > 0
+            && (! $this->promo_end_date || $this->promo_end_date >= today(self::PROMO_TIMEZONE)->toDateString());
+
+        return $promoRuns ? $this->promo_price : $this->price;
+    }
 }
