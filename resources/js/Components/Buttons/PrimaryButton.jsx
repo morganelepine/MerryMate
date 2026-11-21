@@ -15,7 +15,7 @@ export default function PrimaryButton({
             disabled={disabled}
             className={
                 `inline-flex self-center items-center font-medium text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-300 focus-visible:ring-offset-2 rounded-full transition ease-in-out duration-150 ${BUTTON_SIZE_CLASSES[size]} ${
-                    disabled && "opacity-25"
+                    disabled ? "opacity-25" : ""
                 } ` + className
             }
         >

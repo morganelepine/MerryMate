@@ -13,7 +13,7 @@ export default function Ideas({ idea }) {
     return (
         <div className="sm:flex items-center">
             {/* EDIT & DELETE BUTTONS */}
-            <div className="flex items-center w-14">
+            <div className="flex items-center w-16">
                 <EditDeleteButtons idea={idea} setEditing={setEditing} />
             </div>
 
