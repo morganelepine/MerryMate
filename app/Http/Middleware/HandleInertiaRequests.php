@@ -33,7 +33,8 @@ class HandleInertiaRequests extends Middleware
         return [
             ...parent::share($request),
             'auth' => [
-                'user' => $request->user(),
+                // Shared on every page: keep it to what the UI needs (email etc. go through the profile page only)
+                'user' => $request->user()?->only('id', 'name', 'last_name'),
             ],
             'days_since_last_login' => session('days_since_last_login'),
             'ziggy' => fn () => [

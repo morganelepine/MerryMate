@@ -20,6 +20,7 @@ class ProfileController extends Controller
     public function edit(Request $request): Response
     {
         return Inertia::render('Profile/Edit', [
+            'profile' => $request->user()->only('name', 'last_name', 'email', 'email_verified_at'),
             'mustVerifyEmail' => $request->user() instanceof MustVerifyEmail,
             'status' => session('status'),
         ]);
@@ -67,7 +68,6 @@ class ProfileController extends Controller
      */
     public function purchase(): Response
     {
-        // Get all ideas purchased by auth user
         $ideas = Idea::where('status_user_id', Auth::id())->get();
         $totalPrice = round($ideas->sum('price'), 2);
 

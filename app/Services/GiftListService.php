@@ -2,9 +2,9 @@
 
 namespace App\Services;
 
-use App\Models\Idea;
-use App\Models\User;
+use App\Models\GiftList;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Auth;
 use App\Repositories\GiftListRepository;
 
@@ -17,48 +17,45 @@ class GiftListService
         $this->giftListRepository = $giftListRepository;
     }
 
-    public function formatOneList(&$list, $dateFormat = 'd/m/Y')
+    /**
+     * Shape lists for the list cards, sending only the fields the front uses.
+     * Owner and idea stats are loaded in 3 queries total, whatever the number of lists.
+     */
+    public function formatEachLists(Collection $lists, bool $withPrivateCode = false, string $dateFormat = 'd/m/Y')
     {
-        $list['formatted_created_at'] = Carbon::parse($list['created_at'])->format($dateFormat);
-        $list['lastUpdatedAt'] = Idea::where('list_id', $list['id'])->max('created_at');
-        $list['formatted_updated_at'] = Carbon::parse($list['lastUpdatedAt'])->format($dateFormat);
+        $lists->load('user:id,last_name')
+            ->loadCount('ideas')
+            ->loadMax('ideas', 'created_at');
 
-        $list['isEmpty'] = Idea::where('list_id', $list['id'])->count() === 0;
-
-        $user = User::find($list['user_id']);
-        $list['user_lastname'] = $user ? $user->last_name : null;
-
-        return $list;
-    }
-
-    public function formatEachLists($lists, $dateFormat = 'd/m/Y')
-    {
-        $listsArray = $lists->toArray();
-
-        foreach ($listsArray as &$list) {
-            $this->formatOneList($list, $dateFormat);
-        }
-
-        usort($listsArray, function ($a, $b) {
-            return $a['lastUpdatedAt'] < $b['lastUpdatedAt'] ? 1 : -1;
-        });
-
-        return collect($listsArray);
+        return $lists
+            ->sortByDesc('ideas_max_created_at')
+            ->values()
+            ->map(fn (GiftList $list) => [
+                'id' => $list->id,
+                'user_id' => $list->user_id,
+                'user_name' => $list->user_name,
+                'user_lastname' => $list->user?->last_name,
+                'name' => $list->name,
+                'isPrivate' => $list->isPrivate,
+                'isEmpty' => $list->ideas_count === 0,
+                'formatted_created_at' => Carbon::parse($list->created_at)->format($dateFormat),
+                'formatted_updated_at' => Carbon::parse($list->ideas_max_created_at)->format($dateFormat),
+                ...($withPrivateCode ? ['private_code' => GiftList::decryptPrivateCode($list->private_code)] : []),
+            ]);
     }
 
     public function getFormattedUserLists(bool $isPrivate)
     {
-        $userLists = $this->giftListRepository->getUserLists($isPrivate);
-        $userLists = $this->formatEachLists($userLists);
-
-        return $userLists;
+        return $this->formatEachLists($this->giftListRepository->getUserLists($isPrivate), true);
     }
 
     public function getFollowedLists()
     {
-        $followedLists = Auth::user()->followedLists()->get();
-        $followedLists = $this->formatEachLists($followedLists);
+        return $this->formatEachLists(Auth::user()->followedLists()->get());
+    }
 
-        return $followedLists;
+    public function getListsToFollow()
+    {
+        return $this->formatEachLists($this->giftListRepository->getListsToFollow());
     }
 }

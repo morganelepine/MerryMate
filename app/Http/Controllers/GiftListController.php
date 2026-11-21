@@ -61,11 +61,8 @@ class GiftListController extends Controller
         }
 
         if ($isOwner) {
-            // The owner may need the plaintext code (e.g. for the share button)
-            $list->private_code = $this->decryptPrivateCode($list->private_code);
-        } else {
-            // Nobody else should ever receive the (even encrypted) private code
-            $list->makeHidden('private_code');
+            // The owner needs the plaintext code for the share button
+            $list->revealPrivateCode();
         }
 
         if (! $hasAccess) {
@@ -165,7 +162,7 @@ class GiftListController extends Controller
      */
     public function listsToFollow(): Response
     {
-        $listsToFollow = $this->giftListRepository->getListsToFollow();
+        $listsToFollow = $this->giftListService->getListsToFollow();
 
         return Inertia::render('GiftList/ListsToFollow', [
             'listsToFollow' => $listsToFollow,
@@ -192,11 +189,6 @@ class GiftListController extends Controller
         $privateLists = $this->giftListService->getFormattedUserLists(true);
 
         $publicLists = $this->giftListService->getFormattedUserLists(false);
-        foreach ($publicLists as &$publicList) {
-            if (strlen($publicList['private_code']) > 20) {
-                $publicList['private_code'] = Crypt::decrypt($publicList['private_code']);
-            }
-        }
 
         return Inertia::render('GiftList/AuthLists', [
             'publicLists' => $publicLists,
@@ -251,6 +243,10 @@ class GiftListController extends Controller
             'isPrivate' => 'boolean',
             'private_code' => 'string|max:65535',
         ]);
+
+        if (isset($validated['private_code'])) {
+            $validated['private_code'] = Crypt::encrypt($validated['private_code']);
+        }
 
         $list->update($validated);
 
@@ -345,19 +341,11 @@ class GiftListController extends Controller
     }
 
     /**
-     * Decrypt a list's private code, accounting for legacy plaintext codes.
-     */
-    private function decryptPrivateCode(string $privateCode): string
-    {
-        return strlen($privateCode) > 20 ? Crypt::decrypt($privateCode) : $privateCode;
-    }
-
-    /**
      * Compare a submitted code to the list's private code, case- and whitespace-insensitively.
      */
     private function isCorrectPrivateCode(GiftList $list, string $submittedCode): bool
     {
-        $decryptedCorrectPrivateCode = $this->decryptPrivateCode($list->private_code);
+        $decryptedCorrectPrivateCode = GiftList::decryptPrivateCode($list->private_code);
 
         return strcasecmp(trim($submittedCode), trim($decryptedCorrectPrivateCode)) === 0;
     }

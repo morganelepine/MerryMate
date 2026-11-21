@@ -2,10 +2,12 @@
 
 namespace Tests\Feature;
 
+use App\Models\FollowedList;
 use App\Models\GiftList;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\DB;
 use Tests\TestCase;
 
 class GiftListTest extends TestCase
@@ -177,28 +179,111 @@ class GiftListTest extends TestCase
 
     public function test_decrypt_private_code_or_use_plain_text(): void
     {
-        // Private code not crypted (old)
-        [, $plainCodeList] = $this->createGiftListWithOwner([
-            'private_code' => 'plain_text_code',
+        // Legacy codes were stored in plaintext
+        $this->assertSame('plain_text_code', GiftList::decryptPrivateCode('plain_text_code'));
+
+        $this->assertSame(
+            'encrypted_text_code',
+            GiftList::decryptPrivateCode(Crypt::encrypt('encrypted_text_code'))
+        );
+    }
+
+    public function test_updated_private_code_is_stored_encrypted(): void
+    {
+        [$user, $giftList] = $this->createGiftListWithOwner([
+            'private_code' => Crypt::encrypt('1234'),
+            'isPrivate' => false,
         ]);
 
-        $decryptedPrivateCode = strlen($plainCodeList->private_code) > 20
-            ? Crypt::decrypt($plainCodeList->private_code)
-            : $plainCodeList->private_code;
+        $this->actingAs($user)
+            ->patch("/lists/{$giftList->id}", ['private_code' => 'new-code'])
+            ->assertSessionHasNoErrors();
 
-        $this->assertEquals('plain_text_code', $decryptedPrivateCode);
+        $storedCode = $giftList->fresh()->private_code;
 
-        // Private code crypted (new)
-        $encryptedCode = Crypt::encrypt('encrypted_text_code');
-        [, $encryptedCodeList] = $this->createGiftListWithOwner([
-            'private_code' => $encryptedCode,
+        $this->assertNotSame('new-code', $storedCode);
+        $this->assertSame('new-code', Crypt::decrypt($storedCode));
+    }
+
+    public function test_private_code_is_only_sent_to_the_list_owner(): void
+    {
+        [$owner, $giftList] = $this->createGiftListWithOwner([
+            'name' => 'Mariage',
+            'private_code' => Crypt::encrypt('1234'),
+            'isPrivate' => false,
+        ]);
+        $follower = User::factory()->create();
+        FollowedList::create([
+            'user_id' => $follower->id,
+            'gift_list_id' => $giftList->id,
+            'private_code' => Crypt::encrypt('1234'),
+        ]);
+        $stranger = User::factory()->create();
+
+        $this->actingAs($owner)->get('/lists')->assertInertia(fn ($page) => $page
+            ->where('mySharedLists.0.private_code', '1234')
+        );
+
+        $this->actingAs($follower)->get('/lists')->assertInertia(fn ($page) => $page
+            ->has('followedLists.0')
+            ->missing('followedLists.0.private_code')
+        );
+
+        $this->actingAs($follower)->get("/lists/{$giftList->id}")->assertInertia(fn ($page) => $page
+            ->missing('list.private_code')
+            ->missing('followedLists.0.private_code')
+        );
+
+        $this->actingAs($stranger)->get('/lists/to-follow')->assertInertia(fn ($page) => $page
+            ->has('listsToFollow.0')
+            ->missing('listsToFollow.0.private_code')
+        );
+
+        $this->actingAs($stranger)->getJson('/lists/search?search=Mariage')
+            ->assertOk()
+            ->assertJsonMissingPath('listsToFollow.0.private_code');
+    }
+
+    public function test_list_cards_only_carry_the_fields_the_front_uses(): void
+    {
+        [$owner, $giftList] = $this->createGiftListWithOwner(['isPrivate' => false]);
+        $follower = User::factory()->create();
+        FollowedList::create([
+            'user_id' => $follower->id,
+            'gift_list_id' => $giftList->id,
+            'private_code' => Crypt::encrypt('1234'),
         ]);
 
-        $decryptedPrivateCode = strlen($encryptedCodeList->private_code) > 50
-            ? Crypt::decrypt($encryptedCodeList->private_code)
-            : $encryptedCodeList->private_code;
+        $this->actingAs($follower)->get('/lists')->assertInertia(fn ($page) => $page
+            ->missing('auth.user.email')
+            ->missing('auth.user.last_login_at')
+            ->where('followedLists.0.id', $giftList->id)
+            ->where('followedLists.0.user_lastname', $owner->last_name)
+            ->where('followedLists.0.isEmpty', true)
+            ->missing('followedLists.0.pivot')
+            ->missing('followedLists.0.created_at')
+        );
+    }
 
-        $this->assertEquals('encrypted_text_code', $decryptedPrivateCode);
+    public function test_list_index_query_count_does_not_grow_with_the_number_of_lists(): void
+    {
+        $user = User::factory()->create();
+        $countQueries = function () use ($user) {
+            DB::flushQueryLog();
+            DB::enableQueryLog();
+            $this->actingAs($user)->get('/lists')->assertOk();
+
+            return count(DB::getQueryLog());
+        };
+
+        GiftList::create(['user_id' => $user->id, 'user_name' => $user->name, 'name' => 'A', 'private_code' => '1234', 'isPrivate' => false]);
+        $withOneList = $countQueries();
+
+        foreach (range(1, 5) as $i) {
+            GiftList::create(['user_id' => $user->id, 'user_name' => $user->name, 'name' => "L{$i}", 'private_code' => '1234', 'isPrivate' => false]);
+        }
+
+        $this->assertSame($withOneList, $countQueries());
     }
 
     public function test_guest_cannot_view_list_without_unlocking_it(): void

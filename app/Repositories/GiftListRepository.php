@@ -9,8 +9,7 @@ class GiftListRepository
 {
     public function getUserLists(bool $isPrivate)
     {
-        return GiftList::with('user:id,name')
-            ->where('user_id', Auth::id())
+        return GiftList::where('user_id', Auth::id())
             ->where('isPrivate', $isPrivate)
             ->latest()
             ->get();

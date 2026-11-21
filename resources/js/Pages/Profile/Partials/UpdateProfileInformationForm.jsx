@@ -2,16 +2,15 @@ import InputError from "@/Components/Utils/InputError";
 import InputLabel from "@/Components/Utils/InputLabel";
 import PrimaryButton from "@/Components/Buttons/PrimaryButton";
 import TextInput from "@/Components/Utils/TextInput";
-import { Link, useForm, usePage } from "@inertiajs/react";
+import { Link, useForm } from "@inertiajs/react";
 import { Transition } from "@headlessui/react";
 
 export default function UpdateProfileInformation({
+    user,
     mustVerifyEmail,
     status,
     className = "",
 }) {
-    const user = usePage().props.auth.user;
-
     const { data, setData, patch, errors, processing, recentlySuccessful } =
         useForm({
             name: user.name,
