@@ -117,12 +117,6 @@ export default function IdeaFormFields({ variant, data, setData, errors }) {
                     null,
                     "Des détails sur la promo en cours : durée, conditions...",
                 )}
-                {field("membership", null, "Code / lien de parrainage")}
-                {field(
-                    "membership_reduction",
-                    null,
-                    "Réduction offerte grâce au parrainage : -15%, un acheté un offert...",
-                )}
             </div>
         );
     }
@@ -172,23 +166,6 @@ export default function IdeaFormFields({ variant, data, setData, errors }) {
                         "promo_details",
                         "Détails sur la promo en cours",
                         "Durée, conditions...",
-                        { wrapperClassName: "my-2" },
-                    )}
-                </div>
-            </DisclosureSection>
-
-            <DisclosureSection title="Parrainage">
-                <div className="space-y-5 mt-4">
-                    {field(
-                        "membership",
-                        "Code / lien à utiliser lors de l'achat",
-                        "https://nebuleusebijoux.com#ref=1835832",
-                        { wrapperClassName: "my-2" },
-                    )}
-                    {field(
-                        "membership_reduction",
-                        "Réduction offerte",
-                        "-15%, un acheté/un offert...",
                         { wrapperClassName: "my-2" },
                     )}
                 </div>

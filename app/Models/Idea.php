@@ -40,8 +40,6 @@ class Idea extends Model
         'is_multiple',
         'promo',
         'promo_details',
-        'membership',
-        'membership_reduction',
         'status',
         'status_user',
         'status_user_id',

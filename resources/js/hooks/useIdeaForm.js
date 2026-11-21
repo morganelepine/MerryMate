@@ -1,4 +1,5 @@
 import { useForm } from "@inertiajs/react";
+import { NO_BRAND } from "@/Components/Ideas/ideaHelpers";
 
 const EMPTY_IDEA = {
     idea: "",
@@ -10,8 +11,6 @@ const EMPTY_IDEA = {
     is_multiple: 0,
     promo: 0,
     promo_details: "",
-    membership: "",
-    membership_reduction: "",
 };
 
 export default function useIdeaForm({ auth, list, idea = null, onSuccess }) {
@@ -28,8 +27,6 @@ export default function useIdeaForm({ auth, list, idea = null, onSuccess }) {
                   price: idea.price,
                   favorite: idea.favorite,
                   is_multiple: idea.is_multiple,
-                  membership: idea.membership,
-                  membership_reduction: idea.membership_reduction,
                   promo: idea.promo,
                   promo_details: idea.promo_details,
               }
@@ -56,7 +53,7 @@ export default function useIdeaForm({ auth, list, idea = null, onSuccess }) {
         }
 
         if (!data.brand) {
-            data.brand = "Sans marque";
+            data.brand = NO_BRAND;
         }
 
         post(route("ideas.store"), {

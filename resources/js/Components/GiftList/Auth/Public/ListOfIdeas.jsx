@@ -1,10 +1,10 @@
 import PropTypes from "prop-types";
 import Ideas from "@/Components/Ideas/PublicList/Idea";
-import BrandMembership from "@/Components/Ideas/BrandMembership";
+import BrandNoteEditor from "@/Components/Ideas/BrandNoteEditor";
 import BrandHeading from "@/Components/Ideas/BrandHeading";
-import { groupByBrand } from "@/Components/Ideas/ideaHelpers";
+import { groupByBrand, NO_BRAND } from "@/Components/Ideas/ideaHelpers";
 
-export default function ListOfIdeas({ ideas }) {
+export default function ListOfIdeas({ ideas, brandNotes = {} }) {
     return (
         <div className="space-y-12">
             {groupByBrand(ideas).map((brandData) => (
@@ -14,7 +14,12 @@ export default function ListOfIdeas({ ideas }) {
                         count={brandData.ideas.length}
                         color="text-orange-600"
                     />
-                    <BrandMembership membership={brandData.membership} />
+                    {brandData.brand && brandData.brand !== NO_BRAND && (
+                        <BrandNoteEditor
+                            brand={brandData.brand}
+                            content={brandNotes[brandData.brand]}
+                        />
+                    )}
                     <div className="mt-4 space-y-3">
                         {brandData.ideas.map((idea) => (
                             <Ideas key={idea.id} idea={idea} />
@@ -28,4 +33,5 @@ export default function ListOfIdeas({ ideas }) {
 
 ListOfIdeas.propTypes = {
     ideas: PropTypes.array,
+    brandNotes: PropTypes.objectOf(PropTypes.string),
 };

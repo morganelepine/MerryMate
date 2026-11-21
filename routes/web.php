@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\BrandNoteController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\GiftListController;
 use App\Http\Controllers\IdeaController;
@@ -62,6 +63,10 @@ Route::middleware('throttle:60,1')->prefix('ideas')->group(function () {
 Route::resource('ideas', IdeaController::class)
     ->only(['store', 'update', 'destroy'])
     ->middleware(['auth', 'verified']);
+
+Route::put('/brand-notes', [BrandNoteController::class, 'upsert'])
+    ->middleware(['auth', 'verified'])
+    ->name('brand-notes.upsert');
 
 // Multiple ideas management
 Route::middleware('throttle:60,1')->prefix('multiple-ideas')->group(function () {

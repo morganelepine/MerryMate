@@ -12,6 +12,7 @@ export default function GuestList({
     ideas_available,
     ideas_reserved,
     ideas_purchased,
+    brandNotes,
 }) {
     const [userName, setUserName] = useState(DEFAULT_GUEST_NAME);
 
@@ -29,6 +30,7 @@ export default function GuestList({
                 ideas_available={ideas_available}
                 ideas_reserved={ideas_reserved}
                 ideas_purchased={ideas_purchased}
+                brandNotes={brandNotes}
                 userName={userName}
                 canReserve={false}
             />
@@ -41,4 +43,5 @@ GuestList.propTypes = {
     ideas_available: PropTypes.array,
     ideas_reserved: PropTypes.array,
     ideas_purchased: PropTypes.array,
+    brandNotes: PropTypes.objectOf(PropTypes.string),
 };

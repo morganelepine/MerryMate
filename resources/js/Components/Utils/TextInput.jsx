@@ -1,5 +1,8 @@
 import { forwardRef, useEffect, useRef } from "react";
 
+export const INPUT_CLASSES =
+    "mt-2 w-full rounded-xl shadow-sm border-gray-300 focus:border-orange-300 focus:ring focus:ring-orange-200 focus:ring-opacity-50";
+
 export default forwardRef(function TextInput(
     { type = "text", className = "", isFocused = false, ...props },
     ref,
@@ -17,10 +20,7 @@ export default forwardRef(function TextInput(
         <input
             {...props}
             type={type}
-            className={
-                "mt-2 w-full rounded-xl shadow-sm border-gray-300 focus:border-orange-300 focus:ring focus:ring-orange-200 focus:ring-opacity-50 " +
-                className
-            }
+            className={`${INPUT_CLASSES} ${className}`}
             ref={input}
         />
     );

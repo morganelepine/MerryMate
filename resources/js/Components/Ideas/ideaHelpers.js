@@ -1,7 +1,9 @@
 export const formatIdeaCount = (count) =>
     `${count} ${count > 1 ? "idées" : "idée"}`;
 
-// Keeps the incoming order. An idea with a membership link already entered applies to the entire brand.
+export const NO_BRAND = "Sans marque";
+
+// Keeps the incoming order.
 export function groupByBrand(ideas) {
     const groups = new Map();
 
@@ -10,10 +12,7 @@ export function groupByBrand(ideas) {
         groups.get(brand).ideas.push(idea);
     }
 
-    return [...groups.values()].map((group) => ({
-        ...group,
-        membership: group.ideas.find((idea) => idea.membership),
-    }));
+    return [...groups.values()];
 }
 
 // The link field is free text: only treat it as a URL when it parses to a real domain.

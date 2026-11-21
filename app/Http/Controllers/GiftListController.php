@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\BrandNote;
 use App\Models\FollowedList;
 use App\Models\GiftList;
 use App\Models\Idea;
@@ -75,6 +76,7 @@ class GiftListController extends Controller
                 'ideas_reserved' => [],
                 'ideas_purchased' => [],
                 'followedLists' => [],
+                'brandNotes' => (object) [],
                 'guestAccessGranted' => false,
             ]);
         }
@@ -87,6 +89,9 @@ class GiftListController extends Controller
         // Get lists followed by auth user
         $followedLists = Auth::check() ? FollowedList::where('user_id', Auth::id())->get() : collect();
 
+        // Brand notes belong to the list owner and apply to all their lists. Cast so an empty map is sent as {}, not [].
+        $brandNotes = (object) BrandNote::where('user_id', $list->user_id)->pluck('content', 'brand')->all();
+
         return Inertia::render('GiftList/Show', [
             'list' => $list,
             'ideas' => $ideas,
@@ -94,6 +99,7 @@ class GiftListController extends Controller
             'ideas_reserved' => $ideas_reserved,
             'ideas_purchased' => $ideas_purchased,
             'followedLists' => $followedLists,
+            'brandNotes' => $brandNotes,
             'guestAccessGranted' => $isGuestWithAccess,
         ]);
     }

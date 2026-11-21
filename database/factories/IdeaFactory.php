@@ -38,8 +38,6 @@ class IdeaFactory extends Factory
             'is_multiple' => fake()->boolean(),
             'promo' => fake()->boolean(),
             'promo_details' => fake()->randomElement(['', 'Actuellement à 6,50€ (soldes)']),
-            'membership' => fake()->url(),
-            'membership_reduction' => fake()->randomElement(['réduction de 15%', 'un acheté, un offert']),
             'status' => $status,
             'status_user' => $statusUserName,
             'status_user_id' => $statusUser !== null ? $statusUser->id : null,

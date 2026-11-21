@@ -4,7 +4,7 @@ import { Head } from "@inertiajs/react";
 import IdeasAvailable from "@/Components/Ideas/UserList/Ideas_available";
 import IdeasReserved from "@/Components/Ideas/UserList/Ideas_reserved";
 import IdeasPurchased from "@/Components/Ideas/UserList/Ideas_purchased";
-import BrandMembership from "@/Components/Ideas/BrandMembership";
+import BrandNote from "@/Components/Ideas/BrandNote";
 import BrandHeading from "@/Components/Ideas/BrandHeading";
 import { groupByBrand } from "@/Components/Ideas/ideaHelpers";
 import {
@@ -99,6 +99,7 @@ export default function IdeasToReserve({
     ideas_available,
     ideas_reserved,
     ideas_purchased,
+    brandNotes = {},
     userName,
     canReserve = true,
 }) {
@@ -267,9 +268,9 @@ export default function IdeasToReserve({
                                                 color={TABS[activeTab].text}
                                             />
                                             {activeTab === "available" && (
-                                                <BrandMembership
-                                                    membership={
-                                                        group.membership
+                                                <BrandNote
+                                                    content={
+                                                        brandNotes[group.brand]
                                                     }
                                                 />
                                             )}
@@ -296,6 +297,7 @@ IdeasToReserve.propTypes = {
     ideas_available: PropTypes.array,
     ideas_reserved: PropTypes.array,
     ideas_purchased: PropTypes.array,
+    brandNotes: PropTypes.objectOf(PropTypes.string),
     userName: PropTypes.string,
     canReserve: PropTypes.bool,
 };

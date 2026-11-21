@@ -11,6 +11,7 @@ export default function UserList({
     ideas_available,
     ideas_reserved,
     ideas_purchased,
+    brandNotes,
 }) {
     const [userName, setUserName] = useState(auth.user.name);
 
@@ -35,6 +36,7 @@ export default function UserList({
                 ideas_available={ideas_available}
                 ideas_reserved={ideas_reserved}
                 ideas_purchased={ideas_purchased}
+                brandNotes={brandNotes}
                 userName={userName}
             />
         </AuthenticatedLayout>
@@ -47,4 +49,5 @@ UserList.propTypes = {
     ideas_available: PropTypes.array,
     ideas_reserved: PropTypes.array,
     ideas_purchased: PropTypes.array,
+    brandNotes: PropTypes.objectOf(PropTypes.string),
 };

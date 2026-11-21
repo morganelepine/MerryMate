@@ -15,7 +15,13 @@ import {
     PAGE_GUTTER,
 } from "@/Layouts/Partials/pageContainer";
 
-export default function AuthList({ auth, list, ideas, ideas_available }) {
+export default function AuthList({
+    auth,
+    list,
+    ideas,
+    ideas_available,
+    brandNotes,
+}) {
     const daysSinceLastLogin = usePage().props.days_since_last_login;
 
     return (
@@ -55,7 +61,7 @@ export default function AuthList({ auth, list, ideas, ideas_available }) {
 
             <div className={`${LIST_WIDTH} ${PAGE_GUTTER} pt-8 pb-8`}>
                 {ideas.length > 0 ? (
-                    <ListOfIdeas ideas={ideas} />
+                    <ListOfIdeas ideas={ideas} brandNotes={brandNotes} />
                 ) : (
                     <EmptyPublicList list={list} />
                 )}
@@ -81,4 +87,5 @@ AuthList.propTypes = {
     list: PropTypes.object,
     ideas: PropTypes.array,
     ideas_available: PropTypes.array,
+    brandNotes: PropTypes.objectOf(PropTypes.string),
 };

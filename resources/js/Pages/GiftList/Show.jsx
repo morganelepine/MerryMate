@@ -15,6 +15,7 @@ export default function Show({
     ideas_reserved,
     ideas_purchased,
     followedLists,
+    brandNotes,
     guestAccessGranted,
 }) {
     // A signed-out visitor: either they've already unlocked this list
@@ -27,6 +28,7 @@ export default function Show({
                 ideas_available={ideas_available}
                 ideas_reserved={ideas_reserved}
                 ideas_purchased={ideas_purchased}
+                brandNotes={brandNotes}
             />
         ) : (
             <GuestPrivateCode list={list} />
@@ -50,6 +52,7 @@ export default function Show({
                     list={list}
                     ideas={ideas}
                     ideas_available={ideas_available}
+                    brandNotes={brandNotes}
                 />
             )}
 
@@ -64,6 +67,7 @@ export default function Show({
                     ideas_available={ideas_available}
                     ideas_reserved={ideas_reserved}
                     ideas_purchased={ideas_purchased}
+                    brandNotes={brandNotes}
                 />
             )}
 
@@ -82,5 +86,6 @@ Show.propTypes = {
     ideas_reserved: PropTypes.array,
     ideas_purchased: PropTypes.array,
     followedLists: PropTypes.array,
+    brandNotes: PropTypes.objectOf(PropTypes.string),
     guestAccessGranted: PropTypes.bool,
 };
