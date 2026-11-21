@@ -1,12 +1,11 @@
 import { useState } from "react";
-import PropTypes from "prop-types";
 import ListToFollowCard from "@/Components/GiftList/User/ListToFollow/ListToFollowCard";
 import TextInput from "@/Components/Utils/TextInput";
 import InputLabel from "@/Components/Utils/InputLabel";
 import PrimaryButton from "@/Components/Buttons/PrimaryButton";
 import { searchLists } from "@/api/lists";
 
-export default function SearchList({ auth }) {
+export default function SearchList() {
     const [search, setSearch] = useState("");
     const [results, setResults] = useState([]);
     const [error, setError] = useState("");
@@ -70,7 +69,6 @@ export default function SearchList({ auth }) {
                         <ListToFollowCard
                             key={list.id}
                             listToFollow={list}
-                            auth={auth}
                         />
                     ))}
                 </div>
@@ -78,7 +76,3 @@ export default function SearchList({ auth }) {
         </>
     );
 }
-
-SearchList.propTypes = {
-    auth: PropTypes.object.isRequired,
-};

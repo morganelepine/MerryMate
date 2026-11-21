@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 use App\Models\User;
 use App\Models\GiftList;
@@ -70,6 +71,18 @@ class NotificationController extends Controller
     {
         $requestingUser = Auth::user();
 
+        $alreadyFollowing = $requestingUser->followed_lists()->where('gift_list_id', $list->id)->exists();
+        $pendingRequest = $listOwner->notifications()
+            ->where('type', 'request-access')
+            ->where('data->requestingUserId', $requestingUser->id)
+            ->where('data->listId', $list->id)
+            ->whereNull('data->response')
+            ->exists();
+
+        if ($alreadyFollowing || $pendingRequest) {
+            return response()->json(['message' => 'Demande déjà envoyée.']);
+        }
+
         $listOwner->notify(new NotifyRequestAccessToList($listOwner, $requestingUser->name, $requestingUser->id, $list->name, $list->id));
 
         return response()->json(['message' => 'Demande envoyée avec succès.']);
@@ -82,31 +95,35 @@ class NotificationController extends Controller
 
         abort_unless($list->user_id === $listOwner->id, 403);
 
-        $notification = $listOwner->notifications()->find($notificationId);
-        abort_unless($notification && (int) $notification->data['listId'] === $list->id, 403);
+        $response = $request->validate([
+            'response' => 'required|in:accepté,décliné',
+        ])['response'];
 
-        $requestingUser = User::find($notification->data['requestingUserId']);
-        $response = $request->input('response');
+        // Row lock so that two concurrent clicks cannot both see the request as unanswered.
+        $requestingUser = DB::transaction(function () use ($listOwner, $notificationId, $list, $response) {
+            $notification = $listOwner->notifications()->lockForUpdate()->find($notificationId);
+            abort_unless($notification && (int) $notification->data['listId'] === $list->id, 403);
+            abort_if(isset($notification->data['response']), 409, 'Tu as déjà répondu à cette demande.');
 
-        if ($response === 'accepté') {
-            // Add the new relation in followed_lists table
-            $requestingUser->followed_lists()->create([
-                'user_id' => $requestingUser->id,
-                'gift_list_id' => $list->id,
-                'private_code' => $list->private_code,
-            ]);
-            // Send the notification
-            $requestingUser->notify(new NotifyResponseToRequestAccess($response, $requestingUser, $listOwner->name, $list->name, $list->id));
+            $requestingUser = User::find($notification->data['requestingUserId']);
 
-        } else {
-            $requestingUser->notify(new NotifyResponseToRequestAccess($response, $requestingUser, $listOwner->name, $list->name, $list->id));
-        }
+            if ($response === 'accepté') {
+                $requestingUser->followed_lists()->createOrFirst(
+                    ['gift_list_id' => $list->id],
+                    ['private_code' => $list->private_code],
+                );
+            }
 
-        $notificationData = $notification->data;
-        $notificationData['response'] = $response;
-        $notification->data = $notificationData;
-        $notification->markAsRead();
-        $notification->save();
+            $notificationData = $notification->data;
+            $notificationData['response'] = $response;
+            $notification->data = $notificationData;
+            $notification->markAsRead();
+            $notification->save();
+
+            return $requestingUser;
+        });
+
+        $requestingUser->notify(new NotifyResponseToRequestAccess($response, $requestingUser, $listOwner->name, $list->name, $list->id));
 
         return response()->json(['message' => 'Réponse envoyée avec succès.']);
     }

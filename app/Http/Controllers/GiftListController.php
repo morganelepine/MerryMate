@@ -289,18 +289,15 @@ class GiftListController extends Controller
 
         if ($this->isCorrectPrivateCode($list, $privateCode)) {
             $user = $request->user();
-            $validated = $request->validate([
-                'user_id' => 'required|integer',
-                'gift_list_id' => 'required|integer',
-                'private_code' => 'required|string',
-            ]);
-            $validated['private_code'] = Crypt::encrypt($validated['private_code']);
-            $user->followed_lists()->create($validated);
+            $followedList = $user->followed_lists()->createOrFirst(
+                ['gift_list_id' => $list->id],
+                ['private_code' => Crypt::encrypt($privateCode)],
+            );
 
-            // Search for user whose list has been followed and notify her⸱him
-            $giftList = GiftList::find($validated['gift_list_id']);
-            $listOwner = $giftList->user;
-            $listOwner->notify(new NotifyListFollowed($user->name, $giftList->name));
+            // Notify only on a new follow, so that a resubmitted form does not notify the owner twice.
+            if ($followedList->wasRecentlyCreated) {
+                $list->user->notify(new NotifyListFollowed($user->name, $list->name));
+            }
 
             return redirect(route('lists.followedLists'));
 

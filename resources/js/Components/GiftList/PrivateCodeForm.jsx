@@ -7,15 +7,8 @@ import { PAGE_BODY } from "@/Layouts/Partials/pageContainer";
 import InputError from "@/Components/Utils/InputError";
 import PrimaryButton from "@/Components/Buttons/PrimaryButton";
 
-const NO_EXTRA_DATA = {};
-
-export default function PrivateCodeForm({
-    list,
-    routeName,
-    extraData = NO_EXTRA_DATA,
-}) {
+export default function PrivateCodeForm({ list, routeName }) {
     const { data, setData, post, processing, reset, errors } = useForm({
-        ...extraData,
         private_code: "",
     });
 
@@ -64,5 +57,4 @@ export default function PrivateCodeForm({
 PrivateCodeForm.propTypes = {
     list: PropTypes.object.isRequired,
     routeName: PropTypes.string.isRequired,
-    extraData: PropTypes.object,
 };

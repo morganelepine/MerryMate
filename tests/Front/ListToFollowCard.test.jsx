@@ -10,7 +10,6 @@ vi.mock("sonner", () => ({
     toast: { error: vi.fn(), success: vi.fn() },
 }));
 
-const auth = { user: { id: 1, name: "Alice" } };
 const listToFollow = {
     id: 3,
     user_id: 9,
@@ -31,7 +30,7 @@ describe("ListToFollowCard", () => {
 
     it("sends an access request and persists it in localStorage on success", async () => {
         requestAccessToList.mockResolvedValueOnce({});
-        render(<ListToFollow auth={auth} listToFollow={listToFollow} />);
+        render(<ListToFollow listToFollow={listToFollow} />);
 
         fireEvent.click(requestButton());
 
@@ -43,7 +42,7 @@ describe("ListToFollowCard", () => {
 
     it("disables the button immediately, before the request even resolves", () => {
         requestAccessToList.mockReturnValue(new Promise(() => {}));
-        render(<ListToFollow auth={auth} listToFollow={listToFollow} />);
+        render(<ListToFollow listToFollow={listToFollow} />);
 
         fireEvent.click(requestButton());
 
@@ -53,7 +52,7 @@ describe("ListToFollowCard", () => {
     it("re-enables the button and shows an error toast when the request fails", async () => {
         const { toast } = await import("sonner");
         requestAccessToList.mockRejectedValueOnce(new Error("network"));
-        render(<ListToFollow auth={auth} listToFollow={listToFollow} />);
+        render(<ListToFollow listToFollow={listToFollow} />);
 
         fireEvent.click(requestButton());
 
@@ -64,7 +63,7 @@ describe("ListToFollowCard", () => {
 
     it("restores the disabled state from localStorage on mount", () => {
         localStorage.setItem("requestSent-3", "true");
-        render(<ListToFollow auth={auth} listToFollow={listToFollow} />);
+        render(<ListToFollow listToFollow={listToFollow} />);
 
         expect(requestButton()).toBeDisabled();
     });

@@ -5,10 +5,8 @@ import InputLabel from "@/Components/Utils/InputLabel";
 import InputError from "@/Components/Utils/InputError";
 import OutlineButton from "@/Components/Buttons/OutlineButton";
 
-export default function SecretCode({ auth, listToFollow }) {
+export default function SecretCode({ listToFollow }) {
     const { data, setData, post, processing, reset, errors } = useForm({
-        user_id: auth.user.id,
-        gift_list_id: listToFollow.id,
         private_code: "",
     });
 
@@ -52,6 +50,5 @@ export default function SecretCode({ auth, listToFollow }) {
 }
 
 SecretCode.propTypes = {
-    auth: PropTypes.object.isRequired,
     listToFollow: PropTypes.object.isRequired,
 };

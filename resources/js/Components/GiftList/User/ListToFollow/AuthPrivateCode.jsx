@@ -12,14 +12,7 @@ export default function AuthPrivateCode({ auth, list }) {
             subtitle={`Liste de ${formatOwner(list)}`}
         >
             <Head title={list.name} />
-            <PrivateCodeForm
-                list={list}
-                routeName="lists.followList"
-                extraData={{
-                    user_id: auth.user.id,
-                    gift_list_id: list.id,
-                }}
-            />
+            <PrivateCodeForm list={list} routeName="lists.followList" />
         </AuthenticatedLayout>
     );
 }

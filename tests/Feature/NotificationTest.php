@@ -137,6 +137,48 @@ class NotificationTest extends TestCase
         ]);
     }
 
+    public function test_access_request_cannot_be_answered_twice(): void
+    {
+        [$owner, $giftList] = $this->createGiftListWithOwner();
+        $requester = User::factory()->create();
+
+        $notification = $this->requestAccess($requester, $owner, $giftList);
+        $url = "/notifications/respond-access/{$notification->id}/{$giftList->id}";
+
+        $this->actingAs($owner)->post($url, ['response' => self::ACCEPTED_RESPONSE])->assertStatus(200);
+        $this->actingAs($owner)->post($url, ['response' => self::ACCEPTED_RESPONSE])->assertStatus(409);
+
+        $this->assertSame(1, $requester->followed_lists()->count());
+        $this->assertSame(1, $requester->notifications()->where('type', 'response-to-request')->count());
+    }
+
+    public function test_access_request_response_must_be_accepted_or_declined(): void
+    {
+        [$owner, $giftList] = $this->createGiftListWithOwner();
+        $requester = User::factory()->create();
+
+        $notification = $this->requestAccess($requester, $owner, $giftList);
+
+        $this->actingAs($owner)->postJson(
+            "/notifications/respond-access/{$notification->id}/{$giftList->id}",
+            ['response' => 'n’importe quoi']
+        )->assertStatus(422);
+
+        $this->assertArrayNotHasKey('response', $notification->fresh()->data);
+        $this->assertSame(0, $requester->notifications()->count());
+    }
+
+    public function test_pending_access_request_is_not_sent_twice(): void
+    {
+        [$owner, $giftList] = $this->createGiftListWithOwner();
+        $requester = User::factory()->create();
+
+        $this->requestAccess($requester, $owner, $giftList);
+        $this->requestAccess($requester, $owner, $giftList);
+
+        $this->assertSame(1, $owner->notifications()->where('type', 'request-access')->count());
+    }
+
     public function test_only_the_list_owner_can_respond_to_an_access_request(): void
     {
         [$owner, $giftList] = $this->createGiftListWithOwner();

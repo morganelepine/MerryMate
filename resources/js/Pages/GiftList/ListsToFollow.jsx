@@ -15,7 +15,7 @@ export default function ListsToFollow({ auth, listsToFollow }) {
 
             <div className={PAGE_BODY}>
                 {listsToFollow.length > 0 ? (
-                    <SearchList auth={auth} />
+                    <SearchList />
                 ) : (
                     <p className="text-gray-600">
                         Il n’y a actuellement aucune liste à suivre. Reviens

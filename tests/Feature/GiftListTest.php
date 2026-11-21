@@ -146,6 +146,48 @@ class GiftListTest extends TestCase
         ]);
     }
 
+    public function test_following_a_giftlist_twice_creates_one_follow_and_one_notification(): void
+    {
+        [$owner, $giftList] = $this->createGiftListWithOwner([
+            'private_code' => Crypt::encrypt('1234'),
+        ]);
+        $follower = User::factory()->create();
+
+        foreach ([1, 2] as $attempt) {
+            $this->actingAs($follower)->post("/lists/{$giftList->id}/follow", [
+                'private_code' => '1234',
+            ])->assertRedirect(route('lists.followedLists'));
+        }
+
+        $this->assertSame(1, $follower->followed_lists()->count());
+        $this->assertSame(1, $owner->notifications()->count());
+    }
+
+    public function test_following_ignores_list_and_user_ids_sent_in_the_body(): void
+    {
+        [, $giftList] = $this->createGiftListWithOwner([
+            'private_code' => Crypt::encrypt('1234'),
+        ]);
+        [, $otherList] = $this->createGiftListWithOwner([
+            'private_code' => Crypt::encrypt('9999'),
+        ]);
+        $follower = User::factory()->create();
+        $victim = User::factory()->create();
+
+        $this->actingAs($follower)->post("/lists/{$giftList->id}/follow", [
+            'user_id' => $victim->id,
+            'gift_list_id' => $otherList->id,
+            'private_code' => '1234',
+        ]);
+
+        $this->assertDatabaseHas('followed_lists', [
+            'user_id' => $follower->id,
+            'gift_list_id' => $giftList->id,
+        ]);
+        $this->assertDatabaseMissing('followed_lists', ['gift_list_id' => $otherList->id]);
+        $this->assertDatabaseMissing('followed_lists', ['user_id' => $victim->id]);
+    }
+
     public function test_request_can_be_sent_to_follow_giftlist(): void
     {
         [$user, $giftList] = $this->createGiftListWithOwner([

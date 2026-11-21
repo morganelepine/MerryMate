@@ -9,7 +9,7 @@ import { CARD_SURFACE } from "@/Components/Utils/surfaces";
 import { requestAccessToList } from "@/api/notifications";
 import { formatListDate, formatOwner } from "@/Components/GiftList/listCard";
 
-export default function ListToFollowCard({ auth, listToFollow }) {
+export default function ListToFollowCard({ listToFollow }) {
     const [requestSent, setRequestSent] = useState(false);
     const [showCode, setShowCode] = useState(false);
 
@@ -80,7 +80,7 @@ export default function ListToFollowCard({ auth, listToFollow }) {
 
             {showCode && (
                 <div id={codePanelId} className="mt-4">
-                    <SecretCode listToFollow={listToFollow} auth={auth} />
+                    <SecretCode listToFollow={listToFollow} />
                 </div>
             )}
         </div>
@@ -88,6 +88,5 @@ export default function ListToFollowCard({ auth, listToFollow }) {
 }
 
 ListToFollowCard.propTypes = {
-    auth: PropTypes.object.isRequired,
     listToFollow: PropTypes.object.isRequired,
 };
