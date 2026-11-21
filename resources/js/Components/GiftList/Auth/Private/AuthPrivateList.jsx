@@ -5,6 +5,7 @@ import ListTitle from "@/Components/GiftList/Action/ListTitle";
 import {
     LIST_HEADER_CLOSED,
     LIST_WIDTH,
+    PAGE_BOTTOM,
     PAGE_GUTTER,
 } from "@/Layouts/Partials/pageContainer";
 import PrimaryButton from "@/Components/Buttons/PrimaryButton";
@@ -21,7 +22,7 @@ export default function AuthPrivateList({ auth, list, ideas }) {
         >
             <Head title={list.name} />
 
-            <div className={`${LIST_WIDTH} ${PAGE_GUTTER} pt-8 pb-14`}>
+            <div className={`${LIST_WIDTH} ${PAGE_GUTTER} pt-8 ${PAGE_BOTTOM}`}>
                 {ideas.length > 0 ? (
                     <>
                         {/* ADD IDEA FORM */}

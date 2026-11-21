@@ -4,7 +4,11 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import MyLists from "@/Components/GiftList/Index/MyLists";
 import FollowedLists from "@/Components/GiftList/Index/FollowedLists";
 import QuickActions from "@/Components/GiftList/Index/QuickActions";
-import { HOME_WIDTH, PAGE_GUTTER } from "@/Layouts/Partials/pageContainer";
+import {
+    HOME_WIDTH,
+    PAGE_BOTTOM,
+    PAGE_GUTTER,
+} from "@/Layouts/Partials/pageContainer";
 
 export default function Index({
     auth,
@@ -20,7 +24,7 @@ export default function Index({
         >
             <Head title="Accueil" />
 
-            <div className={`${HOME_WIDTH} ${PAGE_GUTTER} pb-16`}>
+            <div className={`${HOME_WIDTH} ${PAGE_GUTTER} ${PAGE_BOTTOM}`}>
                 <h1 className="hidden sm:block font-yeseva pt-10 text-3xl sm:text-4xl text-gray-900">
                     Bonjour {auth.user.name}
                 </h1>

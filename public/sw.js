@@ -1,7 +1,7 @@
-const CACHE_NAME = "merrymate-v1";
+const CACHE_NAME = "merrymate-v2";
 const STATIC_PRECACHE = [
-    "/icons/logo-MerryMate-192.png",
-    "/icons/logo-MerryMate-512.png",
+    "/icons/logo-MerryMate-192-v2.png",
+    "/icons/logo-MerryMate-512-v2.png",
 ];
 
 self.addEventListener("install", (event) => {

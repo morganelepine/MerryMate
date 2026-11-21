@@ -52,7 +52,8 @@ export default function IdeaShow({ idea }) {
     const linkAsTitle = linkIsTitle(idea);
     // Without a name, the link is already the title (pill or free text): don't repeat it.
     const showsLink = Boolean(idea.idea && idea.link);
-    // With no price and a single extra (link or "Plusieurs fois"), it fits on the title line.
+    // With no price and a single extra (link or "Plusieurs fois"), it fits on the title line,
+    // except on mobile where it goes below the title.
     const extrasInline = !hasPrice && showsLink !== isMultiple;
 
     return (
@@ -74,8 +75,11 @@ export default function IdeaShow({ idea }) {
                     )}
                 </p>
 
-                {extrasInline &&
-                    (showsLink ? <IdeaLink idea={idea} /> : <MultipleBadge />)}
+                {extrasInline && (
+                    <div className="hidden shrink-0 sm:flex">
+                        {showsLink ? <IdeaLink idea={idea} /> : <MultipleBadge />}
+                    </div>
+                )}
 
                 {hasPrice && (
                     <div className="shrink-0 text-right leading-6">
@@ -120,8 +124,10 @@ export default function IdeaShow({ idea }) {
                 )}
             </div>
 
-            {!extrasInline && (isMultiple || showsLink) && (
-                <div className="flex flex-wrap items-center gap-2">
+            {(isMultiple || showsLink) && (
+                <div
+                    className={`flex flex-wrap items-center gap-2 ${extrasInline ? "sm:hidden" : ""}`}
+                >
                     <IdeaLink idea={idea} />
                     {isMultiple && <MultipleBadge />}
                 </div>

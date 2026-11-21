@@ -7,9 +7,11 @@ import IdeasPurchased from "@/Components/Ideas/UserList/Ideas_purchased";
 import BrandNote from "@/Components/Ideas/BrandNote";
 import BrandHeading from "@/Components/Ideas/BrandHeading";
 import { groupByBrand } from "@/Components/Ideas/ideaHelpers";
+import CountBadge from "@/Components/Utils/CountBadge";
 import {
     LIST_HEADER_BAND,
     LIST_WIDTH,
+    PAGE_BOTTOM,
     PAGE_GUTTER,
 } from "@/Layouts/Partials/pageContainer";
 
@@ -23,7 +25,7 @@ const ICONS = {
 
 const TABS = {
     available: {
-        label: "Disponibles",
+        label: "Dispo",
         title: "Idées disponibles",
         icon: "gift",
         empty: "Toutes les idées ont trouvé preneur pour le moment. Reviens plus tard !",
@@ -32,7 +34,7 @@ const TABS = {
         activeTab: "bg-orange-50 border-orange-300 text-orange-700",
     },
     reserved: {
-        label: "Réservés",
+        label: "Réservé",
         title: "Cadeaux réservés",
         icon: "reserve",
         empty: "Aucun cadeau réservé pour le moment.",
@@ -41,7 +43,7 @@ const TABS = {
         activeTab: "bg-lilac-50 border-lilac-300 text-lilac-800",
     },
     purchased: {
-        label: "Achetés",
+        label: "Acheté",
         title: "Cadeaux achetés",
         icon: "purchase",
         empty: "Aucun cadeau acheté pour le moment.",
@@ -208,9 +210,9 @@ export default function IdeasToReserve({
                                         <span className="truncate">
                                             {TABS[key].label}
                                         </span>
-                                        <span className="shrink-0 rounded-full bg-black/5 px-1.5 sm:px-2 text-xs">
-                                            {ideasByTab[key].length}
-                                        </span>
+                                        <CountBadge
+                                            count={ideasByTab[key].length}
+                                        />
                                     </button>
                                 );
                             })}
@@ -224,7 +226,7 @@ export default function IdeasToReserve({
                         className={`flex-1 ${tab.band}`}
                     >
                         <div
-                            className={`${LIST_WIDTH} ${PAGE_GUTTER} py-8 sm:py-10`}
+                            className={`${LIST_WIDTH} ${PAGE_GUTTER} pt-8 sm:pt-10 ${PAGE_BOTTOM}`}
                         >
                             <div className="flex items-center gap-3 sm:gap-4">
                                 <span

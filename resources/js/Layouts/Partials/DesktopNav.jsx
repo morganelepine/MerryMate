@@ -1,6 +1,7 @@
 import PropTypes from "prop-types";
 import NavLink from "@/Components/Utils/NavLink";
 import { NAV_ICONS } from "@/Components/Utils/navIcons";
+import CountBadge from "@/Components/Utils/CountBadge";
 
 const LINKS = [
     { route: "lists.authLists", icon: "lists", label: "Mes listes" },
@@ -32,10 +33,12 @@ export default function DesktopNav({ unreadCount }) {
                     </svg>
                     {label}
                     {icon === "bell" && unreadCount > 0 && (
-                        <span className="flex items-center justify-center min-w-[1.25rem] h-5 px-1.5 rounded-full bg-orange-600 text-xs font-semibold text-white">
-                            {unreadCount}
+                        <CountBadge
+                            count={unreadCount}
+                            className="bg-orange-600 font-semibold text-white"
+                        >
                             <span className="sr-only"> non lues</span>
-                        </span>
+                        </CountBadge>
                     )}
                 </NavLink>
             ))}

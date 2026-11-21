@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import { Link } from "@inertiajs/react";
 import { UnreadCountContext } from "@/hooks/useUnreadNotifications";
 import { NAV_ICONS } from "@/Components/Utils/navIcons";
+import CountBadge from "@/Components/Utils/CountBadge";
 
 const TILE =
     "relative flex h-full flex-col gap-3 rounded-2xl border p-4 transition focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-300 focus-visible:ring-offset-2";
@@ -47,12 +48,11 @@ function Tile({ href, icon, title, subtitle, badge, primary = false }) {
                 </span>
             </span>
             {badge > 0 && (
-                <span
+                <CountBadge
                     aria-hidden="true"
-                    className="absolute top-3 right-3 flex items-center justify-center min-w-[1.25rem] h-5 px-1.5 rounded-full bg-orange-600 text-xs font-semibold text-white"
-                >
-                    {badge}
-                </span>
+                    count={badge}
+                    className="absolute top-3 right-3 bg-orange-600 font-semibold text-white"
+                />
             )}
         </Link>
     );

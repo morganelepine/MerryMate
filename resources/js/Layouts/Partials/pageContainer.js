@@ -9,5 +9,8 @@ export const LIST_WIDTH = "max-w-4xl";
 export const LIST_HEADER_BAND = "bg-white";
 export const LIST_HEADER_CLOSED = `${LIST_HEADER_BAND} border-b border-gray-200 pb-4 sm:pb-6`;
 
+// Breathing room at the bottom of every page.
+export const PAGE_BOTTOM = "pb-16 sm:pb-20";
+
 // Content below a page header, aligned with it.
-export const PAGE_BODY = `${LIST_WIDTH} ${PAGE_GUTTER} py-8 sm:py-10`;
+export const PAGE_BODY = `${LIST_WIDTH} ${PAGE_GUTTER} pt-8 sm:pt-10 ${PAGE_BOTTOM}`;

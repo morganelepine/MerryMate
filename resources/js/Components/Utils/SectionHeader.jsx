@@ -1,4 +1,5 @@
 import PropTypes from "prop-types";
+import CountBadge from "@/Components/Utils/CountBadge";
 
 export default function SectionHeader({ title, count, action }) {
     return (
@@ -6,9 +7,11 @@ export default function SectionHeader({ title, count, action }) {
             <h2 className="flex items-center gap-2.5 font-yeseva text-xl text-gray-900 min-w-0">
                 <span className="break-words min-w-0">{title}</span>
                 {count !== undefined && (
-                    <span className="rounded-full border border-orange-300 bg-orange-100 px-2 py-1 font-sans text-xs font-medium">
-                        {count}
-                    </span>
+                    <CountBadge
+                        size="md"
+                        count={count}
+                        className="border border-orange-300 bg-orange-100 font-sans"
+                    />
                 )}
             </h2>
             {action}

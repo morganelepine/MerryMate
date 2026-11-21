@@ -1,6 +1,7 @@
 import PropTypes from "prop-types";
 import IdeaLink from "@/Components/Ideas/IdeaLink";
 import {
+    NO_BRAND,
     formatPrice,
     getIdeaTitle,
     getPaidPrice,
@@ -11,10 +12,13 @@ import { STATUS_VARIANTS } from "@/Components/Ideas/ideaCard";
 
 const RESERVED = STATUS_VARIANTS.reserved;
 
-export default function BudgetIdeasPurchased({ idea }) {
-    const meta = [idea.brand, idea.details, idea.choice]
-        .filter(Boolean)
-        .join(" ~ ");
+export default function IdeaSummaryCard({
+    idea,
+    showPrice = true,
+    giver = null,
+}) {
+    const brand = idea.brand === NO_BRAND ? null : idea.brand;
+    const meta = [brand, idea.details, idea.choice].filter(Boolean).join(" ~ ");
     const paidPrice = getPaidPrice(idea);
 
     return (
@@ -27,19 +31,30 @@ export default function BudgetIdeasPurchased({ idea }) {
                         {RESERVED.label}
                     </p>
                 )}
-                {linkIsTitle(idea) ? (
-                    <IdeaLink idea={idea} />
-                ) : (
-                    <p className="font-semibold text-gray-900 truncate">
-                        {getIdeaTitle(idea)}
+                {/* Stacked on mobile, side by side from `sm` up. */}
+                <div className="min-w-0 sm:flex sm:items-baseline sm:gap-4">
+                    {linkIsTitle(idea) ? (
+                        <IdeaLink idea={idea} />
+                    ) : (
+                        <p className="min-w-0 font-semibold text-gray-900 truncate">
+                            {getIdeaTitle(idea)}
+                        </p>
+                    )}
+                    {meta && (
+                        <p className="min-w-0 text-sm text-gray-500 truncate">
+                            {meta}
+                        </p>
+                    )}
+                </div>
+
+                {giver && (
+                    <p className="mt-1 text-sm text-orange-600">
+                        Offert par {giver}
                     </p>
-                )}
-                {meta && (
-                    <p className="text-sm text-gray-500 truncate">{meta}</p>
                 )}
             </div>
             {!linkIsTitle(idea) && <IdeaLink idea={idea} iconOnlyOnMobile />}
-            {paidPrice > 0 && (
+            {showPrice && paidPrice > 0 && (
                 <p className="shrink-0 font-semibold text-gray-900">
                     {formatPrice(paidPrice)}
                 </p>
@@ -48,7 +63,7 @@ export default function BudgetIdeasPurchased({ idea }) {
     );
 }
 
-BudgetIdeasPurchased.propTypes = {
+IdeaSummaryCard.propTypes = {
     idea: PropTypes.shape({
         idea: PropTypes.string,
         link: PropTypes.string,
@@ -59,4 +74,6 @@ BudgetIdeasPurchased.propTypes = {
         choice: PropTypes.string,
         status: PropTypes.string,
     }).isRequired,
+    showPrice: PropTypes.bool,
+    giver: PropTypes.string,
 };

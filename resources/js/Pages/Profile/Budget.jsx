@@ -1,7 +1,7 @@
 import { Head } from "@inertiajs/react";
 import PropTypes from "prop-types";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import BudgetIdeasPurchased from "@/Components/Profile/Budget/BudgetIdeasPurchased";
+import IdeaSummaryCard from "@/Components/Ideas/IdeaSummaryCard";
 import SectionHeader from "@/Components/Utils/SectionHeader";
 import OutlineButton from "@/Components/Buttons/OutlineButton";
 import { PAGE_BODY } from "@/Layouts/Partials/pageContainer";
@@ -62,14 +62,14 @@ export default function Budget({ auth, ideas, totalPrice }) {
                                     title={`Pour ${recipient}`}
                                     count={group.ideas.length}
                                     action={
-                                        <p className="font-semibold text-gray-900">
+                                        <p className="font-yeseva text-lg text-gray-900">
                                             {formatPrice(group.total)}
                                         </p>
                                     }
                                 />
                                 <div className="mt-4 space-y-3">
                                     {group.ideas.map((idea) => (
-                                        <BudgetIdeasPurchased
+                                        <IdeaSummaryCard
                                             key={idea.key}
                                             idea={idea}
                                         />

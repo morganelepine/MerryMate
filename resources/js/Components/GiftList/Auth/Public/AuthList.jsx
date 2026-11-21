@@ -12,6 +12,7 @@ import PrimaryButton from "@/Components/Buttons/PrimaryButton";
 import {
     LIST_HEADER_CLOSED,
     LIST_WIDTH,
+    PAGE_BOTTOM,
     PAGE_GUTTER,
 } from "@/Layouts/Partials/pageContainer";
 
@@ -59,7 +60,7 @@ export default function AuthList({
         >
             <Head title={list.name} />
 
-            <div className={`${LIST_WIDTH} ${PAGE_GUTTER} pt-8 pb-8`}>
+            <div className={`${LIST_WIDTH} ${PAGE_GUTTER} pt-8 ${PAGE_BOTTOM}`}>
                 {ideas.length > 0 ? (
                     <ListOfIdeas ideas={ideas} brandNotes={brandNotes} />
                 ) : (
