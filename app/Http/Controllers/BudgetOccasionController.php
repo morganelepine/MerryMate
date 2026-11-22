@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Concerns\AuthorizesListAccess;
 use App\Models\Idea;
 use App\Models\MultipleIdea;
 use App\Support\BudgetOccasion;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 
 /**
@@ -15,6 +15,8 @@ use Illuminate\Validation\Rule;
  */
 class BudgetOccasionController extends Controller
 {
+    use AuthorizesListAccess;
+
     public function updateIdea(Request $request, Idea $idea): RedirectResponse
     {
         return $this->updateOccasion($request, $idea);
@@ -27,7 +29,7 @@ class BudgetOccasionController extends Controller
 
     private function updateOccasion(Request $request, Idea|MultipleIdea $purchase): RedirectResponse
     {
-        abort_unless($purchase->status_user_id !== null && $purchase->status_user_id === Auth::id(), 403);
+        $this->authorizeStatusOwner($purchase);
 
         $validated = $request->validate([
             'occasion' => ['required', Rule::in(BudgetOccasion::VALUES)],

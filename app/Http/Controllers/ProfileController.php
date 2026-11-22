@@ -74,7 +74,7 @@ class ProfileController extends Controller
     {
         $userId = Auth::id();
         $year = $request->integer('year');
-        if ($year < 2000 || $year > 2100) {
+        if ($year < BudgetGift::MIN_YEAR || $year > BudgetGift::MAX_YEAR) {
             $year = (int) now()->year;
         }
 
@@ -85,8 +85,7 @@ class ProfileController extends Controller
             ->map(fn (Idea $idea) => [
                 ...$idea->toArray(),
                 'key' => "idea-{$idea->id}",
-                'occasion' => BudgetOccasion::resolve($idea->budget_occasion, $idea->taken_at),
-                'occasion_url' => route('ideas.budget-occasion', $idea),
+                ...$this->occasionFields($idea, 'ideas.budget-occasion'),
             ]);
 
         // Each reservation or purchase of a multiple idea is its own row, shaped like an idea.
@@ -100,8 +99,7 @@ class ProfileController extends Controller
                 'status' => $purchase->status,
                 'choice' => $purchase->choice,
                 'paid_price' => $purchase->paid_price,
-                'occasion' => BudgetOccasion::resolve($purchase->budget_occasion, $purchase->taken_at),
-                'occasion_url' => route('multiple-ideas.budget-occasion', $purchase),
+                ...$this->occasionFields($purchase, 'multiple-ideas.budget-occasion'),
             ]);
 
         $recipients = BudgetRecipient::where('user_id', $userId)
@@ -115,6 +113,14 @@ class ProfileController extends Controller
             'year' => $year,
             'years' => $this->budgetYears($userId, $year),
         ]);
+    }
+
+    private function occasionFields(Idea|MultipleIdea $purchase, string $correctionRoute): array
+    {
+        return [
+            'occasion' => BudgetOccasion::resolve($purchase->budget_occasion, $purchase->taken_at),
+            'occasion_url' => route($correctionRoute, $purchase),
+        ];
     }
 
     /**

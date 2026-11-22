@@ -19,7 +19,7 @@ class BudgetRecipientController extends Controller
 
     public function update(Request $request, BudgetRecipient $budgetRecipient): RedirectResponse
     {
-        abort_unless($budgetRecipient->user_id === Auth::id(), 403);
+        $this->authorize('update', $budgetRecipient);
 
         $budgetRecipient->update($this->validated($request, $budgetRecipient));
 
@@ -31,7 +31,7 @@ class BudgetRecipientController extends Controller
      */
     public function destroy(BudgetRecipient $budgetRecipient): RedirectResponse
     {
-        abort_unless($budgetRecipient->user_id === Auth::id(), 403);
+        $this->authorize('delete', $budgetRecipient);
 
         $budgetRecipient->delete();
 

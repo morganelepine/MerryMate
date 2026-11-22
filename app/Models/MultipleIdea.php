@@ -2,12 +2,14 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\TracksTakenAt;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class MultipleIdea extends Model
 {
     use HasFactory;
+    use TracksTakenAt;
 
     public function idea()
     {
@@ -27,7 +29,6 @@ class MultipleIdea extends Model
         'status_guest_token',
         'choice',
         'paid_price',
-        'taken_at',
     ];
 
     /**

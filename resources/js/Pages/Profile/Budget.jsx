@@ -24,14 +24,14 @@ import {
 import { formatIdeaCount, formatPrice } from "@/Components/Ideas/ideaHelpers";
 import {
     HOME_WIDTH,
-    PAGE_BOTTOM,
-    PAGE_GUTTER,
+    PAGE_BODY_SPACING,
 } from "@/Layouts/Partials/pageContainer";
+import useDisclosure from "@/hooks/useDisclosure";
 
 const BUDGET_PROPS = ["ideas", "recipients", "year", "years"];
 
 export default function Budget({ auth, ideas, recipients, year, years }) {
-    const [addingRecipient, setAddingRecipient] = useState(false);
+    const addRecipient = useDisclosure();
     const [occasion, setOccasion] = useState(DEFAULT_OCCASION);
     const yearId = useId();
     const { cards, totals } = useMemo(
@@ -59,7 +59,7 @@ export default function Budget({ auth, ideas, recipients, year, years }) {
             actions={
                 <PrimaryButton
                     size="medium"
-                    onClick={() => setAddingRecipient(true)}
+                    onClick={addRecipient.open}
                     className="gap-2"
                 >
                     <OutlineIcon
@@ -73,20 +73,18 @@ export default function Budget({ auth, ideas, recipients, year, years }) {
             <Head title="Budget cadeaux" />
 
             <div
-                className={`${HOME_WIDTH} ${PAGE_GUTTER} pt-8 sm:pt-10 ${PAGE_BOTTOM} space-y-6`}
+                className={`${HOME_WIDTH} ${PAGE_BODY_SPACING} space-y-6`}
             >
                 <div
                     className={`${CARD_SURFACE} flex flex-col gap-3 p-4 lg:flex-row lg:items-center lg:justify-between`}
                 >
-                    <div>
-                        <p className="flex items-center gap-2 font-semibold text-gray-900">
-                            <OutlineIcon
-                                path={BUDGET_ICONS.calendar}
-                                className="h-5 w-5 text-orange-600"
-                            />
-                            Filtres
-                        </p>
-                    </div>
+                    <p className="flex items-center gap-2 font-semibold text-gray-900">
+                        <OutlineIcon
+                            path={BUDGET_ICONS.calendar}
+                            className="h-5 w-5 text-orange-600"
+                        />
+                        Filtres
+                    </p>
                     <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
                         <OccasionFilter
                             value={occasion}
@@ -180,8 +178,8 @@ export default function Budget({ auth, ideas, recipients, year, years }) {
             </div>
 
             <Modal
-                show={addingRecipient}
-                onClose={() => setAddingRecipient(false)}
+                show={addRecipient.isOpen}
+                onClose={addRecipient.close}
                 maxWidth="md"
             >
                 <div className="p-6">
@@ -192,7 +190,7 @@ export default function Budget({ auth, ideas, recipients, year, years }) {
                         Ajouter une personne
                     </Modal.Title>
                     <BudgetRecipientForm
-                        onClose={() => setAddingRecipient(false)}
+                        onClose={addRecipient.close}
                         className="mt-4"
                     />
                 </div>

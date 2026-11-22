@@ -4,9 +4,7 @@ import { useForm } from "@inertiajs/react";
 import TextInput from "@/Components/Utils/TextInput";
 import InputLabel from "@/Components/Utils/InputLabel";
 import InputError from "@/Components/Utils/InputError";
-import PrimaryButton from "@/Components/Buttons/PrimaryButton";
-import CancelButton from "@/Components/Buttons/CancelButton";
-import DeleteButton from "@/Components/Buttons/DeleteButton";
+import BudgetFormActions from "@/Components/Profile/Budget/BudgetFormActions";
 import {
     BUDGET_CARDS_TITLE_ID,
     focusById,
@@ -73,21 +71,17 @@ export default function BudgetRecipientForm({
                 className="mt-1"
             />
 
-            <div className="mt-3 flex flex-wrap items-center gap-y-2">
-                <PrimaryButton size="small" type="submit" disabled={processing}>
-                    {isEditing ? "Enregistrer" : "Ajouter"}
-                </PrimaryButton>
-                <CancelButton onClick={onClose} />
-                {isEditing && (
-                    <DeleteButton
-                        label="Supprimer"
-                        question={`Supprimer ${recipient.name} et tous ses cadeaux, toutes années confondues ?`}
-                        onConfirm={destroy}
-                        processing={processing}
-                        className="ml-auto"
-                    />
-                )}
-            </div>
+            <BudgetFormActions
+                isEditing={isEditing}
+                processing={processing}
+                onClose={onClose}
+                deleteQuestion={
+                    recipient &&
+                    `Supprimer ${recipient.name} et tous ses cadeaux, toutes années confondues ?`
+                }
+                onDelete={destroy}
+                className="mt-3"
+            />
         </form>
     );
 }

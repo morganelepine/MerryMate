@@ -1,14 +1,11 @@
 import PropTypes from "prop-types";
 import {
     ALL_OCCASIONS,
-    OCCASIONS,
+    OCCASION_OPTIONS,
 } from "@/Components/Profile/Budget/budgetHelpers";
 
 const OPTIONS = [
-    ...Object.entries(OCCASIONS).map(([value, { filter }]) => ({
-        value,
-        label: filter,
-    })),
+    ...OCCASION_OPTIONS.map(({ value, filter }) => ({ value, label: filter })),
     { value: ALL_OCCASIONS, label: "Tout" },
 ];
 

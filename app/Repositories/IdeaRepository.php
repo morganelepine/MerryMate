@@ -68,10 +68,6 @@ class IdeaRepository
         $idea->status_guest_token = $status === 'available' ? null : GuestIdentity::current();
         // Frozen at purchase: the promo may end, or the owner change the price, afterwards.
         $idea->paid_price = $status === 'purchased' ? $idea->currentPrice() : null;
-        $idea->taken_at = $status === 'available' ? null : now();
-        if ($status === 'available') {
-            $idea->budget_occasion = null;
-        }
         $idea->save();
     }
 
@@ -80,7 +76,6 @@ class IdeaRepository
         $multipleIdea->status = $status;
         $multipleIdea->choice = $choice;
         $multipleIdea->paid_price = $status === 'purchased' ? $multipleIdea->idea->currentPrice() : null;
-        $multipleIdea->taken_at = $status === 'available' ? null : now();
         $multipleIdea->save();
     }
 }

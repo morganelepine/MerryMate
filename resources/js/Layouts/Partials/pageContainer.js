@@ -13,4 +13,5 @@ export const LIST_HEADER_CLOSED = `${LIST_HEADER_BAND} border-b border-gray-200 
 export const PAGE_BOTTOM = "pb-16 sm:pb-20";
 
 // Content below a page header, aligned with it.
-export const PAGE_BODY = `${LIST_WIDTH} ${PAGE_GUTTER} pt-8 sm:pt-10 ${PAGE_BOTTOM}`;
+export const PAGE_BODY_SPACING = `${PAGE_GUTTER} pt-8 sm:pt-10 ${PAGE_BOTTOM}`;
+export const PAGE_BODY = `${LIST_WIDTH} ${PAGE_BODY_SPACING}`;

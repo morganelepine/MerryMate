@@ -2,7 +2,9 @@
 
 namespace Database\Factories;
 
+use App\Models\BudgetGift;
 use App\Models\BudgetRecipient;
+use App\Support\BudgetOccasion;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -17,8 +19,8 @@ class BudgetGiftFactory extends Factory
             'year' => (int) now()->year,
             'title' => fake()->words(2, true),
             'price' => fake()->randomFloat(2, 2, 80),
-            'status' => fake()->randomElement(['idea', 'purchased']),
-            'occasion' => 'christmas',
+            'status' => fake()->randomElement(BudgetGift::STATUSES),
+            'occasion' => fake()->randomElement(BudgetOccasion::VALUES),
         ];
     }
 }

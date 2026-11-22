@@ -33,12 +33,18 @@ export const GIFT_STATUS = {
     },
 };
 
+// Statuses a gift tracked by hand can have (BudgetGift::STATUSES).
+export const GIFT_STATUSES = ["idea", "purchased"];
+
 // `filter` is the plural used by the occasion filter.
 export const OCCASIONS = {
     christmas: { label: "Noël", filter: "Noël" },
     birthday: { label: "Anniversaire", filter: "Anniversaires" },
     other: { label: "Autre", filter: "Autres" },
 };
+export const OCCASION_OPTIONS = Object.entries(OCCASIONS).map(
+    ([value, { label, filter }]) => ({ value, label, filter }),
+);
 export const ALL_OCCASIONS = "all";
 export const DEFAULT_OCCASION = "christmas";
 
@@ -100,24 +106,30 @@ export function buildBudget(recipients, ideas, occasion) {
         byName.get(key).ideas.push(idea);
     }
 
-    const totals = { purchased: 0, purchasedCount: 0, idea: 0, ideaCount: 0 };
+    const totals = {
+        purchased: { cents: 0, count: 0 },
+        idea: { cents: 0, count: 0 },
+    };
 
     const withTotals = cards.map((card, index) => {
+        // Each line once, as [status, price in cents].
+        const lines = [
+            ...card.gifts.map((gift) => [gift.status, toCents(gift.price)]),
+            ...card.ideas.map((idea) => [
+                "purchased",
+                toCents(getPaidPrice(idea)),
+            ]),
+        ];
         let cents = 0;
-        for (const gift of card.gifts) {
-            cents += toCents(gift.price);
-            totals[gift.status] += toCents(gift.price);
-            totals[`${gift.status}Count`] += 1;
-        }
-        for (const idea of card.ideas) {
-            cents += toCents(getPaidPrice(idea));
-            totals.purchased += toCents(getPaidPrice(idea));
-            totals.purchasedCount += 1;
+        for (const [status, lineCents] of lines) {
+            cents += lineCents;
+            totals[status].cents += lineCents;
+            totals[status].count += 1;
         }
         return {
             ...card,
             accent: CARD_ACCENTS[index % CARD_ACCENTS.length],
-            count: card.gifts.length + card.ideas.length,
+            count: lines.length,
             total: cents / 100,
         };
     });
@@ -125,11 +137,11 @@ export function buildBudget(recipients, ideas, occasion) {
     return {
         cards: withTotals,
         totals: {
-            all: (totals.purchased + totals.idea) / 100,
-            purchased: totals.purchased / 100,
-            purchasedCount: totals.purchasedCount,
-            idea: totals.idea / 100,
-            ideaCount: totals.ideaCount,
+            all: (totals.purchased.cents + totals.idea.cents) / 100,
+            purchased: totals.purchased.cents / 100,
+            purchasedCount: totals.purchased.count,
+            idea: totals.idea.cents / 100,
+            ideaCount: totals.idea.count,
         },
     };
 }

@@ -180,14 +180,8 @@ class BudgetTest extends TestCase
         $idea2024 = Idea::factory()->create(['list_id' => $giftList->id, 'user_id' => $owner->id]);
         $buyer = User::factory()->create();
         FollowedList::create(['user_id' => $buyer->id, 'gift_list_id' => $giftList->id, 'private_code' => '1234']);
-        $taken = [
-            'is_multiple' => false,
-            'status' => 'purchased',
-            'status_user' => $buyer->name,
-            'status_user_id' => $buyer->id,
-        ];
-        $idea2025->forceFill([...$taken, 'taken_at' => '2025-12-10 10:00:00'])->save();
-        $idea2024->forceFill([...$taken, 'taken_at' => '2024-12-10 10:00:00'])->save();
+        $this->markPurchasedBy($idea2025, $buyer, '2025-12-10 10:00:00');
+        $this->markPurchasedBy($idea2024, $buyer, '2024-12-10 10:00:00');
 
         $recipient = BudgetRecipient::factory()->create(['user_id' => $buyer->id, 'name' => 'Roxane']);
         BudgetGift::factory()->create(['budget_recipient_id' => $recipient->id, 'year' => 2025, 'title' => 'Parfum']);
@@ -255,10 +249,9 @@ class BudgetTest extends TestCase
         $may = Idea::factory()->create(['list_id' => $giftList->id, 'user_id' => $owner->id]);
         $corrected = Idea::factory()->create(['list_id' => $giftList->id, 'user_id' => $owner->id]);
         $buyer = User::factory()->create();
-        $taken = ['is_multiple' => false, 'status' => 'purchased', 'status_user' => $buyer->name, 'status_user_id' => $buyer->id];
-        $december->forceFill([...$taken, 'taken_at' => '2025-12-02 10:00:00'])->save();
-        $may->forceFill([...$taken, 'taken_at' => '2025-05-12 10:00:00'])->save();
-        $corrected->forceFill([...$taken, 'taken_at' => '2025-12-20 10:00:00', 'budget_occasion' => 'other'])->save();
+        $this->markPurchasedBy($december, $buyer, '2025-12-02 10:00:00');
+        $this->markPurchasedBy($may, $buyer, '2025-05-12 10:00:00');
+        $this->markPurchasedBy($corrected, $buyer, '2025-12-20 10:00:00', ['budget_occasion' => 'other']);
 
         $this->actingAs($buyer)
             ->get('/profile/budget?year=2025')
@@ -275,7 +268,7 @@ class BudgetTest extends TestCase
         [$owner, $giftList] = $this->createGiftListWithOwner();
         $idea = Idea::factory()->create(['list_id' => $giftList->id, 'user_id' => $owner->id]);
         $buyer = User::factory()->create();
-        $idea->forceFill(['status' => 'purchased', 'status_user' => $buyer->name, 'status_user_id' => $buyer->id, 'taken_at' => now()])->save();
+        $this->markPurchasedBy($idea, $buyer, now());
 
         $this->actingAs(User::factory()->create())
             ->patch("/ideas/{$idea->id}/budget-occasion", ['occasion' => 'other'])
@@ -288,5 +281,20 @@ class BudgetTest extends TestCase
             ->assertSessionHasNoErrors();
 
         $this->assertSame('other', $idea->fresh()->budget_occasion);
+    }
+
+    /**
+     * Purchase made straight in the database, dated as given (taken_at isn't fillable from routes).
+     */
+    private function markPurchasedBy(Idea $idea, User $buyer, $takenAt, array $extra = []): void
+    {
+        $idea->forceFill([
+            'is_multiple' => false,
+            'status' => 'purchased',
+            'status_user' => $buyer->name,
+            'status_user_id' => $buyer->id,
+            'taken_at' => $takenAt,
+            ...$extra,
+        ])->save();
     }
 }

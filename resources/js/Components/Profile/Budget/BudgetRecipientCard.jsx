@@ -15,7 +15,7 @@ import {
     BUDGET_ROW_PRICE,
     BUDGET_ROW_TEXT,
     cardAddButtonId,
-    OCCASIONS,
+    OCCASION_OPTIONS,
     focusById,
     formatGiftCount,
     matchesOccasion,
@@ -68,13 +68,11 @@ function MerryMateRow({ idea, occasionFilter }) {
                             aria-label={`Occasion de ${title}`}
                             className="rounded border-0 bg-transparent py-0 pl-0 pr-7 text-xs text-gray-500 hover:text-orange-600 focus:ring-2 focus:ring-orange-300"
                         >
-                            {Object.entries(OCCASIONS).map(
-                                ([value, { label }]) => (
-                                    <option key={value} value={value}>
-                                        {label}
-                                    </option>
-                                ),
-                            )}
+                            {OCCASION_OPTIONS.map(({ value, label }) => (
+                                <option key={value} value={value}>
+                                    {label}
+                                </option>
+                            ))}
                         </select>
                     </p>
                 </div>

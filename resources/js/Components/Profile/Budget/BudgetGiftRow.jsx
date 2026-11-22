@@ -10,6 +10,7 @@ import {
     BUDGET_ROW_LAYOUT,
     BUDGET_ROW_PRICE,
     BUDGET_ROW_TEXT,
+    GIFT_STATUSES,
 } from "@/Components/Profile/Budget/budgetHelpers";
 
 export default function BudgetGiftRow({
@@ -81,7 +82,7 @@ BudgetGiftRow.propTypes = {
         id: PropTypes.number.isRequired,
         title: PropTypes.string.isRequired,
         price: PropTypes.number,
-        status: PropTypes.oneOf(["idea", "purchased"]).isRequired,
+        status: PropTypes.oneOf(GIFT_STATUSES).isRequired,
     }).isRequired,
     recipient: PropTypes.shape({
         id: PropTypes.number.isRequired,

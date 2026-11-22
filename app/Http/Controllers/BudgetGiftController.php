@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\BudgetGift;
-use App\Models\BudgetRecipient;
 use App\Support\BudgetOccasion;
 use App\Support\Price;
 use Illuminate\Http\RedirectResponse;
@@ -23,7 +22,7 @@ class BudgetGiftController extends Controller
                 'integer',
                 Rule::exists('budget_recipients', 'id')->where('user_id', Auth::id()),
             ],
-            'year' => 'required|integer|between:2000,2100',
+            'year' => 'required|integer|between:'.BudgetGift::MIN_YEAR.','.BudgetGift::MAX_YEAR,
             ...$this->giftRules(),
         ]);
 
@@ -34,7 +33,7 @@ class BudgetGiftController extends Controller
 
     public function update(Request $request, BudgetGift $budgetGift): RedirectResponse
     {
-        $this->authorizeOwner($budgetGift);
+        $this->authorize('update', $budgetGift);
         Price::normalize($request);
 
         $budgetGift->update($request->validate($this->giftRules()));
@@ -44,7 +43,7 @@ class BudgetGiftController extends Controller
 
     public function toggleStatus(BudgetGift $budgetGift): RedirectResponse
     {
-        $this->authorizeOwner($budgetGift);
+        $this->authorize('update', $budgetGift);
 
         $budgetGift->update([
             'status' => $budgetGift->status === 'purchased' ? 'idea' : 'purchased',
@@ -55,7 +54,7 @@ class BudgetGiftController extends Controller
 
     public function destroy(BudgetGift $budgetGift): RedirectResponse
     {
-        $this->authorizeOwner($budgetGift);
+        $this->authorize('delete', $budgetGift);
 
         $budgetGift->delete();
 
@@ -70,13 +69,5 @@ class BudgetGiftController extends Controller
             'status' => ['required', Rule::in(BudgetGift::STATUSES)],
             'occasion' => ['required', Rule::in(BudgetOccasion::VALUES)],
         ];
-    }
-
-    private function authorizeOwner(BudgetGift $gift): void
-    {
-        abort_unless(
-            BudgetRecipient::whereKey($gift->budget_recipient_id)->where('user_id', Auth::id())->exists(),
-            403,
-        );
     }
 }

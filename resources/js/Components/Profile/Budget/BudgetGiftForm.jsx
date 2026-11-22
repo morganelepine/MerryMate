@@ -4,23 +4,20 @@ import { useForm } from "@inertiajs/react";
 import TextInput, { INPUT_CLASSES } from "@/Components/Utils/TextInput";
 import InputLabel from "@/Components/Utils/InputLabel";
 import InputError from "@/Components/Utils/InputError";
-import PrimaryButton from "@/Components/Buttons/PrimaryButton";
-import CancelButton from "@/Components/Buttons/CancelButton";
-import DeleteButton from "@/Components/Buttons/DeleteButton";
+import BudgetFormActions from "@/Components/Profile/Budget/BudgetFormActions";
 import { priceToInput } from "@/Components/Ideas/ideaHelpers";
 import {
     ALL_OCCASIONS,
     BUDGET_FORM,
     DEFAULT_OCCASION,
     GIFT_STATUS,
-    OCCASIONS,
+    GIFT_STATUSES,
+    OCCASION_OPTIONS,
     cardAddButtonId,
     focusById,
     matchesOccasion,
 } from "@/Components/Profile/Budget/budgetHelpers";
 import useEscapeToClose from "@/hooks/useEscapeToClose";
-
-const EDITABLE_STATUSES = ["idea", "purchased"];
 
 export default function BudgetGiftForm({
     recipient,
@@ -137,7 +134,7 @@ export default function BudgetGiftForm({
                     onChange={(e) => setData("occasion", e.target.value)}
                     className={`${INPUT_CLASSES} text-sm`}
                 >
-                    {Object.entries(OCCASIONS).map(([value, { label }]) => (
+                    {OCCASION_OPTIONS.map(({ value, label }) => (
                         <option key={value} value={value}>
                             {label}
                         </option>
@@ -151,7 +148,7 @@ export default function BudgetGiftForm({
                     Statut
                 </legend>
                 <div className="mt-1 flex gap-4">
-                    {EDITABLE_STATUSES.map((status) => (
+                    {GIFT_STATUSES.map((status) => (
                         <label
                             key={status}
                             className="inline-flex items-center gap-2 text-sm"
@@ -171,21 +168,14 @@ export default function BudgetGiftForm({
                 <InputError message={errors.status} className="mt-1" />
             </fieldset>
 
-            <div className="flex flex-wrap items-center pt-4">
-                <PrimaryButton size="small" type="submit" disabled={processing}>
-                    {isEditing ? "Enregistrer" : "Ajouter"}
-                </PrimaryButton>
-                <CancelButton onClick={onClose} />
-                {isEditing && (
-                    <DeleteButton
-                        label="Supprimer"
-                        question={`Supprimer « ${gift.title} » ?`}
-                        onConfirm={destroy}
-                        processing={processing}
-                        className="ml-auto"
-                    />
-                )}
-            </div>
+            <BudgetFormActions
+                isEditing={isEditing}
+                processing={processing}
+                onClose={onClose}
+                deleteQuestion={gift && `Supprimer « ${gift.title} » ?`}
+                onDelete={destroy}
+                className="pt-4"
+            />
         </form>
     );
 }
