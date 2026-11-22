@@ -6,6 +6,7 @@ use App\Http\Controllers\Concerns\AuthorizesListAccess;
 use App\Models\GiftList;
 use App\Models\Idea;
 use App\Repositories\IdeaRepository;
+use App\Support\Price;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -15,10 +16,8 @@ class IdeaController extends Controller
 {
     use AuthorizesListAccess;
 
-    private const PRICE_RULE = 'nullable|numeric|decimal:0,2|min:0|max:999999.99';
-
     private const PROMO_RULES = [
-        'promo_price' => self::PRICE_RULE,
+        'promo_price' => Price::RULE,
         'promo_end_date' => 'nullable|date_format:Y-m-d',
     ];
 
@@ -48,7 +47,7 @@ class IdeaController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $string = 'nullable|string|max:255';
-        $this->normalizePrice($request);
+        Price::normalize($request, ['price', 'promo_price']);
 
         $validated = $request->validate([
             'list_id' => 'required|integer',
@@ -57,7 +56,7 @@ class IdeaController extends Controller
             'brand' => $string,
             'link' => 'required_without:idea|nullable|string|max:255',
             'details' => $string,
-            'price' => self::PRICE_RULE,
+            'price' => Price::RULE,
             'favorite' => 'boolean',
             'is_multiple' => 'boolean',
             'promo' => 'boolean',
@@ -80,14 +79,14 @@ class IdeaController extends Controller
         $this->authorize('update', $idea);
 
         $string = 'nullable|string|max:255';
-        $this->normalizePrice($request);
+        Price::normalize($request, ['price', 'promo_price']);
 
         $validated = $request->validate([
             'idea' => $string,
             'brand' => $string,
             'link' => 'nullable|string|max:550',
             'details' => $string,
-            'price' => self::PRICE_RULE,
+            'price' => Price::RULE,
             'favorite' => 'boolean',
             'is_multiple' => 'boolean',
             'promo' => 'boolean',
@@ -168,18 +167,6 @@ class IdeaController extends Controller
         $this->ideaRepository->updateIdea($idea, 'available', '');
 
         return back();
-    }
-
-    /**
-     * Prices are typed the French way ("34,99"): accept the comma as decimal separator.
-     */
-    private function normalizePrice(Request $request): void
-    {
-        foreach (['price', 'promo_price'] as $field) {
-            if (is_string($request->input($field))) {
-                $request->merge([$field => str_replace(',', '.', trim($request->input($field)))]);
-            }
-        }
     }
 
     /**

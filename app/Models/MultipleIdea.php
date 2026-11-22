@@ -27,6 +27,7 @@ class MultipleIdea extends Model
         'status_guest_token',
         'choice',
         'paid_price',
+        'taken_at',
     ];
 
     /**
@@ -43,5 +44,6 @@ class MultipleIdea extends Model
 
     protected $casts = [
         'paid_price' => 'float',
+        'taken_at' => 'datetime',
     ];
 }

@@ -32,6 +32,11 @@ class User extends Authenticatable
         return $this->hasMany(BrandNote::class);
     }
 
+    public function budgetRecipients(): HasMany
+    {
+        return $this->hasMany(BudgetRecipient::class);
+    }
+
     // Un user peut suivre plusieurs listes
     public function followed_lists(): HasMany
     {

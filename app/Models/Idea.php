@@ -70,6 +70,7 @@ class Idea extends Model
         'price' => 'float',
         'promo_price' => 'float',
         'paid_price' => 'float',
+        'taken_at' => 'datetime',
     ];
 
     // Promo end dates are typed by French users: the last day ends at midnight Paris time.

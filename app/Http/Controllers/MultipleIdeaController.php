@@ -39,6 +39,7 @@ class MultipleIdeaController extends Controller
             'status_guest_token' => GuestIdentity::current(),
             'status' => 'reserved',
             'choice' => $request->get('choice'),
+            'taken_at' => now(),
         ]);
 
         return back();
@@ -60,6 +61,7 @@ class MultipleIdeaController extends Controller
             'status' => 'purchased',
             'choice' => $request->get('choice'),
             'paid_price' => $idea->currentPrice(),
+            'taken_at' => now(),
         ]);
 
         return back();

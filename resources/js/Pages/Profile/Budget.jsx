@@ -1,89 +1,194 @@
-import { Head } from "@inertiajs/react";
+import { useId, useMemo, useState } from "react";
+import { Head, router } from "@inertiajs/react";
 import PropTypes from "prop-types";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import IdeaSummaryCard from "@/Components/Ideas/IdeaSummaryCard";
-import SectionHeader from "@/Components/Utils/SectionHeader";
-import OutlineButton from "@/Components/Buttons/OutlineButton";
-import { PAGE_BODY } from "@/Layouts/Partials/pageContainer";
-import { formatPrice, getPaidPrice } from "@/Components/Ideas/ideaHelpers";
+import PrimaryButton from "@/Components/Buttons/PrimaryButton";
+import Modal from "@/Components/Utils/Modal";
+import OutlineIcon from "@/Components/Utils/OutlineIcon";
+import { CARD_SURFACE } from "@/Components/Utils/surfaces";
+import { NAV_ICONS } from "@/Components/Utils/navIcons";
+import { INPUT_CLASSES } from "@/Components/Utils/TextInput";
+import BudgetStat from "@/Components/Profile/Budget/BudgetStat";
+import BudgetRecipientCard from "@/Components/Profile/Budget/BudgetRecipientCard";
+import BudgetRecipientForm from "@/Components/Profile/Budget/BudgetRecipientForm";
+import {
+    BUDGET_CARDS_TITLE_ID,
+    BUDGET_ICONS,
+    buildBudget,
+    formatGiftCount,
+} from "@/Components/Profile/Budget/budgetHelpers";
+import { formatIdeaCount, formatPrice } from "@/Components/Ideas/ideaHelpers";
+import {
+    HOME_WIDTH,
+    PAGE_BOTTOM,
+    PAGE_GUTTER,
+} from "@/Layouts/Partials/pageContainer";
 
-// Purchases grouped by the person they were bought for, with a subtotal each.
-function groupByRecipient(ideas) {
-    const groups = new Map();
-    for (const idea of ideas) {
-        if (!groups.has(idea.user_name)) {
-            groups.set(idea.user_name, { ideas: [], totalCents: 0 });
-        }
-        const group = groups.get(idea.user_name);
-        group.ideas.push(idea);
-        // Summed in cents to avoid floating-point drift (0.1 + 0.2).
-        group.totalCents += Math.round((getPaidPrice(idea) ?? 0) * 100);
-    }
-    return [...groups.entries()].map(([recipient, { ideas, totalCents }]) => [
-        recipient,
-        { ideas, total: totalCents / 100 },
-    ]);
-}
+const BUDGET_PROPS = ["ideas", "recipients", "year", "years"];
 
-export default function Budget({ auth, ideas, totalPrice }) {
+export default function Budget({ auth, ideas, recipients, year, years }) {
+    const [addingRecipient, setAddingRecipient] = useState(false);
+    const yearId = useId();
+    const { cards, totals } = useMemo(
+        () => buildBudget(recipients, ideas),
+        [recipients, ideas],
+    );
+
+    const changeYear = (e) =>
+        router.get(
+            route("profile.purchase"),
+            { year: e.target.value },
+            { preserveScroll: true, preserveState: true, only: BUDGET_PROPS },
+        );
+
     return (
         <AuthenticatedLayout
             user={auth.user}
-            title="Mon budget"
-            subtitle="Les cadeaux que tu as achetés pour tes proches"
+            title="Budget cadeaux"
+            subtitle="Distingue tes idées de tes achats et suis les dépenses pour chaque proche, année par année."
+            headerWidth={HOME_WIDTH}
             actions={
-                ideas.length > 0 ? (
-                    <p className="">
-                        <span className="block text-xs text-gray-500">
-                            Total dépensé
-                        </span>
-                        <span className="font-yeseva text-2xl text-gray-900">
-                            {formatPrice(totalPrice)}
-                        </span>
-                    </p>
-                ) : (
-                    <OutlineButton
-                        size="medium"
-                        href={route("lists.followedLists")}
-                    >
-                        Voir mes listes suivies
-                    </OutlineButton>
-                )
+                <PrimaryButton
+                    size="medium"
+                    onClick={() => setAddingRecipient(true)}
+                    className="gap-2"
+                >
+                    <OutlineIcon
+                        path={BUDGET_ICONS.userPlus}
+                        className="h-4 w-4"
+                    />
+                    Ajouter une personne
+                </PrimaryButton>
             }
         >
-            <Head title="Mon budget" />
+            <Head title="Budget cadeaux" />
 
-            <div className={PAGE_BODY}>
-                {ideas.length > 0 ? (
-                    <div className="space-y-12">
-                        {groupByRecipient(ideas).map(([recipient, group]) => (
-                            <section key={recipient}>
-                                <SectionHeader
-                                    title={`Pour ${recipient}`}
-                                    count={group.ideas.length}
-                                    action={
-                                        <p className="font-yeseva text-lg text-gray-900">
-                                            {formatPrice(group.total)}
-                                        </p>
-                                    }
-                                />
-                                <div className="mt-4 space-y-3">
-                                    {group.ideas.map((idea) => (
-                                        <IdeaSummaryCard
-                                            key={idea.key}
-                                            idea={idea}
-                                        />
-                                    ))}
-                                </div>
-                            </section>
-                        ))}
+            <div
+                className={`${HOME_WIDTH} ${PAGE_GUTTER} pt-8 sm:pt-10 ${PAGE_BOTTOM} space-y-6`}
+            >
+                <div
+                    className={`${CARD_SURFACE} flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between`}
+                >
+                    <div>
+                        <label
+                            htmlFor={yearId}
+                            className="flex items-center gap-2 font-semibold text-gray-900"
+                        >
+                            <OutlineIcon
+                                path={BUDGET_ICONS.calendar}
+                                className="h-5 w-5 text-orange-600"
+                            />
+                            Filtrer par année
+                        </label>
+                        <p
+                            id={`${yearId}-hint`}
+                            className="text-xs text-gray-500"
+                        >
+                            Tous les montants et les blocs ci-dessous suivent ce
+                            filtre.
+                        </p>
                     </div>
-                ) : (
-                    <p className="text-gray-600">
-                        Tu n’as effectué aucun achat pour le moment.
-                    </p>
-                )}
+                    <select
+                        id={yearId}
+                        value={year}
+                        onChange={changeYear}
+                        aria-describedby={`${yearId}-hint`}
+                        className={`${INPUT_CLASSES} !mt-0 sm:w-40`}
+                    >
+                        {years.map((option) => (
+                            <option key={option} value={option}>
+                                {option}
+                            </option>
+                        ))}
+                    </select>
+                </div>
+
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                    <BudgetStat
+                        icon={BUDGET_ICONS.wallet}
+                        iconClassName="bg-lilac-100 text-lilac-800"
+                        label="Budget total"
+                        value={formatPrice(totals.all)}
+                        hint="Idées et achats"
+                    />
+                    <BudgetStat
+                        icon={NAV_ICONS.gifts}
+                        iconClassName="bg-sage-100 text-sage-800"
+                        label="Achats"
+                        value={formatPrice(totals.purchased)}
+                        hint={formatGiftCount(totals.purchasedCount)}
+                    />
+                    <BudgetStat
+                        icon={BUDGET_ICONS.bulb}
+                        iconClassName="bg-orange-100 text-orange-700"
+                        label="Idées"
+                        value={formatPrice(totals.idea)}
+                        hint={formatIdeaCount(totals.ideaCount)}
+                    />
+                    <BudgetStat
+                        icon={NAV_ICONS.followed}
+                        iconClassName="bg-blue-100 text-blue-800"
+                        label="Proches"
+                        value={cards.length}
+                    />
+                </div>
+
+                <section
+                    aria-labelledby={BUDGET_CARDS_TITLE_ID}
+                    className="pt-4"
+                >
+                    <div className="border-b border-gray-200 pb-4">
+                        {/* Focusable by script: focus lands here once a card is deleted. */}
+                        <h2
+                            id={BUDGET_CARDS_TITLE_ID}
+                            tabIndex={-1}
+                            className="font-yeseva text-xl text-gray-900 focus:outline-none"
+                        >
+                            Cadeaux par proche
+                        </h2>
+                        <p className="mt-1 text-sm text-gray-500">
+                            Année {year} · Clique sur un statut pour le
+                            modifier.
+                        </p>
+                    </div>
+
+                    {cards.length > 0 ? (
+                        <div className="mt-6 grid grid-cols-1 items-start gap-5 md:grid-cols-2 lg:grid-cols-3">
+                            {cards.map((card) => (
+                                <BudgetRecipientCard
+                                    key={card.key}
+                                    card={card}
+                                    year={year}
+                                />
+                            ))}
+                        </div>
+                    ) : (
+                        <p className="mt-6 text-gray-600">
+                            Ajoute une personne pour commencer à suivre ton
+                            budget.
+                        </p>
+                    )}
+                </section>
             </div>
+
+            <Modal
+                show={addingRecipient}
+                onClose={() => setAddingRecipient(false)}
+                maxWidth="md"
+            >
+                <div className="p-6">
+                    <Modal.Title
+                        as="h2"
+                        className="font-yeseva text-xl text-gray-900"
+                    >
+                        Ajouter une personne
+                    </Modal.Title>
+                    <BudgetRecipientForm
+                        onClose={() => setAddingRecipient(false)}
+                        className="mt-4"
+                    />
+                </div>
+            </Modal>
         </AuthenticatedLayout>
     );
 }
@@ -91,5 +196,7 @@ export default function Budget({ auth, ideas, totalPrice }) {
 Budget.propTypes = {
     auth: PropTypes.object.isRequired,
     ideas: PropTypes.array.isRequired,
-    totalPrice: PropTypes.number,
+    recipients: PropTypes.array.isRequired,
+    year: PropTypes.number.isRequired,
+    years: PropTypes.arrayOf(PropTypes.number).isRequired,
 };

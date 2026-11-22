@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\BrandNoteController;
+use App\Http\Controllers\BudgetGiftController;
+use App\Http\Controllers\BudgetRecipientController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\GiftListController;
 use App\Http\Controllers\IdeaController;
@@ -67,6 +69,13 @@ Route::resource('ideas', IdeaController::class)
 Route::put('/brand-notes', [BrandNoteController::class, 'upsert'])
     ->middleware(['auth', 'verified'])
     ->name('brand-notes.upsert');
+
+// Budget: gifts tracked outside of MerryMate lists
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::resource('budget-recipients', BudgetRecipientController::class)->only(['store', 'update', 'destroy']);
+    Route::resource('budget-gifts', BudgetGiftController::class)->only(['store', 'update', 'destroy']);
+    Route::patch('/budget-gifts/{budgetGift}/status', [BudgetGiftController::class, 'toggleStatus'])->name('budget-gifts.status');
+});
 
 // Multiple ideas management
 Route::middleware('throttle:60,1')->prefix('multiple-ideas')->group(function () {

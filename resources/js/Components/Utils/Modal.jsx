@@ -61,3 +61,6 @@ export default function Modal({
         </Transition>
     );
 }
+
+// Names the dialog for screen readers (aria-labelledby), e.g. <Modal.Title as="h2">.
+Modal.Title = Dialog.Title;

@@ -10,6 +10,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 use Inertia\Response;
+use App\Models\BudgetGift;
+use App\Models\BudgetRecipient;
 use App\Models\Idea;
 use App\Models\MultipleIdea;
 
@@ -65,19 +67,29 @@ class ProfileController extends Controller
     }
 
     /**
-     * Display the user's purchases.
+     * Display the user's gift budget for a year: MerryMate purchases and gifts tracked by hand.
      */
-    public function purchase(): Response
+    public function purchase(Request $request): Response
     {
+        $userId = Auth::id();
+        $year = $request->integer('year');
+        if ($year < 2000 || $year > 2100) {
+            $year = (int) now()->year;
+        }
+
         // Reservations count too: buyers often never confirm them once the gift is bought.
-        $ideas = Idea::where('status_user_id', Auth::id())->get()->map(fn (Idea $idea) => [
-            ...$idea->toArray(),
-            'key' => "idea-{$idea->id}",
-        ]);
+        $ideas = Idea::where('status_user_id', $userId)
+            ->whereYear('taken_at', $year)
+            ->get()
+            ->map(fn (Idea $idea) => [
+                ...$idea->toArray(),
+                'key' => "idea-{$idea->id}",
+            ]);
 
         // Each reservation or purchase of a multiple idea is its own row, shaped like an idea.
         $multiplePurchases = MultipleIdea::with('idea')
-            ->where('status_user_id', Auth::id())
+            ->where('status_user_id', $userId)
+            ->whereYear('taken_at', $year)
             ->get()
             ->map(fn (MultipleIdea $purchase) => [
                 ...$purchase->idea->only(['idea', 'brand', 'details', 'link', 'price', 'user_name']),
@@ -87,13 +99,38 @@ class ProfileController extends Controller
                 'paid_price' => $purchase->paid_price,
             ]);
 
-        $ideas = $ideas->concat($multiplePurchases)->values();
-        $totalPrice = round($ideas->sum(fn (array $idea) => $idea['paid_price'] ?? $idea['price']), 2);
+        $recipients = BudgetRecipient::where('user_id', $userId)
+            ->with(['gifts' => fn ($query) => $query->where('year', $year)->orderBy('id')])
+            ->orderBy('id')
+            ->get(['id', 'name']);
 
         return Inertia::render('Profile/Budget', [
-            'ideas' => $ideas,
-            'totalPrice' => $totalPrice
+            'ideas' => $ideas->concat($multiplePurchases)->values(),
+            'recipients' => $recipients,
+            'year' => $year,
+            'years' => $this->budgetYears($userId, $year),
         ]);
+    }
+
+    /**
+     * Years with something in the budget, plus the current and selected ones, most recent first.
+     */
+    private function budgetYears(int $userId, int $selected): array
+    {
+        $takenAt = Idea::where('status_user_id', $userId)->whereNotNull('taken_at')->pluck('taken_at')
+            ->concat(MultipleIdea::where('status_user_id', $userId)->whereNotNull('taken_at')->pluck('taken_at'))
+            ->map(fn ($date) => (int) $date->year);
+
+        $giftYears = BudgetGift::whereHas('recipient', fn ($query) => $query->where('user_id', $userId))
+            ->distinct()
+            ->pluck('year');
+
+        return $takenAt->concat($giftYears)
+            ->push((int) now()->year, $selected)
+            ->unique()
+            ->sortDesc()
+            ->values()
+            ->all();
     }
 
     /**
