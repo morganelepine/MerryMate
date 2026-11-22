@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Idea extends Model
 {
@@ -20,6 +21,11 @@ class Idea extends Model
     public function giftList(): BelongsTo
     {
         return $this->belongsTo(GiftList::class);
+    }
+
+    public function multipleIdeas(): HasMany
+    {
+        return $this->hasMany(MultipleIdea::class, 'idea_id');
     }
 
     /**

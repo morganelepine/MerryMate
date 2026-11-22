@@ -5,8 +5,10 @@ namespace Tests\Feature;
 use App\Models\FollowedList;
 use App\Models\GiftList;
 use App\Models\Idea;
+use App\Models\MultipleIdea;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Inertia\Testing\AssertableInertia as Assert;
 use Tests\TestCase;
 
 class IdeaTest extends TestCase
@@ -37,6 +39,71 @@ class IdeaTest extends TestCase
             ->assertRedirect();
 
         $this->assertNull($idea->fresh());
+    }
+
+    public function test_archiving_a_list_archives_taken_multiple_ideas_like_single_ones(): void
+    {
+        [$owner, $giftList] = $this->createGiftListWithOwner();
+        $ideaDefaults = [
+            'list_id' => $giftList->id,
+            'user_id' => $owner->id,
+            'user_name' => $owner->name,
+            'is_multiple' => true,
+            'status' => 'available',
+        ];
+        $idea = Idea::factory()->create($ideaDefaults);
+        $untouched = Idea::factory()->create($ideaDefaults);
+        $multipleIdea = MultipleIdea::create([
+            'idea_id' => $idea->id,
+            'status_user' => 'Buyer',
+            'status' => 'purchased',
+        ]);
+
+        $this->actingAs($owner)->delete("/ideas/{$idea->id}")->assertSessionHasErrors();
+        $this->assertNotNull($idea->fresh());
+
+        $this->actingAs($owner)->patch("/lists/{$giftList->id}/archive")->assertRedirect();
+        $this->assertEquals('archived', $idea->fresh()->status);
+        $this->assertEquals('available', $untouched->fresh()->status);
+        $this->assertEquals('purchased', $multipleIdea->fresh()->status);
+
+        $this->actingAs($owner)
+            ->get('/profile/gifts')
+            ->assertInertia(fn (Assert $page) => $page
+                ->has('ideas', 1)
+                ->where('ideas.0.key', "multiple-{$multipleIdea->id}")
+                ->where('ideas.0.status_user', 'Buyer'));
+
+        $this->actingAs($owner)->delete("/ideas/{$idea->id}")->assertSessionHasNoErrors();
+        $this->assertNull($idea->fresh());
+        $this->assertNull($multipleIdea->fresh());
+    }
+
+    public function test_purchasing_a_multiple_idea_never_touches_a_reservation_sharing_its_id(): void
+    {
+        [$owner, $giftList] = $this->createGiftListWithOwner();
+        $idea = Idea::factory()->create([
+            'list_id' => $giftList->id,
+            'user_id' => $owner->id,
+            'user_name' => $owner->name,
+            'is_multiple' => true,
+        ]);
+        $buyer = User::factory()->create();
+        FollowedList::create(['user_id' => $buyer->id, 'gift_list_id' => $giftList->id, 'private_code' => '1234']);
+        // A reservation whose id equals the idea id, held by someone else.
+        $reservation = MultipleIdea::forceCreate([
+            'id' => $idea->id,
+            'idea_id' => $idea->id,
+            'status_user' => 'Someone',
+            'status' => 'reserved',
+        ]);
+
+        $this->actingAs($buyer)
+            ->patch("/multiple-ideas/{$idea->id}/purchase", ['userName' => $buyer->name])
+            ->assertSessionHasNoErrors();
+
+        $this->assertEquals('reserved', $reservation->fresh()->status);
+        $this->assertDatabaseHas('multiple_ideas', ['idea_id' => $idea->id, 'status_user_id' => $buyer->id, 'status' => 'purchased']);
     }
 
     public function test_guest_can_purchase_idea_after_unlocking_list_with_private_code(): void

@@ -22,7 +22,7 @@ class IdeaRepository
 
         $multipleIdeas = MultipleIdea::with('idea')
             ->whereHas('idea', function ($query) use ($listId) {
-                $query->where('list_id', $listId);
+                $query->where('list_id', $listId)->where('status', '!=', 'archived');
             })
             ->where('status', $status)
             ->orderByDesc('updated_at')

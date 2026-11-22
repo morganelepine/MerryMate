@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\FollowedList;
 use App\Models\Idea;
+use App\Models\MultipleIdea;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Inertia\Testing\AssertableInertia as Assert;
@@ -46,7 +47,9 @@ class BudgetTest extends TestCase
         $this->actingAs($buyer)->patch("/ideas/{$single->id}/purchase", ['userName' => $buyer->name]);
         $this->actingAs($buyer)->patch("/ideas/{$reserved->id}/reserve", ['userName' => $buyer->name]);
         $this->actingAs($buyer)->patch("/multiple-ideas/{$multiple->id}/reserve", ['userName' => $buyer->name]);
-        $this->actingAs($buyer)->patch("/multiple-ideas/{$multiple->id}/purchase", ['userName' => $buyer->name]);
+        $this->actingAs($buyer)->patch("/multiple-ideas/{$multiple->id}/reserve", ['userName' => $buyer->name]);
+        $reservation = MultipleIdea::where('idea_id', $multiple->id)->firstOrFail();
+        $this->actingAs($buyer)->patch("/multiple-ideas/{$reservation->id}/confirm-purchase", ['userName' => $buyer->name]);
         $this->actingAs($buyer)->patch("/multiple-ideas/{$multiple->id}/purchase", ['userName' => $buyer->name]);
 
         // The promo ending afterwards must not change what was paid.

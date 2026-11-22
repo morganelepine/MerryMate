@@ -101,7 +101,21 @@ class ProfileController extends Controller
      */
     public function gifts(): Response
     {
-        $ideas = Idea::where('user_id', Auth::id())->where('status', 'archived')->orderByDesc('updated_at')->get();
+        $ideas = Idea::with('multipleIdeas')
+            ->where('user_id', Auth::id())
+            ->where('status', 'archived')
+            ->orderByDesc('updated_at')
+            ->get()
+            // Each reservation or purchase of a multiple idea is a gift of its own, shaped like an idea.
+            ->flatMap(fn (Idea $idea) => $idea->is_multiple
+                ? $idea->multipleIdeas->map(fn (MultipleIdea $gift) => [
+                    ...$idea->only(['idea', 'brand', 'details', 'link', 'status', 'updated_at']),
+                    'key' => "multiple-{$gift->id}",
+                    'status_user' => $gift->status_user,
+                    'choice' => $gift->choice,
+                ])
+                : [[...$idea->toArray(), 'key' => "idea-{$idea->id}"]])
+            ->values();
 
         return Inertia::render('Profile/Gifts', [
             'ideas' => $ideas,

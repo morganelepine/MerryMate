@@ -82,7 +82,7 @@ export default function Gifts({ auth, ideas }) {
                         >
                             {selectedIdeas.map((idea) => (
                                 <IdeaSummaryCard
-                                    key={idea.id}
+                                    key={idea.key}
                                     idea={idea}
                                     showPrice={false}
                                     giver={idea.status_user || null}

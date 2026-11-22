@@ -45,38 +45,40 @@ class MultipleIdeaController extends Controller
     }
 
     /**
-     * Purchase a multiple idea.
+     * Purchase a multiple idea straight away, without reserving it first.
      */
     public function purchaseMultipleIdea(Request $request, $ideaId): RedirectResponse
     {
-        $multipleIdea = MultipleIdea::find($ideaId);
-        $choice = $request->get('choice');
+        $idea = Idea::findOrFail($ideaId);
+        $this->authorizeListAccess($idea->list_id);
 
-        if ($multipleIdea) {
-            $this->authorizeListAccess($multipleIdea->idea->list_id);
+        MultipleIdea::create([
+            'idea_id' => $idea->id,
+            'status_user' => $this->validatedUserName($request),
+            'status_user_id' => Auth::id(),
+            'status_guest_token' => GuestIdentity::current(),
+            'status' => 'purchased',
+            'choice' => $request->get('choice'),
+            'paid_price' => $idea->currentPrice(),
+        ]);
 
-            // Confirming the purchase of an idea already reserved by someone is only theirs to do.
-            $this->authorizeStatusOwner($multipleIdea);
+        return back();
+    }
 
-            $this->ideaRepository->updateMultipleIdea($multipleIdea, 'purchased', $choice);
+    /**
+     * Turn a reservation of a multiple idea into a purchase.
+     */
+    public function confirmMultipleIdeaPurchase(Request $request, $multipleIdeaId): RedirectResponse
+    {
+        $multipleIdea = MultipleIdea::where('status', 'reserved')->findOrFail($multipleIdeaId);
+        $this->authorizeListAccess($multipleIdea->idea->list_id);
 
-            return back();
-        } else {
-            $idea = Idea::findOrFail($ideaId);
-            $this->authorizeListAccess($idea->list_id);
+        // Confirming the purchase of an idea already reserved by someone is only theirs to do.
+        $this->authorizeStatusOwner($multipleIdea);
 
-            MultipleIdea::create([
-                'idea_id' => $idea->id,
-                'status_user' => $this->validatedUserName($request),
-                'status_user_id' => Auth::id(),
-                'status_guest_token' => GuestIdentity::current(),
-                'status' => 'purchased',
-                'choice' => $choice,
-                'paid_price' => $idea->currentPrice(),
-            ]);
+        $this->ideaRepository->updateMultipleIdea($multipleIdea, 'purchased', $request->get('choice'));
 
-            return back();
-        }
+        return back();
     }
 
     /**

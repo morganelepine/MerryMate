@@ -28,10 +28,14 @@ export default function ButtonPurchase({ idea, userName }) {
     const submit = (e, ignoreChoice = false) => {
         e.preventDefault();
 
-        const routeName =
-            idea.is_multiple === 1
-                ? "multiple-ideas.purchase"
-                : "ideas.purchase";
+        // A reserved multiple idea is a reservation row, whose id is not an idea id.
+        let routeName = "ideas.purchase";
+        if (idea.is_multiple === 1) {
+            routeName =
+                idea.status === "reserved"
+                    ? "multiple-ideas.confirm-purchase"
+                    : "multiple-ideas.purchase";
+        }
 
         // Payload sent explicitly: with @inertiajs/react 1.0, useForm's transform()
         // is ignored when the form re-renders without its data changing.

@@ -261,8 +261,11 @@ class GiftListController extends Controller
     {
         $this->authorize('update', $list);
 
-        Idea::where('list_id', $list->id)->where('status', 'reserved')->update(['status' => 'archived']);
-        Idea::where('list_id', $list->id)->where('status', 'purchased')->update(['status' => 'archived']);
+        Idea::where('list_id', $list->id)
+            ->where(fn ($query) => $query
+                ->whereIn('status', ['reserved', 'purchased'])
+                ->orWhere(fn ($query) => $query->where('is_multiple', true)->has('multipleIdeas')))
+            ->update(['status' => 'archived']);
 
         return redirect(route('lists.show', $list->id));
     }

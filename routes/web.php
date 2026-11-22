@@ -71,13 +71,10 @@ Route::put('/brand-notes', [BrandNoteController::class, 'upsert'])
 // Multiple ideas management
 Route::middleware('throttle:60,1')->prefix('multiple-ideas')->group(function () {
     Route::patch('/{multipleIdea}/reserve',  [MultipleIdeaController::class, 'reserveMultipleIdea'])->name('multiple-ideas.reserve');
-    Route::patch('/{multipleIdea}/purchase', [MultipleIdeaController::class, 'purchaseMultipleIdea'])->name('multiple-ideas.purchase');
+    Route::patch('/{idea}/purchase',         [MultipleIdeaController::class, 'purchaseMultipleIdea'])->name('multiple-ideas.purchase');
+    Route::patch('/{multipleIdea}/confirm-purchase', [MultipleIdeaController::class, 'confirmMultipleIdeaPurchase'])->name('multiple-ideas.confirm-purchase');
     Route::patch('/{multipleIdea}/cancel',   [MultipleIdeaController::class, 'cancelMultipleIdea'])->name('multiple-ideas.cancel');
 });
-
-Route::resource('multiple-ideas', MultipleIdeaController::class)
-    ->only(['store', 'update', 'destroy'])
-    ->middleware(['auth', 'verified']);
 
 // Lists management
 Route::middleware('auth')->prefix('lists')->group(function () {
