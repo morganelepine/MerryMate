@@ -1,34 +1,34 @@
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 import ArchiveReminder from "@/Components/GiftList/Auth/Public/Actions/ArchiveReminder";
 
+vi.mock("@inertiajs/react", () => ({
+    useForm: () => ({
+        patch: (url, { onSuccess }) => onSuccess(),
+        reset: vi.fn(),
+    }),
+}));
+
+vi.mock("sonner", () => ({
+    toast: { error: vi.fn(), success: vi.fn() },
+}));
+
 const mockList = { id: 1, name: "Gift List" };
-const mockDaysSinceLastLogin = 31;
-
-const renderArchiveReminder = (overrides = {}) => {
-    const defaultProps = {
-        list: mockList,
-        daysSinceLastLogin: mockDaysSinceLastLogin,
-    };
-
-    return render(<ArchiveReminder {...{ ...defaultProps, ...overrides }} />);
-};
+const REMINDER_TEXT = /Pense à archiver ta liste/i;
 
 describe("ArchiveReminder", () => {
-    it("displays the archive reminder modal if the user hasn't logged in for over 30 days", async () => {
-        renderArchiveReminder();
-        expect(
-            screen.getByText(/Pense à archiver ta liste/i)
-        ).toBeInTheDocument();
+    it("displays the archive reminder modal when the server asks for it", () => {
+        render(<ArchiveReminder list={mockList} show />);
+        expect(screen.getByText(REMINDER_TEXT)).toBeInTheDocument();
     });
 
-    it("does NOT display the archive reminder modal if the user has logged in less than 30 days ago", async () => {
-        renderArchiveReminder({ daysSinceLastLogin: 20 });
-        expect(screen.queryByText(/Pense à archiver ta liste/i)).toBeNull();
+    it("does NOT display the archive reminder modal otherwise", () => {
+        render(<ArchiveReminder list={mockList} />);
+        expect(screen.queryByText(REMINDER_TEXT)).toBeNull();
     });
 
-    it("does NOT display archive reminder if 'archive-reminder' already exists in localStorage", async () => {
-        localStorage.setItem(`archive-reminder-${mockList.id}`, "no-reminder");
-        renderArchiveReminder();
-        expect(screen.queryByText(/Pense à archiver ta liste/i)).toBeNull();
+    it("closes the modal once the list is archived", () => {
+        render(<ArchiveReminder list={mockList} show />);
+        fireEvent.click(screen.getByText("Archiver la liste"));
+        expect(screen.queryByText(REMINDER_TEXT)).toBeNull();
     });
 });

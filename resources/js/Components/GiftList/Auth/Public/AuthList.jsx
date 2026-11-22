@@ -1,5 +1,5 @@
 import PropTypes from "prop-types";
-import { Head, usePage } from "@inertiajs/react";
+import { Head } from "@inertiajs/react";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import ListOfIdeas from "@/Components/GiftList/Auth/Public/ListOfIdeas";
 import ListTitle from "@/Components/GiftList/Action/ListTitle";
@@ -22,9 +22,9 @@ export default function AuthList({
     ideas,
     ideas_available,
     brandNotes,
+    showArchiveReminder = false,
+    resetMutedReminders = false,
 }) {
-    const daysSinceLastLogin = usePage().props.days_since_last_login;
-
     return (
         <AuthenticatedLayout
             user={auth.user}
@@ -68,17 +68,16 @@ export default function AuthList({
                 )}
             </div>
 
+            {/* Never two modals at once: the archive reminder goes first. */}
             <AddIdeaAlert
                 list={list}
                 ideas={ideas}
                 ideas_available={ideas_available}
-                daysSinceLastLogin={daysSinceLastLogin}
+                resetMutedReminders={resetMutedReminders}
+                deferred={showArchiveReminder}
             />
 
-            <ArchiveReminder
-                list={list}
-                daysSinceLastLogin={daysSinceLastLogin}
-            />
+            <ArchiveReminder list={list} show={showArchiveReminder} />
         </AuthenticatedLayout>
     );
 }
@@ -89,4 +88,6 @@ AuthList.propTypes = {
     ideas: PropTypes.array,
     ideas_available: PropTypes.array,
     brandNotes: PropTypes.objectOf(PropTypes.string),
+    showArchiveReminder: PropTypes.bool,
+    resetMutedReminders: PropTypes.bool,
 };

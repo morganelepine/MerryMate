@@ -8,6 +8,7 @@ export default function AddIdeaAlertModal({
     ideas_available,
     modalVisible,
     closeModal,
+    onNoReminder,
 }) {
     let numberOfAvailableIdeas;
     if (ideas_available.length === 0) {
@@ -18,14 +19,6 @@ export default function AddIdeaAlertModal({
                 ? ` qu'une idée disponible`
                 : ` que ${ideas_available.length} idées disponibles`;
     }
-
-    const handleNoReminder = () => {
-        localStorage.setItem(
-            `few-ideas-left-reminder-${list.id}`,
-            "no-reminder",
-        );
-        closeModal();
-    };
 
     return (
         <Modal show={modalVisible} onClose={closeModal}>
@@ -40,6 +33,7 @@ export default function AddIdeaAlertModal({
                     viewBox="0 0 28 28"
                     stroke="currentColor"
                     className="h-8 w-8"
+                    aria-hidden="true"
                 >
                     <path d="M6 18 18 6M6 6l12 12" />
                 </svg>
@@ -56,7 +50,7 @@ export default function AddIdeaAlertModal({
                     >
                         Ajouter des idées
                     </PrimaryButton>
-                    <LinkButton onClick={handleNoReminder}>
+                    <LinkButton onClick={onNoReminder}>
                         Ne plus me le rappeler
                     </LinkButton>
                 </div>
@@ -70,4 +64,5 @@ AddIdeaAlertModal.propTypes = {
     list: PropTypes.object,
     modalVisible: PropTypes.bool,
     closeModal: PropTypes.func,
+    onNoReminder: PropTypes.func,
 };

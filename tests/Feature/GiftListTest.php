@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\FollowedList;
 use App\Models\GiftList;
+use App\Models\Idea;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Crypt;
@@ -305,6 +306,46 @@ class GiftListTest extends TestCase
             ->missing('followedLists.0.pivot')
             ->missing('followedLists.0.created_at')
         );
+    }
+
+    public function test_long_absence_reminders_apply_once_per_login(): void
+    {
+        [$owner, $emptyList] = $this->createGiftListWithOwner(['isPrivate' => false]);
+        $listToArchive = GiftList::factory()->create([
+            'user_id' => $owner->id,
+            'user_name' => $owner->name,
+            'isPrivate' => false,
+        ]);
+        Idea::factory()->create([
+            'list_id' => $listToArchive->id,
+            'user_id' => $owner->id,
+            'user_name' => $owner->name,
+            'status' => 'reserved',
+            'status_user' => 'Buyer',
+        ]);
+        // [showArchiveReminder, resetMutedReminders]
+        $reminders = function (GiftList $list) {
+            $props = $this->get("/lists/{$list->id}")->viewData('page')['props'];
+
+            return [$props['showArchiveReminder'], $props['resetMutedReminders']];
+        };
+        $logIn = function (int $daysAway) use ($owner) {
+            $this->post('/logout');
+            $owner->update(['last_login_at' => now()->subDays($daysAway)]);
+            $this->post('/login', ['email' => $owner->email, 'password' => 'Password+1']);
+        };
+
+        $logIn(31);
+        // Nothing to archive: the archive reminder waits, muted reminders are reset.
+        $this->assertSame([false, true], $reminders($emptyList));
+        $this->assertSame([true, false], $reminders($listToArchive));
+        $this->assertSame([false, false], $reminders($listToArchive));
+
+        $logIn(5);
+        $this->assertSame([false, false], $reminders($listToArchive));
+
+        $logIn(40);
+        $this->assertSame([true, true], $reminders($listToArchive));
     }
 
     public function test_list_index_query_count_does_not_grow_with_the_number_of_lists(): void

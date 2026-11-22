@@ -15,7 +15,6 @@ export default function ArchiveReminderModal({
         e.preventDefault();
         patch(route("lists.archive", list), {
             onSuccess: () => {
-                localStorage.removeItem(`archive-reminder-${list.id}`);
                 closeModal();
                 toast.success("Liste archivée !");
             },
@@ -45,6 +44,7 @@ export default function ArchiveReminderModal({
                     viewBox="0 0 28 28"
                     stroke="currentColor"
                     className="h-8 w-8"
+                    aria-hidden="true"
                 >
                     <path d="M6 18 18 6M6 6l12 12" />
                 </svg>

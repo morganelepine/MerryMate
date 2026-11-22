@@ -17,6 +17,8 @@ export default function Show({
     followedLists,
     brandNotes,
     guestAccessGranted,
+    showArchiveReminder,
+    resetMutedReminders,
 }) {
     // A signed-out visitor: either they've already unlocked this list
     // with its private code (see GiftListController::guestAccess),
@@ -53,6 +55,8 @@ export default function Show({
                     ideas={ideas}
                     ideas_available={ideas_available}
                     brandNotes={brandNotes}
+                    showArchiveReminder={showArchiveReminder}
+                    resetMutedReminders={resetMutedReminders}
                 />
             )}
 
@@ -88,4 +92,6 @@ Show.propTypes = {
     followedLists: PropTypes.array,
     brandNotes: PropTypes.objectOf(PropTypes.string),
     guestAccessGranted: PropTypes.bool,
+    showArchiveReminder: PropTypes.bool,
+    resetMutedReminders: PropTypes.bool,
 };

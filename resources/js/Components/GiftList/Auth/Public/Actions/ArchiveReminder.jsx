@@ -1,34 +1,21 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import PropTypes from "prop-types";
 import ArchiveReminderModal from "@/Components/GiftList/Auth/Public/Actions/ArchiveReminderModal";
 
-export default function ArchiveReminder({ list, daysSinceLastLogin }) {
-    const [archiveReminderVisible, setArchiveReminderVisible] = useState(false);
-
-    useEffect(() => {
-        // If user has not logged in for at least 30 days
-        if (daysSinceLastLogin !== null && daysSinceLastLogin > 30) {
-            if (!localStorage.getItem(`archive-reminder-${list.id}`)) {
-                setArchiveReminderVisible(true);
-                localStorage.setItem(`archive-reminder-${list.id}`, "shown");
-            }
-        }
-    }, [daysSinceLastLogin, list.id]);
-
-    const closeArchiveReminderModal = () => {
-        setArchiveReminderVisible(false);
-    };
+// The server decides when to show it: once per login after more than 30 days away.
+export default function ArchiveReminder({ list, show = false }) {
+    const [archiveReminderVisible, setArchiveReminderVisible] = useState(show);
 
     return (
         <ArchiveReminderModal
             list={list}
             modalVisible={archiveReminderVisible}
-            closeModal={closeArchiveReminderModal}
+            closeModal={() => setArchiveReminderVisible(false)}
         />
     );
 }
 
 ArchiveReminder.propTypes = {
     list: PropTypes.object,
-    daysSinceLastLogin: PropTypes.number,
+    show: PropTypes.bool,
 };

@@ -89,6 +89,14 @@ class GiftListController extends Controller
         // Brand notes belong to the list owner and apply to all their lists. Cast so an empty map is sent as {}, not [].
         $brandNotes = (object) BrandNote::where('user_id', $list->user_id)->pluck('content', 'brand')->all();
 
+        // Long absence reminders are only pulled where they are displayed: the owner's shared lists.
+        // The archive one waits for a list with something to archive.
+        $isOwnSharedList = $isOwner && ! $list->isPrivate;
+        $hasSomethingToArchive = $ideas_reserved->isNotEmpty() || $ideas_purchased->isNotEmpty();
+        $showArchiveReminder = $isOwnSharedList && $hasSomethingToArchive
+            && session()->pull('archive_reminder_pending', false);
+        $resetMutedReminders = $isOwnSharedList && session()->pull('few_ideas_reset_pending', false);
+
         return Inertia::render('GiftList/Show', [
             'list' => $list,
             'ideas' => $ideas,
@@ -98,6 +106,8 @@ class GiftListController extends Controller
             'followedLists' => $followedLists,
             'brandNotes' => $brandNotes,
             'guestAccessGranted' => $isGuestWithAccess,
+            'showArchiveReminder' => $showArchiveReminder,
+            'resetMutedReminders' => $resetMutedReminders,
         ]);
     }
 

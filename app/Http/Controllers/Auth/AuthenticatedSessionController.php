@@ -35,13 +35,16 @@ class AuthenticatedSessionController extends Controller
         $request->session()->regenerate();
 
         $user = $request->user();
-        $daysSinceLastLogin = null;
-        if ($user->last_login_at) {
-            $lastLoginAt = Carbon::parse($user->last_login_at);
-            $daysSinceLastLogin = $lastLoginAt->diffInDays(now());
-        }
+        $daysSinceLastLogin = $user->last_login_at
+            ? Carbon::parse($user->last_login_at)->diffInDays(now())
+            : null;
 
-        session(['days_since_last_login' => $daysSinceLastLogin]);
+        // Each consumed once by an owned shared list (see GiftListController::show).
+        $isLongAbsence = $daysSinceLastLogin > 30;
+        session([
+            'archive_reminder_pending' => $isLongAbsence,
+            'few_ideas_reset_pending' => $isLongAbsence,
+        ]);
 
         $user->update([
             'last_login_at' => now(),
