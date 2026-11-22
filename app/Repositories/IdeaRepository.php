@@ -69,6 +69,9 @@ class IdeaRepository
         // Frozen at purchase: the promo may end, or the owner change the price, afterwards.
         $idea->paid_price = $status === 'purchased' ? $idea->currentPrice() : null;
         $idea->taken_at = $status === 'available' ? null : now();
+        if ($status === 'available') {
+            $idea->budget_occasion = null;
+        }
         $idea->save();
     }
 

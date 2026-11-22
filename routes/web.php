@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\BrandNoteController;
 use App\Http\Controllers\BudgetGiftController;
+use App\Http\Controllers\BudgetOccasionController;
 use App\Http\Controllers\BudgetRecipientController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\GiftListController;
@@ -75,6 +76,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('budget-recipients', BudgetRecipientController::class)->only(['store', 'update', 'destroy']);
     Route::resource('budget-gifts', BudgetGiftController::class)->only(['store', 'update', 'destroy']);
     Route::patch('/budget-gifts/{budgetGift}/status', [BudgetGiftController::class, 'toggleStatus'])->name('budget-gifts.status');
+    Route::patch('/ideas/{idea}/budget-occasion', [BudgetOccasionController::class, 'updateIdea'])->name('ideas.budget-occasion');
+    Route::patch('/multiple-ideas/{multipleIdea}/budget-occasion', [BudgetOccasionController::class, 'updateMultipleIdea'])->name('multiple-ideas.budget-occasion');
 });
 
 // Multiple ideas management

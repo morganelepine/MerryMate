@@ -18,6 +18,7 @@ class BudgetGiftFactory extends Factory
             'title' => fake()->words(2, true),
             'price' => fake()->randomFloat(2, 2, 80),
             'status' => fake()->randomElement(['idea', 'purchased']),
+            'occasion' => 'christmas',
         ];
     }
 }

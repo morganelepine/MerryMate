@@ -18,6 +18,7 @@ class BudgetGift extends Model
         'title',
         'price',
         'status',
+        'occasion',
     ];
 
     // A decimal column is read as a string: cast it so the front can add prices up.

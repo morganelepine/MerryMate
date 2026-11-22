@@ -14,6 +14,7 @@ use App\Models\BudgetGift;
 use App\Models\BudgetRecipient;
 use App\Models\Idea;
 use App\Models\MultipleIdea;
+use App\Support\BudgetOccasion;
 
 class ProfileController extends Controller
 {
@@ -84,6 +85,8 @@ class ProfileController extends Controller
             ->map(fn (Idea $idea) => [
                 ...$idea->toArray(),
                 'key' => "idea-{$idea->id}",
+                'occasion' => BudgetOccasion::resolve($idea->budget_occasion, $idea->taken_at),
+                'occasion_url' => route('ideas.budget-occasion', $idea),
             ]);
 
         // Each reservation or purchase of a multiple idea is its own row, shaped like an idea.
@@ -97,6 +100,8 @@ class ProfileController extends Controller
                 'status' => $purchase->status,
                 'choice' => $purchase->choice,
                 'paid_price' => $purchase->paid_price,
+                'occasion' => BudgetOccasion::resolve($purchase->budget_occasion, $purchase->taken_at),
+                'occasion_url' => route('multiple-ideas.budget-occasion', $purchase),
             ]);
 
         $recipients = BudgetRecipient::where('user_id', $userId)

@@ -12,7 +12,12 @@ import {
     BUDGET_ROW_TEXT,
 } from "@/Components/Profile/Budget/budgetHelpers";
 
-export default function BudgetGiftRow({ gift, recipient, year }) {
+export default function BudgetGiftRow({
+    gift,
+    recipient,
+    year,
+    occasionFilter,
+}) {
     const { isOpen, open, close, triggerRef } = useDisclosure();
     const [toggling, setToggling] = useState(false);
 
@@ -34,6 +39,7 @@ export default function BudgetGiftRow({ gift, recipient, year }) {
                     recipient={recipient}
                     year={year}
                     gift={gift}
+                    occasionFilter={occasionFilter}
                     onClose={close}
                 />
             </li>
@@ -82,4 +88,5 @@ BudgetGiftRow.propTypes = {
         name: PropTypes.string.isRequired,
     }).isRequired,
     year: PropTypes.number.isRequired,
+    occasionFilter: PropTypes.string.isRequired,
 };

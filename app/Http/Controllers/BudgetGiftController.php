@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\BudgetGift;
 use App\Models\BudgetRecipient;
+use App\Support\BudgetOccasion;
 use App\Support\Price;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -67,6 +68,7 @@ class BudgetGiftController extends Controller
             'title' => 'required|string|max:255',
             'price' => Price::RULE,
             'status' => ['required', Rule::in(BudgetGift::STATUSES)],
+            'occasion' => ['required', Rule::in(BudgetOccasion::VALUES)],
         ];
     }
 

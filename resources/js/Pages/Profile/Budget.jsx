@@ -11,9 +11,13 @@ import { INPUT_CLASSES } from "@/Components/Utils/TextInput";
 import BudgetStat from "@/Components/Profile/Budget/BudgetStat";
 import BudgetRecipientCard from "@/Components/Profile/Budget/BudgetRecipientCard";
 import BudgetRecipientForm from "@/Components/Profile/Budget/BudgetRecipientForm";
+import OccasionFilter from "@/Components/Profile/Budget/OccasionFilter";
 import {
     BUDGET_CARDS_TITLE_ID,
     BUDGET_ICONS,
+    ALL_OCCASIONS,
+    DEFAULT_OCCASION,
+    OCCASIONS,
     buildBudget,
     formatGiftCount,
 } from "@/Components/Profile/Budget/budgetHelpers";
@@ -28,11 +32,16 @@ const BUDGET_PROPS = ["ideas", "recipients", "year", "years"];
 
 export default function Budget({ auth, ideas, recipients, year, years }) {
     const [addingRecipient, setAddingRecipient] = useState(false);
+    const [occasion, setOccasion] = useState(DEFAULT_OCCASION);
     const yearId = useId();
     const { cards, totals } = useMemo(
-        () => buildBudget(recipients, ideas),
-        [recipients, ideas],
+        () => buildBudget(recipients, ideas, occasion),
+        [recipients, ideas, occasion],
     );
+    const occasionLabel =
+        occasion === ALL_OCCASIONS
+            ? "Toutes occasions"
+            : OCCASIONS[occasion].filter;
 
     const changeYear = (e) =>
         router.get(
@@ -67,43 +76,41 @@ export default function Budget({ auth, ideas, recipients, year, years }) {
                 className={`${HOME_WIDTH} ${PAGE_GUTTER} pt-8 sm:pt-10 ${PAGE_BOTTOM} space-y-6`}
             >
                 <div
-                    className={`${CARD_SURFACE} flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between`}
+                    className={`${CARD_SURFACE} flex flex-col gap-3 p-4 lg:flex-row lg:items-center lg:justify-between`}
                 >
                     <div>
-                        <label
-                            htmlFor={yearId}
-                            className="flex items-center gap-2 font-semibold text-gray-900"
-                        >
+                        <p className="flex items-center gap-2 font-semibold text-gray-900">
                             <OutlineIcon
                                 path={BUDGET_ICONS.calendar}
                                 className="h-5 w-5 text-orange-600"
                             />
-                            Filtrer par année
-                        </label>
-                        <p
-                            id={`${yearId}-hint`}
-                            className="text-xs text-gray-500"
-                        >
-                            Tous les montants et les blocs ci-dessous suivent ce
-                            filtre.
+                            Filtres
                         </p>
                     </div>
-                    <select
-                        id={yearId}
-                        value={year}
-                        onChange={changeYear}
-                        aria-describedby={`${yearId}-hint`}
-                        className={`${INPUT_CLASSES} !mt-0 sm:w-40`}
-                    >
-                        {years.map((option) => (
-                            <option key={option} value={option}>
-                                {option}
-                            </option>
-                        ))}
-                    </select>
+                    <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+                        <OccasionFilter
+                            value={occasion}
+                            onChange={setOccasion}
+                        />
+                        <label htmlFor={yearId} className="sr-only">
+                            Année
+                        </label>
+                        <select
+                            id={yearId}
+                            value={year}
+                            onChange={changeYear}
+                            className={`${INPUT_CLASSES} !mt-0 sm:w-32`}
+                        >
+                            {years.map((option) => (
+                                <option key={option} value={option}>
+                                    {option}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
                 </div>
 
-                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
                     <BudgetStat
                         icon={BUDGET_ICONS.wallet}
                         iconClassName="bg-lilac-100 text-lilac-800"
@@ -147,8 +154,8 @@ export default function Budget({ auth, ideas, recipients, year, years }) {
                             Cadeaux par proche
                         </h2>
                         <p className="mt-1 text-sm text-gray-500">
-                            Année {year} · Clique sur un statut pour le
-                            modifier.
+                            {year} · {occasionLabel} · Clique sur un statut pour
+                            le modifier.
                         </p>
                     </div>
 
@@ -159,6 +166,7 @@ export default function Budget({ auth, ideas, recipients, year, years }) {
                                     key={card.key}
                                     card={card}
                                     year={year}
+                                    occasion={occasion}
                                 />
                             ))}
                         </div>

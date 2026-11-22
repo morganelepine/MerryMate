@@ -117,6 +117,7 @@ class BudgetTest extends TestCase
                 'title' => 'Parfum',
                 'price' => '37,80',
                 'status' => 'purchased',
+                'occasion' => 'birthday',
             ])
             ->assertSessionHasNoErrors();
 
@@ -124,6 +125,7 @@ class BudgetTest extends TestCase
         $this->assertSame(37.8, $gift->price);
         $this->assertSame(2025, $gift->year);
         $this->assertSame('purchased', $gift->status);
+        $this->assertSame('birthday', $gift->occasion);
     }
 
     public function test_user_cannot_add_a_gift_to_someone_elses_recipient(): void
@@ -223,8 +225,68 @@ class BudgetTest extends TestCase
             ->patch("/ideas/{$idea->id}/purchase", ['userName' => $buyer->name])
             ->assertSessionHasNoErrors();
         $this->assertNotNull($idea->fresh()->taken_at);
+        $this->actingAs($buyer)->patch("/ideas/{$idea->id}/budget-occasion", ['occasion' => 'other']);
 
         $this->actingAs($buyer)->patch("/ideas/{$idea->id}/cancel")->assertSessionHasNoErrors();
         $this->assertNull($idea->fresh()->taken_at);
+        // The next buyer starts from the guess again.
+        $this->assertNull($idea->fresh()->budget_occasion);
+    }
+
+    public function test_gift_occasion_must_be_a_known_one(): void
+    {
+        $recipient = BudgetRecipient::factory()->create();
+
+        $this->actingAs($recipient->user)
+            ->post('/budget-gifts', [
+                'budget_recipient_id' => $recipient->id,
+                'year' => 2025,
+                'title' => 'Parfum',
+                'status' => 'idea',
+                'occasion' => 'easter',
+            ])
+            ->assertSessionHasErrors('occasion');
+    }
+
+    public function test_merrymate_purchases_get_an_occasion_guessed_from_their_date_unless_corrected(): void
+    {
+        [$owner, $giftList] = $this->createGiftListWithOwner();
+        $december = Idea::factory()->create(['list_id' => $giftList->id, 'user_id' => $owner->id]);
+        $may = Idea::factory()->create(['list_id' => $giftList->id, 'user_id' => $owner->id]);
+        $corrected = Idea::factory()->create(['list_id' => $giftList->id, 'user_id' => $owner->id]);
+        $buyer = User::factory()->create();
+        $taken = ['is_multiple' => false, 'status' => 'purchased', 'status_user' => $buyer->name, 'status_user_id' => $buyer->id];
+        $december->forceFill([...$taken, 'taken_at' => '2025-12-02 10:00:00'])->save();
+        $may->forceFill([...$taken, 'taken_at' => '2025-05-12 10:00:00'])->save();
+        $corrected->forceFill([...$taken, 'taken_at' => '2025-12-20 10:00:00', 'budget_occasion' => 'other'])->save();
+
+        $this->actingAs($buyer)
+            ->get('/profile/budget?year=2025')
+            ->assertInertia(function (Assert $page) use ($december, $may, $corrected) {
+                $occasions = collect($page->toArray()['props']['ideas'])->pluck('occasion', 'id');
+                $this->assertSame('christmas', $occasions[$december->id]);
+                $this->assertSame('birthday', $occasions[$may->id]);
+                $this->assertSame('other', $occasions[$corrected->id]);
+            });
+    }
+
+    public function test_only_the_buyer_can_correct_the_occasion_of_a_merrymate_purchase(): void
+    {
+        [$owner, $giftList] = $this->createGiftListWithOwner();
+        $idea = Idea::factory()->create(['list_id' => $giftList->id, 'user_id' => $owner->id]);
+        $buyer = User::factory()->create();
+        $idea->forceFill(['status' => 'purchased', 'status_user' => $buyer->name, 'status_user_id' => $buyer->id, 'taken_at' => now()])->save();
+
+        $this->actingAs(User::factory()->create())
+            ->patch("/ideas/{$idea->id}/budget-occasion", ['occasion' => 'other'])
+            ->assertForbidden();
+        $this->actingAs($buyer)
+            ->patch("/ideas/{$idea->id}/budget-occasion", ['occasion' => 'easter'])
+            ->assertSessionHasErrors('occasion');
+        $this->actingAs($buyer)
+            ->patch("/ideas/{$idea->id}/budget-occasion", ['occasion' => 'other'])
+            ->assertSessionHasNoErrors();
+
+        $this->assertSame('other', $idea->fresh()->budget_occasion);
     }
 }

@@ -33,6 +33,18 @@ export const GIFT_STATUS = {
     },
 };
 
+// `filter` is the plural used by the occasion filter.
+export const OCCASIONS = {
+    christmas: { label: "Noël", filter: "Noël" },
+    birthday: { label: "Anniversaire", filter: "Anniversaires" },
+    other: { label: "Autre", filter: "Autres" },
+};
+export const ALL_OCCASIONS = "all";
+export const DEFAULT_OCCASION = "christmas";
+
+export const matchesOccasion = (occasion, filter) =>
+    filter === ALL_OCCASIONS || occasion === filter;
+
 export const otherStatus = (status) =>
     status === "purchased" ? "idea" : "purchased";
 
@@ -58,17 +70,21 @@ const nameKey = (name) => name.trim().toLocaleLowerCase("fr");
  * One card per budget recipient, then one per person bought for in MerryMate
  * who isn't one of them. MerryMate reservations and purchases count as bought.
  */
-export function buildBudget(recipients, ideas) {
+export function buildBudget(recipients, ideas, occasion) {
     const cards = recipients.map((recipient) => ({
         key: `recipient-${recipient.id}`,
         name: recipient.name,
         recipient,
-        gifts: recipient.gifts,
+        gifts: recipient.gifts.filter((gift) =>
+            matchesOccasion(gift.occasion, occasion),
+        ),
         ideas: [],
     }));
     const byName = new Map(cards.map((card) => [nameKey(card.name), card]));
 
     for (const idea of ideas) {
+        if (!matchesOccasion(idea.occasion, occasion)) continue;
+
         const key = nameKey(idea.user_name ?? "");
         if (!byName.has(key)) {
             const card = {

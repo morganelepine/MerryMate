@@ -1,7 +1,7 @@
 import { useId, useRef } from "react";
 import PropTypes from "prop-types";
 import { useForm } from "@inertiajs/react";
-import TextInput from "@/Components/Utils/TextInput";
+import TextInput, { INPUT_CLASSES } from "@/Components/Utils/TextInput";
 import InputLabel from "@/Components/Utils/InputLabel";
 import InputError from "@/Components/Utils/InputError";
 import PrimaryButton from "@/Components/Buttons/PrimaryButton";
@@ -9,10 +9,14 @@ import CancelButton from "@/Components/Buttons/CancelButton";
 import DeleteButton from "@/Components/Buttons/DeleteButton";
 import { priceToInput } from "@/Components/Ideas/ideaHelpers";
 import {
+    ALL_OCCASIONS,
     BUDGET_FORM,
+    DEFAULT_OCCASION,
     GIFT_STATUS,
+    OCCASIONS,
     cardAddButtonId,
     focusById,
+    matchesOccasion,
 } from "@/Components/Profile/Budget/budgetHelpers";
 import useEscapeToClose from "@/hooks/useEscapeToClose";
 
@@ -22,6 +26,7 @@ export default function BudgetGiftForm({
     recipient,
     year,
     gift = null,
+    occasionFilter,
     onClose,
 }) {
     const id = useId();
@@ -33,6 +38,12 @@ export default function BudgetGiftForm({
         title: gift?.title ?? "",
         price: priceToInput(gift?.price),
         status: gift?.status ?? "idea",
+        // A new gift defaults to the occasion being looked at.
+        occasion:
+            gift?.occasion ??
+            (occasionFilter === ALL_OCCASIONS
+                ? DEFAULT_OCCASION
+                : occasionFilter),
     });
     const { data, setData, post, patch, processing, errors } = form;
 
@@ -40,7 +51,16 @@ export default function BudgetGiftForm({
 
     const submit = (e) => {
         e.preventDefault();
-        const options = { preserveScroll: true, onSuccess: onClose };
+        const options = {
+            preserveScroll: true,
+            onSuccess: () => {
+                onClose();
+                // Moved to an occasion filtered out: its row is gone.
+                if (!matchesOccasion(data.occasion, occasionFilter)) {
+                    focusById(cardAddButtonId(recipient.name));
+                }
+            },
+        };
         if (isEditing) {
             patch(route("budget-gifts.update", gift.id), options);
         } else {
@@ -109,6 +129,23 @@ export default function BudgetGiftForm({
                 />
             </div>
 
+            <div>
+                <InputLabel htmlFor={`${id}-occasion`} value="Occasion" />
+                <select
+                    id={`${id}-occasion`}
+                    value={data.occasion}
+                    onChange={(e) => setData("occasion", e.target.value)}
+                    className={`${INPUT_CLASSES} text-sm`}
+                >
+                    {Object.entries(OCCASIONS).map(([value, { label }]) => (
+                        <option key={value} value={value}>
+                            {label}
+                        </option>
+                    ))}
+                </select>
+                <InputError message={errors.occasion} className="mt-1" />
+            </div>
+
             <fieldset>
                 <legend className="text-sm font-medium text-gray-800">
                     Statut
@@ -164,6 +201,8 @@ BudgetGiftForm.propTypes = {
         title: PropTypes.string.isRequired,
         price: PropTypes.number,
         status: PropTypes.string.isRequired,
+        occasion: PropTypes.string,
     }),
+    occasionFilter: PropTypes.string.isRequired,
     onClose: PropTypes.func.isRequired,
 };

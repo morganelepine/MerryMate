@@ -1,4 +1,5 @@
 import PropTypes from "prop-types";
+import { router } from "@inertiajs/react";
 import { CARD_SURFACE } from "@/Components/Utils/surfaces";
 import OutlineIcon from "@/Components/Utils/OutlineIcon";
 import PencilIcon from "@/Components/Utils/PencilIcon";
@@ -7,14 +8,17 @@ import BudgetGiftForm from "@/Components/Profile/Budget/BudgetGiftForm";
 import BudgetRecipientForm from "@/Components/Profile/Budget/BudgetRecipientForm";
 import GiftStatusBadge from "@/Components/Profile/Budget/GiftStatusBadge";
 import {
+    BUDGET_CARDS_TITLE_ID,
     BUDGET_ICONS,
     BUDGET_ROW,
     BUDGET_ROW_LAYOUT,
     BUDGET_ROW_PRICE,
     BUDGET_ROW_TEXT,
     cardAddButtonId,
+    OCCASIONS,
     focusById,
     formatGiftCount,
+    matchesOccasion,
 } from "@/Components/Profile/Budget/budgetHelpers";
 import {
     formatPrice,
@@ -27,8 +31,24 @@ const FOOTER_BUTTON =
     "inline-flex items-center gap-2 text-sm text-orange-600 hover:text-orange-800 rounded focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-300";
 
 // Reservations and purchases made in MerryMate lists: read-only here.
-function MerryMateRow({ idea }) {
+function MerryMateRow({ idea, occasionFilter }) {
     const paidPrice = getPaidPrice(idea);
+    const title = getIdeaTitle(idea);
+
+    const changeOccasion = (e) => {
+        const occasion = e.target.value;
+        router.patch(
+            idea.occasion_url,
+            { occasion },
+            {
+                preserveScroll: true,
+                // The row leaves the filtered view: don't leave the focus on nothing.
+                onSuccess: () =>
+                    !matchesOccasion(occasion, occasionFilter) &&
+                    focusById(BUDGET_CARDS_TITLE_ID),
+            },
+        );
+    };
 
     return (
         <li className={BUDGET_ROW}>
@@ -39,10 +59,24 @@ function MerryMateRow({ idea }) {
                     }
                 />
                 <div className={BUDGET_ROW_TEXT}>
-                    <p className="text-sm text-gray-900 break-words">
-                        {getIdeaTitle(idea)}
+                    <p className="text-sm text-gray-900 break-words">{title}</p>
+                    <p className="text-xs text-gray-500">
+                        sur MerryMate ·{" "}
+                        <select
+                            value={idea.occasion}
+                            onChange={changeOccasion}
+                            aria-label={`Occasion de ${title}`}
+                            className="rounded border-0 bg-transparent py-0 pl-0 pr-7 text-xs text-gray-500 hover:text-orange-600 focus:ring-2 focus:ring-orange-300"
+                        >
+                            {Object.entries(OCCASIONS).map(
+                                ([value, { label }]) => (
+                                    <option key={value} value={value}>
+                                        {label}
+                                    </option>
+                                ),
+                            )}
+                        </select>
                     </p>
-                    <p className="text-xs text-gray-500">sur MerryMate</p>
                 </div>
                 {paidPrice > 0 && (
                     <span className={BUDGET_ROW_PRICE}>
@@ -55,10 +89,14 @@ function MerryMateRow({ idea }) {
 }
 
 MerryMateRow.propTypes = {
-    idea: PropTypes.object.isRequired,
+    idea: PropTypes.shape({
+        occasion: PropTypes.string.isRequired,
+        occasion_url: PropTypes.string.isRequired,
+    }).isRequired,
+    occasionFilter: PropTypes.string.isRequired,
 };
 
-export default function BudgetRecipientCard({ card, year }) {
+export default function BudgetRecipientCard({ card, year, occasion }) {
     const rename = useDisclosure();
     const addGift = useDisclosure();
     const { recipient } = card;
@@ -116,7 +154,11 @@ export default function BudgetRecipientCard({ card, year }) {
 
             <ul className="flex-1 divide-y divide-gray-100 px-4 sm:px-5">
                 {card.ideas.map((idea) => (
-                    <MerryMateRow key={idea.key} idea={idea} />
+                    <MerryMateRow
+                        key={idea.key}
+                        idea={idea}
+                        occasionFilter={occasion}
+                    />
                 ))}
                 {card.gifts.map((gift) => (
                     <BudgetGiftRow
@@ -124,58 +166,59 @@ export default function BudgetRecipientCard({ card, year }) {
                         gift={gift}
                         recipient={recipient}
                         year={year}
+                        occasionFilter={occasion}
                     />
                 ))}
                 {card.count === 0 && !addGift.isOpen && (
                     <li className={`${BUDGET_ROW} text-sm text-gray-500`}>
-                        Aucun cadeau en {year}.
+                        Aucun cadeau pour cette sélection en {year}.
                     </li>
                 )}
             </ul>
 
             <footer className="border-t border-gray-200 p-4 sm:px-5">
-                {recipient ? (
-                    addGift.isOpen ? (
-                        <BudgetGiftForm
-                            recipient={recipient}
-                            year={year}
-                            onClose={addGift.close}
-                        />
-                    ) : (
-                        <button
-                            ref={addGift.triggerRef}
-                            id={cardAddButtonId(card.name)}
-                            type="button"
-                            onClick={addGift.open}
-                            className={FOOTER_BUTTON}
-                        >
-                            <OutlineIcon
-                                path={BUDGET_ICONS.plus}
-                                className="h-4 w-4"
-                            />
-                            Ajouter un cadeau
-                            <span className="sr-only">pour {card.name}</span>
-                        </button>
-                    )
-                ) : addGift.isOpen ? (
+                {addGift.isOpen && recipient && (
+                    <BudgetGiftForm
+                        recipient={recipient}
+                        year={year}
+                        occasionFilter={occasion}
+                        onClose={addGift.close}
+                    />
+                )}
+                {addGift.isOpen && !recipient && (
                     <BudgetRecipientForm
                         defaultName={card.name}
                         onClose={addGift.close}
                         // This card is replaced by the new recipient's one.
                         onSaved={(name) => focusById(cardAddButtonId(name))}
                     />
-                ) : (
+                )}
+                {!addGift.isOpen && (
                     <button
                         ref={addGift.triggerRef}
+                        id={recipient ? cardAddButtonId(card.name) : undefined}
                         type="button"
                         onClick={addGift.open}
                         className={FOOTER_BUTTON}
                     >
                         <OutlineIcon
-                            path={BUDGET_ICONS.userPlus}
+                            path={
+                                recipient
+                                    ? BUDGET_ICONS.plus
+                                    : BUDGET_ICONS.userPlus
+                            }
                             className="h-4 w-4"
                         />
-                        Ajouter {card.name} à mes proches
+                        {recipient ? (
+                            <>
+                                Ajouter un cadeau
+                                <span className="sr-only">
+                                    pour {card.name}
+                                </span>
+                            </>
+                        ) : (
+                            `Ajouter ${card.name} à mes proches`
+                        )}
                     </button>
                 )}
             </footer>
@@ -198,4 +241,5 @@ BudgetRecipientCard.propTypes = {
         total: PropTypes.number.isRequired,
     }).isRequired,
     year: PropTypes.number.isRequired,
+    occasion: PropTypes.string.isRequired,
 };
