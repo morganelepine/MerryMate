@@ -103,6 +103,29 @@ class GiftListTest extends TestCase
         $this->assertSame('Wedding', $giftList->name);
     }
 
+    public function test_private_giftlist_can_be_made_public_with_a_code(): void
+    {
+        [$user, $giftList] = $this->createGiftListWithOwner([
+            'private_code' => '_private',
+            'isPrivate' => true,
+        ]);
+
+        $this->actingAs($user)
+            ->patch("/lists/{$giftList->id}", ['isPrivate' => false])
+            ->assertSessionHasErrors('private_code');
+
+        $this->assertTrue((bool) $giftList->refresh()->isPrivate);
+
+        $this->actingAs($user)
+            ->patch("/lists/{$giftList->id}", ['isPrivate' => false, 'private_code' => 'ab12'])
+            ->assertSessionHasNoErrors()
+            ->assertRedirect("/lists/{$giftList->id}");
+
+        $giftList->refresh();
+        $this->assertFalse((bool) $giftList->isPrivate);
+        $this->assertSame('ab12', GiftList::decryptPrivateCode($giftList->private_code));
+    }
+
     public function test_giftlist_can_be_deleted(): void
     {
         [$user, $giftList] = $this->createGiftListWithOwner([

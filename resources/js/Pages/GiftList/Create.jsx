@@ -5,6 +5,7 @@ import InputError from "@/Components/Utils/InputError";
 import InputLabel from "@/Components/Utils/InputLabel";
 import TextInput from "@/Components/Utils/TextInput";
 import PrimaryButton from "@/Components/Buttons/PrimaryButton";
+import SecretCodeField from "@/Components/GiftList/SecretCodeField";
 import { PANEL } from "@/Components/Utils/surfaces";
 import { PAGE_BODY } from "@/Layouts/Partials/pageContainer";
 
@@ -126,33 +127,11 @@ export default function Create({ auth }) {
                     </fieldset>
 
                     {data.visibility === "shared" && (
-                        <div>
-                            <InputLabel
-                                htmlFor="private_code"
-                                value="Code secret"
-                            />
-                            <TextInput
-                                id="private_code"
-                                name="private_code"
-                                value={data.private_code}
-                                placeholder="Exemple : 12ab"
-                                aria-describedby="private_code_help"
-                                onChange={(e) =>
-                                    setData("private_code", e.target.value)
-                                }
-                            />
-                            <p
-                                id="private_code_help"
-                                className="mt-2 text-sm text-gray-600"
-                            >
-                                Communique ce code à tes proches pour qu’ils
-                                accèdent directement à ta liste.
-                            </p>
-                            <InputError
-                                message={errors.private_code}
-                                className="mt-2"
-                            />
-                        </div>
+                        <SecretCodeField
+                            value={data.private_code}
+                            onChange={(value) => setData("private_code", value)}
+                            error={errors.private_code}
+                        />
                     )}
 
                     <PrimaryButton disabled={processing}>

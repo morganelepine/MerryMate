@@ -251,7 +251,8 @@ class GiftListController extends Controller
             'user_name' => $string,
             'name' => $string,
             'isPrivate' => 'boolean',
-            'private_code' => 'string|max:65535',
+            // A list turning shared needs a real code to hand out to relatives
+            'private_code' => 'required_if:isPrivate,false|string|max:65535',
         ]);
 
         if (isset($validated['private_code'])) {

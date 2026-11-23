@@ -2,6 +2,7 @@ import PropTypes from "prop-types";
 import { Head } from "@inertiajs/react";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import ListTitle from "@/Components/GiftList/Action/ListTitle";
+import MakeListPublicButton from "@/Components/GiftList/Action/MakeListPublic";
 import {
     LIST_HEADER_CLOSED,
     LIST_WIDTH,
@@ -18,7 +19,12 @@ export default function AuthPrivateList({ auth, list, ideas }) {
             user={auth.user}
             headerWidth={LIST_WIDTH}
             headerClassName={LIST_HEADER_CLOSED}
-            header={<ListTitle list={list} />}
+            header={
+                <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                    <ListTitle list={list} />
+                    <MakeListPublicButton list={list} />
+                </div>
+            }
         >
             <Head title={list.name} />
 
