@@ -31,10 +31,9 @@ class IdeaController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create(Request $request, $id): Response
+    public function create(GiftList $list): Response
     {
-        // Get list id from url
-        $list = GiftList::find($id);
+        $this->authorize('update', $list);
 
         return Inertia::render('Ideas/Create', [
             'list' => $list,
@@ -61,10 +60,9 @@ class IdeaController extends Controller
             'is_multiple' => 'boolean',
             'promo' => 'boolean',
             ...self::PROMO_RULES,
-            'status' => $string,
-            'status_user' => $string,
-            'status_user_id' => 'nullable|integer',
         ]);
+
+        $this->authorize('update', GiftList::findOrFail($validated['list_id']));
 
         $request->user()->ideas()->create($this->withoutStalePromo($validated));
 
@@ -91,9 +89,6 @@ class IdeaController extends Controller
             'is_multiple' => 'boolean',
             'promo' => 'boolean',
             ...self::PROMO_RULES,
-            'status' => $string,
-            'status_user' => $string,
-            'status_user_id' => 'nullable|integer',
         ]);
 
         $idea->update($this->withoutStalePromo($validated));

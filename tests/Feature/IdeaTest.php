@@ -309,6 +309,44 @@ class IdeaTest extends TestCase
         $this->assertEquals('purchased', $idea->status);
     }
 
+    public function test_only_the_list_owner_can_add_ideas_to_it(): void
+    {
+        [$owner, $giftList] = $this->createGiftListWithOwner();
+        $follower = User::factory()->create();
+        FollowedList::create(['user_id' => $follower->id, 'gift_list_id' => $giftList->id, 'private_code' => '1234']);
+        $idea = ['list_id' => $giftList->id, 'user_name' => 'X', 'idea' => 'Puzzle'];
+
+        $this->actingAs($follower)->get("/ideas/create/{$giftList->id}")->assertForbidden();
+        $this->actingAs($follower)->post('/ideas', $idea)->assertForbidden();
+        $this->actingAs($owner)->post('/ideas', [...$idea, 'list_id' => $giftList->id + 1])->assertNotFound();
+        $this->assertSame(0, Idea::count());
+
+        $this->actingAs($owner)->get("/ideas/create/{$giftList->id}")->assertOk();
+        $this->actingAs($owner)->post('/ideas', $idea)->assertRedirect("/lists/{$giftList->id}");
+        $this->assertSame(1, $giftList->ideas()->where('status', 'available')->count());
+    }
+
+    public function test_idea_status_cannot_be_forged_when_creating_or_editing_it(): void
+    {
+        [$owner, $giftList] = $this->createGiftListWithOwner();
+        $victim = User::factory()->create();
+        $forged = ['status' => 'purchased', 'status_user' => 'Mamie', 'status_user_id' => $victim->id];
+
+        $this->actingAs($owner)->post('/ideas', [
+            'list_id' => $giftList->id,
+            'user_name' => $owner->name,
+            'idea' => 'Puzzle',
+            ...$forged,
+        ]);
+        $idea = Idea::where('list_id', $giftList->id)->firstOrFail();
+        $this->assertSame(['available', null, null], array_values($idea->only('status', 'status_user', 'status_user_id')));
+
+        $this->actingAs($owner)->patch("/ideas/{$idea->id}", ['idea' => 'Jeu', ...$forged]);
+        $idea->refresh();
+        $this->assertSame('Jeu', $idea->idea);
+        $this->assertSame(['available', null, null], array_values($idea->only('status', 'status_user', 'status_user_id')));
+    }
+
     public function test_price_accepts_decimals_typed_with_a_comma(): void
     {
         [$owner, $giftList] = $this->createGiftListWithOwner();

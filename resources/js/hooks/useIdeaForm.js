@@ -35,9 +35,6 @@ export default function useIdeaForm({ auth, list, idea = null, onSuccess }) {
                   list_id: list.id,
                   user_name: auth.user.name,
                   ...EMPTY_IDEA,
-                  status: "available",
-                  status_user: "",
-                  status_user_id: null,
               },
     );
 
