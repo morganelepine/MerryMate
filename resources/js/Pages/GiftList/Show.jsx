@@ -17,6 +17,7 @@ export default function Show({
     followedLists,
     brandNotes,
     guestAccessGranted,
+    canArchive,
     showArchiveReminder,
     resetMutedReminders,
     followers,
@@ -56,6 +57,7 @@ export default function Show({
                     ideas={ideas}
                     ideas_available={ideas_available}
                     brandNotes={brandNotes}
+                    canArchive={canArchive}
                     showArchiveReminder={showArchiveReminder}
                     resetMutedReminders={resetMutedReminders}
                     followers={followers}
@@ -94,6 +96,7 @@ Show.propTypes = {
     followedLists: PropTypes.array,
     brandNotes: PropTypes.objectOf(PropTypes.string),
     guestAccessGranted: PropTypes.bool,
+    canArchive: PropTypes.bool,
     showArchiveReminder: PropTypes.bool,
     resetMutedReminders: PropTypes.bool,
     followers: PropTypes.array,

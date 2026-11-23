@@ -93,8 +93,8 @@ class GiftListController extends Controller
         // The archive one waits for a list with something to archive.
         $isOwnSharedList = $isOwner && ! $list->isPrivate;
         $hasSomethingToArchive = $ideas_reserved->isNotEmpty() || $ideas_purchased->isNotEmpty();
-        $showArchiveReminder = $isOwnSharedList && $hasSomethingToArchive
-            && session()->pull('archive_reminder_pending', false);
+        $canArchive = $isOwnSharedList && $hasSomethingToArchive;
+        $showArchiveReminder = $canArchive && session()->pull('archive_reminder_pending', false);
         $resetMutedReminders = $isOwnSharedList && session()->pull('few_ideas_reset_pending', false);
 
         $followers = $isOwnSharedList ? $this->giftListRepository->getFollowers($list) : [];
@@ -108,6 +108,7 @@ class GiftListController extends Controller
             'followedLists' => $followedLists,
             'brandNotes' => $brandNotes,
             'guestAccessGranted' => $isGuestWithAccess,
+            'canArchive' => $canArchive,
             'showArchiveReminder' => $showArchiveReminder,
             'resetMutedReminders' => $resetMutedReminders,
             'followers' => $followers,

@@ -7,6 +7,8 @@ export default function Modal({
     maxWidth = "xl",
     closeable = true,
     onClose = () => {},
+    // Once the closing transition is over.
+    onClosed,
 }) {
     const close = () => {
         if (closeable) {
@@ -23,7 +25,12 @@ export default function Modal({
     }[maxWidth];
 
     return (
-        <Transition show={show} as={Fragment} leave="duration-200">
+        <Transition
+            show={show}
+            as={Fragment}
+            leave="duration-200"
+            afterLeave={onClosed}
+        >
             <Dialog
                 as="div"
                 id="modal"

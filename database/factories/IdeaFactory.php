@@ -20,14 +20,17 @@ class IdeaFactory extends Factory
     public function definition(): array
     {
         $user = User::inRandomOrder()->first();
-        $giftList = GiftList::where('user_id', $user->id)->inRandomOrder()->first();
         $statusUser = User::where('id', '!=', $user->id)->inRandomOrder()->first();
         $status = $statusUser !== null ? fake()->randomElement(['available', 'reserved', 'purchased']) : 'available';
         $statusUserName = $status === 'available' ? '' : $statusUser->name;
 
         return [
-            'list_id' => $giftList->id,
             'user_id' => $user->id,
+            'list_id' => fn (array $attributes) => GiftList::where('user_id', $attributes['user_id'])->inRandomOrder()->value('id')
+                ?? GiftList::factory()->create([
+                    'user_id' => $attributes['user_id'],
+                    'user_name' => $attributes['user_name'],
+                ])->id,
             'user_name' => $user->name,
             'idea' => fake()->words(3, true),
             'brand' => fake()->word(),

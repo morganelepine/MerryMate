@@ -1,39 +1,19 @@
 import PropTypes from "prop-types";
 import Modal from "@/Components/Utils/Modal";
 import PrimaryButton from "@/Components/Buttons/PrimaryButton";
-import { toast } from "sonner";
-import { useForm } from "@inertiajs/react";
+import useArchiveList from "@/hooks/useArchiveList";
 
 export default function ArchiveReminderModal({
     list,
     modalVisible,
     closeModal,
 }) {
-    const { patch, reset } = useForm();
-
-    const archiveList = (e) => {
-        e.preventDefault();
-        patch(route("lists.archive", list), {
-            onSuccess: () => {
-                closeModal();
-                toast.success("Liste archivée !");
-            },
-            onError: (errors) => {
-                console.error(
-                    "Erreur lors de l'archivage de la liste :",
-                    errors,
-                );
-                toast.error(
-                    "Oops, une erreur est survenue lors de l'archivage.",
-                );
-            },
-            onFinish: () => reset(),
-        });
-    };
+    const { archiveList, processing } = useArchiveList(list, closeModal);
 
     return (
         <Modal show={modalVisible} onClose={closeModal}>
             <button
+                type="button"
                 onClick={closeModal}
                 className="text-sm hover:text-orange-500 absolute top-2 right-2"
                 aria-label="Fermer"
@@ -50,19 +30,22 @@ export default function ArchiveReminderModal({
                 </svg>
             </button>
             <div className="py-8 px-10 text-center">
-                <p className="text-gray-600 font-bold">
-                    L'événement est passé ?
-                </p>
-                <p className="text-gray-600 font-bold">
+                <Modal.Title as="h2" className="text-gray-600 font-bold">
+                    L'événement est passé ?<br />
                     Pense à archiver ta liste !
-                </p>
+                </Modal.Title>
                 <p className="text-gray-600 mt-4">
                     Tous les cadeaux qui t’ont été offerts seront retirés de la
                     liste. Mais pas d'inquiétude, les idées toujours disponibles
                     resteront bien affichées dans ta liste.
                 </p>
                 <div className="mt-4 flex justify-center">
-                    <PrimaryButton size="small" onClick={archiveList}>
+                    <PrimaryButton
+                        type="button"
+                        size="small"
+                        onClick={archiveList}
+                        disabled={processing}
+                    >
                         Archiver la liste
                     </PrimaryButton>
                 </div>

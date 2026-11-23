@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import PropTypes from "prop-types";
 import { Menu } from "@headlessui/react";
 import CountBadge from "@/Components/Utils/CountBadge";
 import OutlineIcon from "@/Components/Utils/OutlineIcon";
+import { CHEVRON_DOWN, MENU_ITEM, MENU_PANEL } from "@/Components/Utils/menu";
 import { NAV_ICONS } from "@/Components/Utils/navIcons";
 import OutlineButton from "@/Components/Buttons/OutlineButton";
 import { BUTTON_SIZE_CLASSES } from "@/Components/Buttons/buttonSizes";
@@ -15,7 +16,6 @@ const SHARE_PATH =
     "M7.217 10.907a2.25 2.25 0 1 0 0 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.77-.283 1.093m0-2.186 9.566-5.314m-9.566 7.5 9.566 5.314m0 0a2.25 2.25 0 1 0 3.935 2.186 2.25 2.25 0 0 0-3.935-2.186Zm0-12.814a2.25 2.25 0 1 0 3.933-2.185 2.25 2.25 0 0 0-3.933 2.185Z";
 const ARCHIVE_PATH =
     "m20.25 7.5-.625 10.632a2.25 2.25 0 0 1-2.247 2.118H6.622a2.25 2.25 0 0 1-2.247-2.118L3.75 7.5m8.25 3v6.75m0 0-3-3m3 3 3-3M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125Z";
-const CHEVRON_PATH = "m19.5 8.25-7.5 7.5-7.5-7.5";
 
 function ActionContent({ action }) {
     return (
@@ -48,6 +48,15 @@ ActionContent.propTypes = {
 export default function ListActions({ list, followers, canArchive }) {
     const [openModal, setOpenModal] = useState(null);
     const closeModal = () => setOpenModal(null);
+    const desktopActionsRef = useRef(null);
+
+    // Once the list is archived, the button that opened the modal is gone: don't leave the focus on nothing.
+    const restoreLostFocus = () =>
+        requestAnimationFrame(() => {
+            if (document.activeElement === document.body) {
+                desktopActionsRef.current?.querySelector("button")?.focus();
+            }
+        });
 
     const share = {
         label: "Partager",
@@ -74,7 +83,10 @@ export default function ListActions({ list, followers, canArchive }) {
 
     return (
         <>
-            <div className="hidden md:flex items-center gap-4">
+            <div
+                ref={desktopActionsRef}
+                className="hidden md:flex items-center gap-4"
+            >
                 <OutlineButton size="medium" onClick={share.onSelect}>
                     <ActionContent action={share} />
                 </OutlineButton>
@@ -98,17 +110,19 @@ export default function ListActions({ list, followers, canArchive }) {
                 >
                     Autres
                     <OutlineIcon
-                        path={CHEVRON_PATH}
+                        path={CHEVRON_DOWN}
                         className="w-4 h-4 ml-1.5 -mr-0.5"
                     />
                 </Menu.Button>
-                <Menu.Items className="absolute left-0 sm:left-auto sm:right-0 z-40 mt-2 w-44 py-1 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                <Menu.Items
+                    className={`${MENU_PANEL} left-0 sm:left-auto sm:right-0 w-44`}
+                >
                     {[share, ...modalActions].map((action) => (
                         <Menu.Item key={action.label}>
                             <button
                                 type="button"
                                 onClick={action.onSelect}
-                                className="flex w-full items-center px-4 py-3 text-sm text-gray-700 data-[headlessui-state=active]:bg-gray-100 data-[headlessui-state=active]:text-orange-700"
+                                className={`flex items-center py-3 ${MENU_ITEM}`}
                             >
                                 <ActionContent action={action} />
                             </button>
@@ -127,6 +141,7 @@ export default function ListActions({ list, followers, canArchive }) {
                 list={list}
                 show={openModal === "archive"}
                 onClose={closeModal}
+                onClosed={restoreLostFocus}
             />
         </>
     );

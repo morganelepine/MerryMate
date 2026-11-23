@@ -539,6 +539,29 @@ class GiftListTest extends TestCase
         );
     }
 
+    public function test_list_can_only_be_archived_once_an_idea_is_taken(): void
+    {
+        [$owner, $giftList] = $this->createGiftListWithOwner();
+        $idea = Idea::factory()->create([
+            'list_id' => $giftList->id,
+            'user_id' => $owner->id,
+            'user_name' => $owner->name,
+            'is_multiple' => false,
+            'status' => 'available',
+        ]);
+        $canArchive = fn () => $this->actingAs($owner)->get("/lists/{$giftList->id}")->viewData('page')['props']['canArchive'];
+
+        $this->assertFalse($canArchive());
+
+        foreach (['reserved', 'purchased'] as $status) {
+            $idea->update(['status' => $status]);
+            $this->assertTrue($canArchive());
+        }
+
+        $this->patch("/lists/{$giftList->id}/archive");
+        $this->assertFalse($canArchive());
+    }
+
     private function createFollower(GiftList $giftList): User
     {
         $follower = User::factory()->create();

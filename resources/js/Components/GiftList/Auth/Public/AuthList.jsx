@@ -21,6 +21,7 @@ export default function AuthList({
     ideas,
     ideas_available,
     brandNotes,
+    canArchive = false,
     showArchiveReminder = false,
     resetMutedReminders = false,
     followers = [],
@@ -55,7 +56,7 @@ export default function AuthList({
                         <ListActions
                             list={list}
                             followers={followers}
-                            canArchive={ideas.length > 0}
+                            canArchive={canArchive}
                         />
                     </div>
                 </div>
@@ -91,6 +92,7 @@ AuthList.propTypes = {
     ideas: PropTypes.array,
     ideas_available: PropTypes.array,
     brandNotes: PropTypes.objectOf(PropTypes.string),
+    canArchive: PropTypes.bool,
     showArchiveReminder: PropTypes.bool,
     resetMutedReminders: PropTypes.bool,
     followers: PropTypes.array,

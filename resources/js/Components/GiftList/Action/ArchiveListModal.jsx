@@ -1,32 +1,14 @@
-import { useForm } from "@inertiajs/react";
 import PropTypes from "prop-types";
 import Modal from "@/Components/Utils/Modal";
-import { toast } from "sonner";
+import useArchiveList from "@/hooks/useArchiveList";
 import PrimaryButton from "@/Components/Buttons/PrimaryButton";
 import CancelButton from "@/Components/Buttons/CancelButton";
 
-export default function ArchiveListModal({ list, show, onClose }) {
-    const { patch, processing } = useForm();
-
-    const archiveList = () =>
-        patch(route("lists.archive", list), {
-            onSuccess: () => {
-                onClose();
-                toast.success("Liste archivée !");
-            },
-            onError: (errors) => {
-                console.error(
-                    "Erreur lors de l'archivage de la liste :",
-                    errors,
-                );
-                toast.error(
-                    "Oops, une erreur est survenue lors de l'archivage.",
-                );
-            },
-        });
+export default function ArchiveListModal({ list, show, onClose, onClosed }) {
+    const { archiveList, processing } = useArchiveList(list, onClose);
 
     return (
-        <Modal show={show} onClose={onClose}>
+        <Modal show={show} onClose={onClose} onClosed={onClosed}>
             <div className="p-6">
                 <Modal.Title as="h2" className="text-lg font-medium">
                     Es-tu sûr·e de vouloir archiver cette liste ?
@@ -57,4 +39,5 @@ ArchiveListModal.propTypes = {
     list: PropTypes.object.isRequired,
     show: PropTypes.bool.isRequired,
     onClose: PropTypes.func.isRequired,
+    onClosed: PropTypes.func,
 };
