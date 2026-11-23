@@ -14,6 +14,7 @@ export default function Show({
     ideas_available,
     ideas_reserved,
     ideas_purchased,
+    availableIdeasCount,
     followedLists,
     brandNotes,
     guestAccessGranted,
@@ -55,7 +56,7 @@ export default function Show({
                     auth={auth}
                     list={list}
                     ideas={ideas}
-                    ideas_available={ideas_available}
+                    availableIdeasCount={availableIdeasCount}
                     brandNotes={brandNotes}
                     canArchive={canArchive}
                     showArchiveReminder={showArchiveReminder}
@@ -93,6 +94,7 @@ Show.propTypes = {
     ideas_available: PropTypes.array,
     ideas_reserved: PropTypes.array,
     ideas_purchased: PropTypes.array,
+    availableIdeasCount: PropTypes.number,
     followedLists: PropTypes.array,
     brandNotes: PropTypes.objectOf(PropTypes.string),
     guestAccessGranted: PropTypes.bool,

@@ -623,6 +623,73 @@ class GiftListTest extends TestCase
         $this->assertFalse($canArchive());
     }
 
+    public function test_owner_page_does_not_reveal_which_ideas_are_taken(): void
+    {
+        [$owner, $giftList] = $this->createGiftListWithOwner();
+        $ideaDefaults = [
+            'list_id' => $giftList->id,
+            'user_id' => $owner->id,
+            'user_name' => $owner->name,
+            'is_multiple' => false,
+        ];
+        Idea::factory()->create([...$ideaDefaults, 'status' => 'available']);
+        foreach (['reserved', 'purchased'] as $status) {
+            Idea::factory()->create([
+                ...$ideaDefaults,
+                'status' => $status,
+                'status_user' => 'Secret Buyer',
+                'status_user_id' => User::factory()->create()->id,
+            ]);
+        }
+        $follower = $this->createFollower($giftList);
+
+        $this->actingAs($owner)->get("/lists/{$giftList->id}")
+            ->assertDontSee('Secret Buyer')
+            ->assertInertia(fn ($page) => $page
+                ->has('ideas', 3)
+                ->missing('ideas.0.status')
+                ->missing('ideas.0.status_user')
+                ->missing('ideas.0.status_user_id')
+                ->missing('ideas.0.paid_price')
+                ->missing('ideas.0.taken_at')
+                ->missing('ideas.0.updated_at')
+                ->has('ideas.0.promo_price')
+                ->has('ideas_available', 0)
+                ->has('ideas_reserved', 0)
+                ->has('ideas_purchased', 0)
+                ->where('availableIdeasCount', 1)
+                ->where('canArchive', true)
+            );
+
+        $this->actingAs($follower)->get("/lists/{$giftList->id}")->assertInertia(fn ($page) => $page
+            ->has('ideas_available', 1)
+            ->where('ideas_reserved.0.status_user', 'Secret Buyer')
+            ->has('ideas_purchased', 1)
+            ->where('availableIdeasCount', 0)
+            ->where('canArchive', false)
+        );
+    }
+
+    public function test_archiving_again_does_not_redate_gifts_already_archived(): void
+    {
+        [$owner, $giftList] = $this->createGiftListWithOwner();
+        $idea = Idea::factory()->create([
+            'list_id' => $giftList->id,
+            'user_id' => $owner->id,
+            'user_name' => $owner->name,
+            'is_multiple' => true,
+            'status' => 'available',
+        ]);
+        $idea->multipleIdeas()->create(['status' => 'purchased', 'status_user' => 'Buyer']);
+
+        $this->actingAs($owner)->patch("/lists/{$giftList->id}/archive");
+        $archivedAt = $idea->refresh()->updated_at;
+
+        $this->travel(1)->years();
+        $this->patch("/lists/{$giftList->id}/archive");
+        $this->assertEquals($archivedAt, $idea->refresh()->updated_at);
+    }
+
     private function createFollower(GiftList $giftList): User
     {
         $follower = User::factory()->create();

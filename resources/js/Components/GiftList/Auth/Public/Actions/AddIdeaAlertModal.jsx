@@ -5,19 +5,19 @@ import PrimaryButton from "@/Components/Buttons/PrimaryButton";
 
 export default function AddIdeaAlertModal({
     list,
-    ideas_available,
+    availableIdeasCount,
     modalVisible,
     closeModal,
     onNoReminder,
 }) {
     let numberOfAvailableIdeas;
-    if (ideas_available.length === 0) {
+    if (availableIdeasCount === 0) {
         numberOfAvailableIdeas = " d'idée disponible";
     } else {
         numberOfAvailableIdeas =
-            ideas_available.length === 1
+            availableIdeasCount === 1
                 ? ` qu'une idée disponible`
-                : ` que ${ideas_available.length} idées disponibles`;
+                : ` que ${availableIdeasCount} idées disponibles`;
     }
 
     return (
@@ -60,7 +60,7 @@ export default function AddIdeaAlertModal({
 }
 
 AddIdeaAlertModal.propTypes = {
-    ideas_available: PropTypes.array,
+    availableIdeasCount: PropTypes.number,
     list: PropTypes.object,
     modalVisible: PropTypes.bool,
     closeModal: PropTypes.func,

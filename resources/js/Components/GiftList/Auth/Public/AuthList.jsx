@@ -19,7 +19,7 @@ export default function AuthList({
     auth,
     list,
     ideas,
-    ideas_available,
+    availableIdeasCount,
     brandNotes,
     canArchive = false,
     showArchiveReminder = false,
@@ -76,7 +76,7 @@ export default function AuthList({
             <AddIdeaAlert
                 list={list}
                 ideas={ideas}
-                ideas_available={ideas_available}
+                availableIdeasCount={availableIdeasCount}
                 resetMutedReminders={resetMutedReminders}
                 deferred={showArchiveReminder}
             />
@@ -90,7 +90,7 @@ AuthList.propTypes = {
     auth: PropTypes.object.isRequired,
     list: PropTypes.object,
     ideas: PropTypes.array,
-    ideas_available: PropTypes.array,
+    availableIdeasCount: PropTypes.number,
     brandNotes: PropTypes.objectOf(PropTypes.string),
     canArchive: PropTypes.bool,
     showArchiveReminder: PropTypes.bool,

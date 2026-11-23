@@ -9,7 +9,7 @@ const renderAddIdeaAlert = (overrides = {}) => {
     const defaultProps = {
         list: mockList,
         ideas: [1, 2, 3, 4, 5, 6, 7],
-        ideas_available: [1, 2, 3, 4],
+        availableIdeasCount: 4,
     };
 
     return render(<AddIdeaAlert {...{ ...defaultProps, ...overrides }} />);
@@ -22,7 +22,7 @@ describe("AddIdeaAlert", () => {
     });
 
     it("does NOT display the 'few-ideas-left' modal when there are more than 5 available ideas in the list", () => {
-        renderAddIdeaAlert({ ideas_available: [1, 2, 3, 4, 5, 6] });
+        renderAddIdeaAlert({ availableIdeasCount: 6 });
         expect(screen.queryByText(ALERT_TEXT)).toBeNull();
     });
 

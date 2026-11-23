@@ -18,7 +18,7 @@ function readMutedListIds() {
 export default function AddIdeaAlert({
     list,
     ideas,
-    ideas_available,
+    availableIdeasCount,
     resetMutedReminders = false,
     deferred = false,
 }) {
@@ -33,12 +33,12 @@ export default function AddIdeaAlert({
         setFewIdeasLeftModalVisible(
             !deferred &&
                 ideas.length > 0 &&
-                ideas_available.length < FEW_IDEAS_THRESHOLD &&
+                availableIdeasCount < FEW_IDEAS_THRESHOLD &&
                 !readMutedListIds().includes(list.id),
         );
     }, [
         ideas.length,
-        ideas_available.length,
+        availableIdeasCount,
         list.id,
         resetMutedReminders,
         deferred,
@@ -55,7 +55,7 @@ export default function AddIdeaAlert({
     return (
         <AddIdeaAlertModal
             list={list}
-            ideas_available={ideas_available}
+            availableIdeasCount={availableIdeasCount}
             modalVisible={fewIdeasLeftModalVisible}
             closeModal={() => setFewIdeasLeftModalVisible(false)}
             onNoReminder={muteForThisList}
@@ -66,7 +66,7 @@ export default function AddIdeaAlert({
 AddIdeaAlert.propTypes = {
     list: PropTypes.object,
     ideas: PropTypes.array,
-    ideas_available: PropTypes.array,
+    availableIdeasCount: PropTypes.number,
     resetMutedReminders: PropTypes.bool,
     // Another modal takes this visit: wait for the next one.
     deferred: PropTypes.bool,

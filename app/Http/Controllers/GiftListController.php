@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\BrandNote;
 use App\Models\FollowedList;
 use App\Models\GiftList;
-use App\Models\Idea;
 use App\Models\User;
 use App\Notifications\NotifyListFollowed;
 use App\Repositories\GiftListRepository;
@@ -81,16 +80,18 @@ class GiftListController extends Controller
                 'ideas_available' => [],
                 'ideas_reserved' => [],
                 'ideas_purchased' => [],
+                'availableIdeasCount' => 0,
                 'followedLists' => [],
                 'brandNotes' => (object) [],
                 'guestAccessGranted' => false,
             ]);
         }
 
-        $ideas = $this->ideaRepository->getIdeasByStatus($id, ['available', 'reserved', 'purchased']);
-        $ideas_available = $this->ideaRepository->getIdeasByStatus($id, ['available']);
-        $ideas_reserved = $this->ideaRepository->getUnavailableIdeasByStatus($id, 'reserved');
-        $ideas_purchased = $this->ideaRepository->getUnavailableIdeasByStatus($id, 'purchased');
+        // Ideas by status would spoil the surprise: the owner only gets the plain list.
+        $ideas = $isOwner ? $this->ideaRepository->getIdeasForOwner($id) : [];
+        $ideas_available = $isOwner ? [] : $this->ideaRepository->getIdeasByStatus($id, ['available']);
+        $ideas_reserved = $isOwner ? [] : $this->ideaRepository->getUnavailableIdeasByStatus($id, 'reserved');
+        $ideas_purchased = $isOwner ? [] : $this->ideaRepository->getUnavailableIdeasByStatus($id, 'purchased');
 
         // Get lists followed by auth user
         $followedLists = Auth::check() ? FollowedList::where('user_id', Auth::id())->get() : collect();
@@ -101,11 +102,11 @@ class GiftListController extends Controller
         // Long absence reminders are only pulled where they are displayed: the owner's shared lists.
         // The archive one waits for a list with something to archive.
         $isOwnSharedList = $isOwner && ! $list->isPrivate;
-        $hasSomethingToArchive = $ideas_reserved->isNotEmpty() || $ideas_purchased->isNotEmpty();
-        $canArchive = $isOwnSharedList && $hasSomethingToArchive;
+        $canArchive = $isOwnSharedList && $list->ideas()->taken()->exists();
         $showArchiveReminder = $canArchive && session()->pull('archive_reminder_pending', false);
         $resetMutedReminders = $isOwnSharedList && session()->pull('few_ideas_reset_pending', false);
 
+        $availableIdeasCount = $isOwnSharedList ? $list->ideas()->where('status', 'available')->count() : 0;
         $followers = $isOwnSharedList ? $this->giftListRepository->getFollowers($list) : [];
 
         return Inertia::render('GiftList/Show', [
@@ -114,6 +115,7 @@ class GiftListController extends Controller
             'ideas_available' => $ideas_available,
             'ideas_reserved' => $ideas_reserved,
             'ideas_purchased' => $ideas_purchased,
+            'availableIdeasCount' => $availableIdeasCount,
             'followedLists' => $followedLists,
             'brandNotes' => $brandNotes,
             'guestAccessGranted' => $isGuestWithAccess,
@@ -285,11 +287,7 @@ class GiftListController extends Controller
     {
         $this->authorize('update', $list);
 
-        Idea::where('list_id', $list->id)
-            ->where(fn ($query) => $query
-                ->whereIn('status', ['reserved', 'purchased'])
-                ->orWhere(fn ($query) => $query->where('is_multiple', true)->has('multipleIdeas')))
-            ->update(['status' => 'archived']);
+        $list->ideas()->taken()->update(['status' => 'archived']);
 
         return redirect(route('lists.show', $list->id));
     }

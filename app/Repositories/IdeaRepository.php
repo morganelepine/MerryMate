@@ -9,6 +9,17 @@ use Illuminate\Support\Facades\Auth;
 
 class IdeaRepository
 {
+    // The owner must not find out what was taken, not even in the page's data: no status, buyer or dates.
+    private const OWNER_COLUMNS = [
+        'id', 'idea', 'brand', 'link', 'details', 'price', 'favorite', 'is_multiple',
+        'promo', 'promo_price', 'promo_end_date',
+    ];
+
+    public function getIdeasForOwner(int $listId)
+    {
+        return $this->getIdeasByStatus($listId, ['available', 'reserved', 'purchased'], self::OWNER_COLUMNS);
+    }
+
     public function getUnavailableIdeasByStatus(int $listId, string $status)
     {
         $singleIdeas = Idea::where('list_id', $listId)
@@ -49,7 +60,7 @@ class IdeaRepository
         return $singleIdeas->concat($multipleIdeas);
     }
 
-    public function getIdeasByStatus(int $listId, array $status)
+    public function getIdeasByStatus(int $listId, array $status, array $columns = ['*'])
     {
         return Idea::where('list_id', $listId)
             ->whereIn('status', $status)
@@ -57,7 +68,7 @@ class IdeaRepository
             ->orderByDesc('favorite')
             ->orderBy('price')
             ->orderBy('idea')
-            ->get();
+            ->get($columns);
     }
 
     public function updateIdea(Idea $idea, string $status, string $statusUser): void

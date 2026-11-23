@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Concerns\TracksTakenAt;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -28,6 +29,19 @@ class Idea extends Model
     public function multipleIdeas(): HasMany
     {
         return $this->hasMany(MultipleIdea::class, 'idea_id');
+    }
+
+    /**
+     * Ideas someone reserved or purchased, not archived yet.
+     */
+    public function scopeTaken(Builder $query): void
+    {
+        $query->where(fn (Builder $query) => $query
+            ->whereIn('status', ['reserved', 'purchased'])
+            ->orWhere(fn (Builder $query) => $query
+                ->where('is_multiple', true)
+                ->where('status', '!=', 'archived')
+                ->has('multipleIdeas')));
     }
 
     /**
