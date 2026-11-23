@@ -39,9 +39,9 @@ export default function DeleteListButton({ list }) {
 
             <Modal show={confirmingListDeletion} onClose={closeModal}>
                 <div className="p-6">
-                    <h2 className="text-lg font-medium ">
+                    <Modal.Title as="h2" className="text-lg font-medium">
                         Es-tu sûr·e de vouloir supprimer cette liste ?
-                    </h2>
+                    </Modal.Title>
 
                     <p className="mt-1 text-sm text-gray-600">
                         Une fois la liste supprimée, toutes les idées ajoutées

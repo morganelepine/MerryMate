@@ -1,6 +1,7 @@
 import PropTypes from "prop-types";
 import { useForm } from "@inertiajs/react";
 import { toast } from "sonner";
+import { STATUS_ICONS } from "@/Components/Ideas/statusIcons";
 
 export default function ButtonCancel({ idea, type }) {
     const { patch, processing, reset } = useForm();
@@ -43,7 +44,7 @@ export default function ButtonCancel({ idea, type }) {
                     stroke="currentColor"
                     className="w-5 h-5 sm:w-6 sm:h-6 cursor-pointer"
                 >
-                    <path d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                    <path d={STATUS_ICONS.cancel} />
                 </svg>
                 <p className="block sm:hidden ml-1 mr-3">
                     {type === "reservation"

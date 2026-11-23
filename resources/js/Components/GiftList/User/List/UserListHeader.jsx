@@ -71,9 +71,9 @@ export default function UserListHeader({ auth, list, setUserName }) {
                     </svg>
                 </button>
                 <div className="p-6">
-                    <h2 className="text-lg font-medium ">
+                    <Modal.Title as="h2" className="text-lg font-medium">
                         Le mode Secret Santa
-                    </h2>
+                    </Modal.Title>
                     <p className="mt-1 text-sm text-gray-600">
                         En activant le mode Secret Santa, tu restes anonyme
                         lorsque tu réserves ou achètes un cadeau.

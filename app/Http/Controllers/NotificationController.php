@@ -69,7 +69,7 @@ class NotificationController extends Controller
     #send notif when someone wants an access to your list
     public function requestAccessToList(Request $request, User $listOwner, GiftList $list)
     {
-        abort_if($list->isPrivate, 404);
+        abort_if($list->isPrivate || $list->user_id !== $listOwner->id, 404);
 
         $requestingUser = Auth::user();
 
@@ -109,6 +109,13 @@ class NotificationController extends Controller
 
             $requestingUser = User::find($notification->data['requestingUserId']);
 
+            // The account was deleted since: nobody to answer to.
+            if (! $requestingUser) {
+                $notification->delete();
+
+                return null;
+            }
+
             if ($response === 'accepté') {
                 $requestingUser->followed_lists()->createOrFirst(
                     ['gift_list_id' => $list->id],
@@ -124,6 +131,9 @@ class NotificationController extends Controller
 
             return $requestingUser;
         });
+
+        // Outside the transaction, so that the notification stays deleted.
+        abort_unless($requestingUser !== null, 410);
 
         $requestingUser->notify(new NotifyResponseToRequestAccess($response, $requestingUser, $listOwner->name, $list->name, $list->id));
 

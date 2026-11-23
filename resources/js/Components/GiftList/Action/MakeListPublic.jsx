@@ -55,9 +55,9 @@ export default function MakeListPublicButton({ list }) {
 
             <Modal show={confirming} onClose={closeModal}>
                 <form onSubmit={submit} className="p-6">
-                    <h2 className="text-lg font-medium">
+                    <Modal.Title as="h2" className="text-lg font-medium">
                         Partager cette liste avec tes proches ?
-                    </h2>
+                    </Modal.Title>
 
                     <p className="mt-1 text-sm text-gray-600">
                         Elle apparaîtra dans « Chercher » et tes proches

@@ -179,6 +179,19 @@ class NotificationTest extends TestCase
         $this->assertSame(1, $owner->notifications()->where('type', 'request-access')->count());
     }
 
+    public function test_access_request_is_only_sent_to_the_list_owner(): void
+    {
+        [$owner, $giftList] = $this->createGiftListWithOwner();
+        $stranger = User::factory()->create();
+
+        $this->actingAs(User::factory()->create())
+            ->post("/notifications/request-access/{$stranger->id}/{$giftList->id}")
+            ->assertNotFound();
+
+        $this->assertSame(0, $stranger->notifications()->count());
+        $this->assertSame(0, $owner->notifications()->count());
+    }
+
     public function test_only_the_list_owner_can_respond_to_an_access_request(): void
     {
         [$owner, $giftList] = $this->createGiftListWithOwner();

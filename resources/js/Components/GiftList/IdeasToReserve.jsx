@@ -7,6 +7,8 @@ import IdeasPurchased from "@/Components/Ideas/UserList/Ideas_purchased";
 import BrandNote from "@/Components/Ideas/BrandNote";
 import BrandHeading from "@/Components/Ideas/BrandHeading";
 import { groupByBrand } from "@/Components/Ideas/ideaHelpers";
+import { STATUS_ICONS } from "@/Components/Ideas/statusIcons";
+import { NAV_ICONS } from "@/Components/Utils/navIcons";
 import CountBadge from "@/Components/Utils/CountBadge";
 import {
     LIST_HEADER_BAND,
@@ -15,13 +17,7 @@ import {
     PAGE_GUTTER,
 } from "@/Layouts/Partials/pageContainer";
 
-const ICONS = {
-    gift: "M21 11.25v8.25a1.5 1.5 0 0 1-1.5 1.5H5.25a1.5 1.5 0 0 1-1.5-1.5v-8.25M12 4.875A2.625 2.625 0 1 0 9.375 7.5H12m0-2.625V7.5m0-2.625A2.625 2.625 0 1 1 14.625 7.5H12m0 0V21m-8.625-9.75h18c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125h-18c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125Z",
-    reserve:
-        "M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0111.186 0z",
-    purchase: "M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z",
-    cancel: "m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z",
-};
+const ICONS = { ...STATUS_ICONS, gift: NAV_ICONS.gifts };
 
 const TABS = {
     available: {

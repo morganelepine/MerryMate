@@ -61,9 +61,9 @@ export default function DeleteUserForm({ className = "" }) {
 
             <Modal show={confirmingUserDeletion} onClose={closeModal}>
                 <form onSubmit={deleteUser} className="p-6">
-                    <h2 className="text-lg font-medium ">
+                    <Modal.Title as="h2" className="text-lg font-medium">
                         Es-tu sûr·e de vouloir supprimer ton compte ?
-                    </h2>
+                    </Modal.Title>
 
                     <p className="mt-1 text-sm text-gray-600">
                         Une fois ton compte supprimé, toutes tes listes et
@@ -72,13 +72,13 @@ export default function DeleteUserForm({ className = "" }) {
 
                     <div className="mt-6">
                         <InputLabel
-                            htmlFor="password"
+                            htmlFor="delete_account_password"
                             value="Mot de passe"
                             className="sr-only"
                         />
 
                         <TextInput
-                            id="password"
+                            id="delete_account_password"
                             type="password"
                             name="password"
                             ref={passwordInput}
@@ -102,6 +102,7 @@ export default function DeleteUserForm({ className = "" }) {
                             Annuler
                         </OutlineButton>
                         <OutlineButton
+                            type="submit"
                             color="orange"
                             className="ml-3"
                             disabled={processing}

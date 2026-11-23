@@ -22,6 +22,12 @@ export default function RequestButtons({ notification }) {
             );
             window.location.reload();
         } catch (error) {
+            // Nothing left to answer: the buttons stay disabled.
+            if (error.response?.status === 410) {
+                toast.error("Cette personne n'a plus de compte MerryMate.");
+                return;
+            }
+
             console.error("Error while sending the response:", error);
             toast.error(
                 "Oops... ta demande n'a pas été envoyée. Recharge la page et réessaie.",
