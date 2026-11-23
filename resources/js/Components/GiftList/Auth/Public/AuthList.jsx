@@ -3,8 +3,7 @@ import { Head } from "@inertiajs/react";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import ListOfIdeas from "@/Components/GiftList/Auth/Public/ListOfIdeas";
 import ListTitle from "@/Components/GiftList/Action/ListTitle";
-import ArchiveListButton from "@/Components/GiftList/Action/Archive";
-import ShareListButton from "@/Components/GiftList/Action/ShareListButton";
+import ListActions from "@/Components/GiftList/Action/ListActions";
 import AddIdeaAlert from "@/Components/GiftList/Auth/Public/Actions/AddIdeaAlert";
 import ArchiveReminder from "@/Components/GiftList/Auth/Public/Actions/ArchiveReminder";
 import EmptyPublicList from "@/Components/GiftList/Auth/Public/EmptyPublicList";
@@ -24,6 +23,7 @@ export default function AuthList({
     brandNotes,
     showArchiveReminder = false,
     resetMutedReminders = false,
+    followers = [],
 }) {
     return (
         <AuthenticatedLayout
@@ -52,8 +52,11 @@ export default function AuthList({
                             </svg>
                             Ajouter
                         </PrimaryButton>
-                        <ShareListButton list={list} />
-                        {ideas.length > 0 && <ArchiveListButton list={list} />}
+                        <ListActions
+                            list={list}
+                            followers={followers}
+                            canArchive={ideas.length > 0}
+                        />
                     </div>
                 </div>
             }
@@ -90,4 +93,5 @@ AuthList.propTypes = {
     brandNotes: PropTypes.objectOf(PropTypes.string),
     showArchiveReminder: PropTypes.bool,
     resetMutedReminders: PropTypes.bool,
+    followers: PropTypes.array,
 };

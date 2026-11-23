@@ -97,6 +97,8 @@ class GiftListController extends Controller
             && session()->pull('archive_reminder_pending', false);
         $resetMutedReminders = $isOwnSharedList && session()->pull('few_ideas_reset_pending', false);
 
+        $followers = $isOwnSharedList ? $this->giftListRepository->getFollowers($list) : [];
+
         return Inertia::render('GiftList/Show', [
             'list' => $list,
             'ideas' => $ideas,
@@ -108,6 +110,7 @@ class GiftListController extends Controller
             'guestAccessGranted' => $isGuestWithAccess,
             'showArchiveReminder' => $showArchiveReminder,
             'resetMutedReminders' => $resetMutedReminders,
+            'followers' => $followers,
         ]);
     }
 
@@ -320,6 +323,18 @@ class GiftListController extends Controller
                 ['private_code' => 'Ce code est incorrect pour la liste demandée.']
             );
         }
+    }
+
+    /**
+     * Remove someone from the followers of a list. Their reservations and purchases are kept.
+     */
+    public function removeFollower(GiftList $list, User $follower): RedirectResponse
+    {
+        $this->authorize('update', $list);
+
+        $list->followers()->detach($follower->id);
+
+        return redirect()->route('lists.show', $list->id);
     }
 
     /**

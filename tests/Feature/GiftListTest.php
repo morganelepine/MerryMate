@@ -310,6 +310,66 @@ class GiftListTest extends TestCase
             ->assertJsonMissingPath('listsToFollow.0.private_code');
     }
 
+    public function test_followers_are_only_sent_to_the_list_owner(): void
+    {
+        [$owner, $giftList] = $this->createGiftListWithOwner(['isPrivate' => false]);
+        $follower = $this->createFollower($giftList);
+
+        $this->actingAs($owner)->get("/lists/{$giftList->id}")->assertInertia(fn ($page) => $page
+            ->has('followers', 1)
+            ->where('followers.0', $follower->only('id', 'name', 'last_name'))
+        );
+
+        $this->actingAs($follower)->get("/lists/{$giftList->id}")->assertInertia(fn ($page) => $page
+            ->has('followers', 0)
+        );
+    }
+
+    public function test_owner_can_remove_a_follower_who_then_loses_access(): void
+    {
+        [$owner, $giftList] = $this->createGiftListWithOwner(['isPrivate' => false]);
+        [, $otherList] = $this->createGiftListWithOwner(['isPrivate' => false]);
+        // Before the followers: IdeaFactory picks a random user and needs them to own a list.
+        $idea = Idea::factory()->create([
+            'list_id' => $giftList->id,
+            'user_id' => $owner->id,
+            'user_name' => $owner->name,
+            'status' => 'reserved',
+            'status_user' => 'Follower',
+        ]);
+        $follower = $this->createFollower($giftList);
+        $remainingFollower = $this->createFollower($giftList);
+        $follower->followed_lists()->create(['gift_list_id' => $otherList->id, 'private_code' => '1234']);
+        $idea->update(['status_user_id' => $follower->id]);
+
+        $this->actingAs($owner)
+            ->delete("/lists/{$giftList->id}/followers/{$follower->id}")
+            ->assertRedirect("/lists/{$giftList->id}");
+
+        $this->assertSame([$remainingFollower->id], $giftList->followers()->pluck('users.id')->all());
+        $this->assertSame([$otherList->id], $follower->followedLists()->pluck('gift_lists.id')->all());
+        $this->assertSame('reserved', $idea->refresh()->status);
+        $this->assertSame($follower->id, $idea->status_user_id);
+
+        $this->actingAs($follower)->get("/lists/{$giftList->id}")->assertInertia(fn ($page) => $page
+            ->has('ideas', 0)
+            ->has('followedLists', 0)
+        );
+    }
+
+    public function test_only_the_owner_can_remove_a_follower(): void
+    {
+        [, $giftList] = $this->createGiftListWithOwner(['isPrivate' => false]);
+        $follower = $this->createFollower($giftList);
+        $otherFollower = $this->createFollower($giftList);
+        $url = "/lists/{$giftList->id}/followers/{$follower->id}";
+
+        $this->delete($url)->assertRedirect('/login');
+        $this->actingAs($otherFollower)->delete($url)->assertForbidden();
+
+        $this->assertSame(2, $giftList->followers()->count());
+    }
+
     public function test_list_cards_only_carry_the_fields_the_front_uses(): void
     {
         [$owner, $giftList] = $this->createGiftListWithOwner(['isPrivate' => false]);
@@ -477,5 +537,16 @@ class GiftListTest extends TestCase
         $this->get("/lists/{$giftList->id}")->assertInertia(fn ($page) => $page
             ->where('guestAccessGranted', false)
         );
+    }
+
+    private function createFollower(GiftList $giftList): User
+    {
+        $follower = User::factory()->create();
+        $follower->followed_lists()->create([
+            'gift_list_id' => $giftList->id,
+            'private_code' => Crypt::encrypt('1234'),
+        ]);
+
+        return $follower;
     }
 }

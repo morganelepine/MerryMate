@@ -6,6 +6,7 @@ import Modal from "@/Components/Utils/Modal";
 import PrimaryButton from "@/Components/Buttons/PrimaryButton";
 import CancelButton from "@/Components/Buttons/CancelButton";
 import SecretCodeField from "@/Components/GiftList/SecretCodeField";
+import { LIST_ACTION_LINK } from "@/Components/GiftList/listAction";
 
 export default function MakeListPublicButton({ list }) {
     const [confirming, setConfirming] = useState(false);
@@ -37,7 +38,7 @@ export default function MakeListPublicButton({ list }) {
             <button
                 type="button"
                 onClick={() => setConfirming(true)}
-                className="inline-flex items-center py-2 text-sm text-gray-600 hover:text-orange-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-300 rounded"
+                className={LIST_ACTION_LINK}
             >
                 <svg
                     xmlns="http://www.w3.org/2000/svg"

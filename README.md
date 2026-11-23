@@ -34,6 +34,7 @@ Démo en ligne : https://www.merrymate.fr/
     - Vérification via un code privé
     - Demande d'accès via une notification envoyée au·à la propriétaire
 - Acceptation/refus d'une demande d'accès par le·a propriétaire : envoi d'une notification à la personne qui a effectué la demande
+- Affichage des personnes qui suivent la liste et retrait d'un suivi par le·a propriétaire
 
 ### Gestion des idées cadeaux
 

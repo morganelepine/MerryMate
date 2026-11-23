@@ -95,6 +95,7 @@ Route::middleware('auth')->prefix('lists')->group(function () {
     Route::get('/to-follow',        [GiftListController::class, 'listsToFollow'])->name('lists.listsToFollow');
     Route::post('/{list}/follow',   [GiftListController::class, 'followList'])->name('lists.followList');
     Route::patch('/{list}/archive', [GiftListController::class, 'archive'])->name('lists.archive');
+    Route::delete('/{list}/followers/{follower}', [GiftListController::class, 'removeFollower'])->name('lists.removeFollower');
     Route::get('/search',           [GiftListController::class, 'search'])->name('lists.search');
 });
 

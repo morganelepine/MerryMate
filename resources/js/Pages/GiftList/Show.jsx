@@ -19,6 +19,7 @@ export default function Show({
     guestAccessGranted,
     showArchiveReminder,
     resetMutedReminders,
+    followers,
 }) {
     // A signed-out visitor: either they've already unlocked this list
     // with its private code (see GiftListController::guestAccess),
@@ -57,6 +58,7 @@ export default function Show({
                     brandNotes={brandNotes}
                     showArchiveReminder={showArchiveReminder}
                     resetMutedReminders={resetMutedReminders}
+                    followers={followers}
                 />
             )}
 
@@ -94,4 +96,5 @@ Show.propTypes = {
     guestAccessGranted: PropTypes.bool,
     showArchiveReminder: PropTypes.bool,
     resetMutedReminders: PropTypes.bool,
+    followers: PropTypes.array,
 };
