@@ -300,7 +300,7 @@ class IdeaTest extends TestCase
         // A different guest, who also unlocked the list but made no purchase of their own,
         // must not be able to cancel this one.
         $response = $this
-            ->withCookie("list_access_{$giftList->id}", '1')
+            ->actingAsGuestWithAccessTo($giftList)
             ->withCookie('guest_identity', 'a-different-guest-token')
             ->patch("/ideas/{$idea->id}/cancel");
 

@@ -2,12 +2,15 @@
 
 namespace App\Support;
 
+use App\Models\GiftList;
 use Illuminate\Support\Facades\Cookie;
 
 /**
  * Tracks which lists a signed-out guest has unlocked with their private code.
  * Stored in a dedicated cookie per list, not the session, so it survives
- * well past the app's session idle timeout (SESSION_LIFETIME, a couple of hours). */
+ * well past the app's session idle timeout (SESSION_LIFETIME, a couple of hours).
+ * It carries a fingerprint of the code, so that changing the code revokes the access.
+ */
 class GuestListAccess
 {
     private const COOKIE_PREFIX = 'list_access_';
@@ -18,17 +21,26 @@ class GuestListAccess
     /**
      * Remember, for about two months, that the current visitor has unlocked this list.
      */
-    public static function grant(int $listId): void
+    public static function grant(GiftList $list): void
     {
-        Cookie::queue(self::cookieName($listId), '1', self::LIFETIME_IN_MINUTES);
+        Cookie::queue(self::cookieName($list->id), self::fingerprint($list), self::LIFETIME_IN_MINUTES);
     }
 
     /**
      * Whether the current visitor has already unlocked this list.
      */
-    public static function has(int $listId): bool
+    public static function has(GiftList $list): bool
     {
-        return request()->cookie(self::cookieName($listId)) !== null;
+        $cookie = request()->cookie(self::cookieName($list->id));
+
+        return is_string($cookie) && hash_equals(self::fingerprint($list), $cookie);
+    }
+
+    private static function fingerprint(GiftList $list): string
+    {
+        $privateCode = GiftList::decryptPrivateCode($list->private_code);
+
+        return hash_hmac('sha256', mb_strtolower(trim($privateCode)), config('app.key'));
     }
 
     private static function cookieName(int $listId): string

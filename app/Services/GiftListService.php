@@ -51,7 +51,7 @@ class GiftListService
 
     public function getFollowedLists()
     {
-        return $this->formatEachLists(Auth::user()->followedLists()->get());
+        return $this->formatEachLists(Auth::user()->followedLists()->where('isPrivate', false)->get());
     }
 
     public function getListsToFollow()

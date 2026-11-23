@@ -69,6 +69,8 @@ class NotificationController extends Controller
     #send notif when someone wants an access to your list
     public function requestAccessToList(Request $request, User $listOwner, GiftList $list)
     {
+        abort_if($list->isPrivate, 404);
+
         $requestingUser = Auth::user();
 
         $alreadyFollowing = $requestingUser->followed_lists()->where('gift_list_id', $list->id)->exists();

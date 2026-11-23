@@ -329,7 +329,6 @@ class GiftListTest extends TestCase
     {
         [$owner, $giftList] = $this->createGiftListWithOwner(['isPrivate' => false]);
         [, $otherList] = $this->createGiftListWithOwner(['isPrivate' => false]);
-        // Before the followers: IdeaFactory picks a random user and needs them to own a list.
         $idea = Idea::factory()->create([
             'list_id' => $giftList->id,
             'user_id' => $owner->id,
@@ -537,6 +536,68 @@ class GiftListTest extends TestCase
         $this->get("/lists/{$giftList->id}")->assertInertia(fn ($page) => $page
             ->where('guestAccessGranted', false)
         );
+    }
+
+    public function test_private_list_is_only_accessible_to_its_owner(): void
+    {
+        [$owner, $privateList] = $this->createGiftListWithOwner([
+            'private_code' => Crypt::encrypt('_private'),
+            'isPrivate' => true,
+        ]);
+        $idea = Idea::factory()->create([
+            'list_id' => $privateList->id,
+            'user_id' => $owner->id,
+            'user_name' => $owner->name,
+            'status' => 'available',
+        ]);
+        $url = "/lists/{$privateList->id}";
+
+        $this->get($url)->assertRedirect('/login');
+        $this->post("{$url}/guest-access", ['private_code' => '_private'])->assertNotFound();
+
+        // Followed while the private code still opened private lists.
+        $follower = $this->createFollower($privateList);
+        $this->actingAs($follower)->get($url)->assertNotFound();
+        $this->actingAs($follower)->patch("/ideas/{$idea->id}/purchase", ['userName' => 'X'])->assertForbidden();
+        $this->actingAs($follower)->get('/lists')->assertInertia(fn ($page) => $page->has('followedLists', 0));
+
+        $stranger = User::factory()->create();
+        $this->actingAs($stranger)->post("{$url}/follow", ['private_code' => '_private'])->assertNotFound();
+        $this->actingAs($stranger)
+            ->post("/notifications/request-access/{$owner->id}/{$privateList->id}")
+            ->assertNotFound();
+        $this->assertSame(0, $stranger->followed_lists()->count());
+
+        $this->actingAs($owner)->get($url)->assertOk();
+    }
+
+    public function test_guest_access_is_revoked_when_the_code_changes(): void
+    {
+        [$owner, $giftList] = $this->createGiftListWithOwner();
+        $isGranted = fn () => $this->get("/lists/{$giftList->id}")->viewData('page')['props']['guestAccessGranted'];
+
+        $this->actingAsGuestWithAccessTo($giftList);
+        $this->assertTrue($isGranted());
+
+        $giftList->update(['private_code' => Crypt::encrypt('new-code')]);
+        $this->assertFalse($isGranted());
+    }
+
+    public function test_removed_follower_cannot_act_through_an_old_guest_access(): void
+    {
+        [$owner, $giftList] = $this->createGiftListWithOwner();
+        $idea = Idea::factory()->create([
+            'list_id' => $giftList->id,
+            'user_id' => $owner->id,
+            'user_name' => $owner->name,
+            'status' => 'available',
+        ]);
+        $removedFollower = User::factory()->create();
+
+        $this->actingAsGuestWithAccessTo($giftList);
+        $this->actingAs($removedFollower)
+            ->patch("/ideas/{$idea->id}/purchase", ['userName' => 'X'])
+            ->assertForbidden();
     }
 
     public function test_list_can_only_be_archived_once_an_idea_is_taken(): void

@@ -19,15 +19,19 @@ trait AuthorizesListAccess
      */
     protected function authorizeListAccess(int $listId): void
     {
+        $list = GiftList::findOrFail($listId);
         $userId = Auth::id();
-        $hasAuthenticatedAccess = $userId !== null && (
-            GiftList::where('id', $listId)->where('user_id', $userId)->exists()
-            || FollowedList::where('user_id', $userId)->where('gift_list_id', $listId)->exists()
-        );
 
-        $hasGuestAccess = GuestListAccess::has($listId);
+        if ($userId !== null && $userId === $list->user_id) {
+            return;
+        }
 
-        abort_unless($hasAuthenticatedAccess || $hasGuestAccess, 403);
+        // The guest cookie is ignored once signed in, or a removed follower could still act through it.
+        $hasAccess = $userId !== null
+            ? FollowedList::where('user_id', $userId)->where('gift_list_id', $list->id)->exists()
+            : GuestListAccess::has($list);
+
+        abort_if($list->isPrivate || ! $hasAccess, 403);
     }
 
     /**

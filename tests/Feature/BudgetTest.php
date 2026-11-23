@@ -40,7 +40,6 @@ class BudgetTest extends TestCase
             'promo_price' => 29.99,
         ]);
 
-        // Created after the ideas: IdeaFactory picks a random user, who must own a list.
         $buyer = User::factory()->create();
         FollowedList::create([
             'user_id' => $buyer->id,

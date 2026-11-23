@@ -36,10 +36,6 @@ Route::get('/', function () {
     ]);
 });
 
-Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
-
 // Profile management
 Route::middleware('auth')->prefix('profile')->group(function () {
     // Route::get('/profile', [ProfileController::class, 'index'])->name('profile.index');
@@ -107,10 +103,6 @@ Route::get('/lists/{list}', [GiftListController::class, 'show'])->name('lists.sh
 Route::post('/lists/{list}/guest-access', [GiftListController::class, 'guestAccess'])
     ->name('lists.guestAccess')
     ->middleware('throttle:10,1');
-
-Route::get('/privatecode', function () {
-    return Inertia::render('PrivateCode');
-})->middleware(['auth', 'verified'])->name('privatecode');
 
 // Notifications management
 Route::middleware('auth')->prefix('notifications')->group(function () {

@@ -12,6 +12,7 @@ use App\Repositories\GiftListRepository;
 use App\Repositories\IdeaRepository;
 use App\Services\GiftListService;
 use App\Support\GuestListAccess;
+use Illuminate\Auth\AuthenticationException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -42,6 +43,7 @@ class GiftListController extends Controller
      * This route is public: an authenticated owner/follower sees their list as usual,
      * while anyone else (including a signed-out visitor) only gets the list's ideas
      * once they have unlocked it with its private code.
+     * A private list only exists for its owner.
      */
     public function show(Request $request, $id): Response
     {
@@ -50,9 +52,16 @@ class GiftListController extends Controller
         abort_unless($list, 404);
 
         $isOwner = Auth::check() && Auth::id() === $list->user_id;
+
+        if ($list->isPrivate && ! $isOwner) {
+            // The visitor may be the owner, signed out.
+            throw_unless(Auth::check(), AuthenticationException::class);
+            abort(404);
+        }
+
         $isFollower = Auth::check()
             && FollowedList::where('user_id', Auth::id())->where('gift_list_id', $list->id)->exists();
-        $isGuestWithAccess = ! Auth::check() && $this->hasGuestAccess($list->id);
+        $isGuestWithAccess = ! Auth::check() && GuestListAccess::has($list);
         $hasAccess = $isOwner || $isFollower || $isGuestWithAccess;
 
         if ($hasAccess) {
@@ -303,6 +312,8 @@ class GiftListController extends Controller
      */
     public function followList(Request $request, GiftList $list): RedirectResponse
     {
+        abort_if($list->isPrivate, 404);
+
         $privateCode = (string) $request->input('private_code');
 
         if ($this->isCorrectPrivateCode($list, $privateCode)) {
@@ -344,12 +355,14 @@ class GiftListController extends Controller
      */
     public function guestAccess(Request $request, GiftList $list): RedirectResponse
     {
+        abort_if($list->isPrivate, 404);
+
         $validated = $request->validate([
             'private_code' => 'required|string',
         ]);
 
         if ($this->isCorrectPrivateCode($list, $validated['private_code'])) {
-            GuestListAccess::grant($list->id);
+            GuestListAccess::grant($list);
 
             return redirect()->route('lists.show', $list->id);
         }
@@ -357,14 +370,6 @@ class GiftListController extends Controller
         return redirect()->back()->withErrors(
             ['private_code' => 'Ce code est incorrect pour la liste demandée.']
         );
-    }
-
-    /**
-     * Whether a signed-out guest has already unlocked this list.
-     */
-    private function hasGuestAccess(int $listId): bool
-    {
-        return GuestListAccess::has($listId);
     }
 
     /**
